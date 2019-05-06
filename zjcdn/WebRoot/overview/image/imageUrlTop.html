@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<style type="text/css">
+	table{
+		display:block;
+		width:100%;
+		overflow:hidden;
+	}
+	thead,tbody{
+		display:block;
+		width:100%;
+	}
+	th,td{
+		border: 1px solid #bbb;
+		text-align: center;
+		font-size:14px;
+	}
+	tr{
+		display:block;
+	}
+	th{
+		background:#eee;
+		color:#58abda;
+		display: block;
+	    float: left;
+	    height: 30px;
+	    line-height: 30px;
+	}
+	th:nth-child(1){
+	    width: 40%;
+	}
+	th:nth-child(2){
+	    width: 24%;
+	}
+	th:nth-child(3){
+	    width: 34%;
+	}
+	
+	tr td{
+		display:block;
+		float: left;
+	    height: 30px;
+	    line-height: 30px;
+	}
+	tr td:nth-child(1){
+		width: 40%;
+		text-overflow: ellipsis;
+		white-space:nowrap;
+		overflow: hidden;
+	}
+	tr td:nth-child(2){
+		width: 24%;
+	}
+	tr td:nth-child(3){
+		width: 34%;
+	}
+</style>
+<body>
+	<table cellspacing="0" cellpadding="0">
+		<thead>
+			<tr>
+				<th>域名</td>
+				<th>出现次数</th>
+				<th>厂家</th>
+			</tr>
+		</thead>
+		<tbody id="tbody">
+		</tbody>
+	</table>
+</body>
+<script src="/pekingpf/static/jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript">
+function flushdata(){
+	$.ajax({
+		type : 'post',
+		url : '/pekingpf/overview/getUrlTopn/image',
+		contentType : "application/json",
+		dataType : "json",
+		error : function(){
+			alert("图片url数据请求错误！");
+		},
+		success : function(data){
+			var tbody = $("#tbody");
+			tbody.empty();
+			for(var index in data){
+				var tr = $("<tr></tr>");
+				tr.append("<td>"+data[index].resourceUrl+"</td>");
+				tr.append("<td>"+data[index].urlCount+"</td>");
+				tr.append("<td>"+data[index].urlFirm+"</td>");
+				tbody.append(tr);
+			}
+		}
+	})
+}
+$(document).ready(function(){
+	flushdata();
+	//window.setInterval(flushdata, 2000);
+});
+</script>
+
+</html>

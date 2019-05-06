@@ -1,0 +1,52 @@
+<div class="tabbable">
+	<ul class="nav nav-tabs" id="myTab">
+		<li class="active"><a data-toggle="tab" href="#home"> <i
+				class="green ace-icon fa fa-users bigger-120"></i>数据导出
+		</a></li>
+	</ul>
+	<div class="tab-content">
+		<div id="home" class="tab-pane active clearfix">
+			<#search>
+			<form action="${ctxPath}/TextResult/text_list" method="post" id="search-form"
+				target="list-page" class="center clearfix">
+				<div class="row padding-tb-10">
+					<!-- <div class="col-sm-3">
+						<label class="inline">审核日期：</label> <input type="text" class="width-80" name="checkdate"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" readonly />
+					</div> -->
+					<div class="col-sm-3">
+						<!-- <input type="text" class="width-45" id="search-btn" style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;" value="条件查询" readonly /> 
+							<a href="javascript:con();" class="width-45" id="search-btn" style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"></a>  -->
+							<input type="text" id="type" value="${auth.getLoginUser().userType}" hidden /> 
+							<a href="javascript:sub();" class="width-45" id="search-btn" >
+							<input type="text" value="导出数据" class="width-45" id="search-btn" style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;">
+						</a>
+					</div>
+				</div>
+			</form>
+			</#search>
+			<div id="list-page"></div>
+		</div>
+	</div>
+</div>
+<style>
+#profile .center>label {
+	width: 100px;
+	text-align: right;
+}
+</style>
+<script>
+	$("#search-form").getPageList({
+		'submitBtnId' : 'search-btn'
+	});
+
+	function sub(){
+		window.location.href="${ctxPath}/TextCheck/csvSave";
+	}
+
+	$(function() {
+		$("#sx").show();
+		$("#tj").hide();
+	});
+</script>
+

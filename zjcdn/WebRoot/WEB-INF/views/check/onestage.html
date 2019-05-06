@@ -1,0 +1,274 @@
+<html>
+  <head>
+    <title>onestage.html</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">
+    <script type="text/javascript" src="${ctxPath!}/static/app/js/echarts-all-v2.2.4.js"></script>-->
+   <!--  <script type="text/javascript" src="${ctxPath!}/static/app/js/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="${ctxPath!}/static/app/js/build/dist/echarts-all.js"></script> -->
+  </head>
+  
+  <script type="text/javascript">
+  	  setInterval(show,10000);
+  	  function show(){
+  	  	$.ajax({
+  	  		url:'${ctxPath}/onestage',  
+	        type: "post",  
+	        async: true,
+			cache: false,
+			success: function(data){}
+  	  	})
+  	  }
+  	  require.config({
+            paths: {
+                echarts: '${ctxPath!}/static/app/js/build/dist'
+            }
+      });
+  	  require(
+		    [
+		        'echarts',
+		        'echarts/chart/pie',
+		        'echarts/chart/bar'
+		    ],
+		function (ec) {
+        var no1Chart = echarts.init(document.getElementById('no1Chart'));
+		var no1Option = {
+				
+					    title : {
+					        text: '浙江不良信息归属省份情况',
+					    },
+					    tooltip : {
+					        trigger: 'axis'
+					    },
+					    legend: {
+					        data:['2016年']
+					    },
+					    calculable : true,
+					    xAxis : [
+					        {
+					            type : 'value',
+					            boundaryGap : [0, 0.01]
+					        }
+					    ],
+					    yAxis : [
+					        {
+					            type : 'category',
+					            data : arr
+					        }
+					    ],
+					    series : [
+					        {
+					            name:'2011年',
+					            type:'bar',
+					            data:arr1
+					        }
+					    ]
+					};
+		  no1Chart.setOption(no1Option);
+		
+		
+	      var no2Chart = echarts.init(document.getElementById('no2Chart'));
+			var no2Option = {
+			    title: {
+					        text: '浙江不良信息发现情况',
+					        //subtext: '纯属虚构'
+					    },
+					    tooltip: {
+					        trigger: 'axis'
+					    },
+					    legend: {
+					        data:['最高','最低']
+					    },
+					    xAxis:  {
+					        type: 'category',
+					        boundaryGap: false,
+					        data: arr1
+					    },
+					    yAxis: {
+					        type: 'value',
+					        axisLabel: {
+					            formatter: '{value} °C'
+					        }
+					    },
+					    series: [
+					        {
+					            name:'最高',
+					            type:'line',
+					            data:arr,
+					            markPoint: {
+					                data: [
+					                    {type: 'max', name: '最大值'},
+					                    {type: 'min', name: '最小值'}
+					                ]
+					            },
+					            markLine: {
+					                data: [
+					                    {type: 'average', name: '平均值'}
+					                ]
+					            }
+					        }
+					    ]
+					};
+			no2Chart.setOption(no2Option);
+			
+		    var no3Chart = echarts.init(document.getElementById('no3Chart'));
+			var no3Option = {
+				   title : {
+				        text: '浙江不良信息归属网络情况',
+				        x:'center'
+				    },
+				    tooltip : {
+				        trigger: 'item',
+				        formatter: "{a} <br/>{b} : {c} ({d}%)"
+				    },
+				    legend: {
+				        orient : 'vertical',
+				        x : 'left',
+				        data:arr1
+				    },
+				    calculable : true,
+				    series : [
+				        {
+				            name:'访问来源',
+				            type:'pie',
+				            radius : '55%',
+				            center: ['50%', '60%'],
+				            data:data
+				        }
+				    ]
+				};
+  
+			no3Chart.setOption(no3Option);
+			
+			
+		    var no4Chart = echarts.init(document.getElementById('no4Chart'));
+			var no4Option = {
+				title : {
+				        text: '浙江不良信息归属域名情况',
+				        x:'center'
+				    },
+				    tooltip : {
+				        trigger: 'item',
+				        formatter: "{a} <br/>{b} : {c} ({d}%)"
+				    },
+				    legend: {
+				        orient : 'vertical',
+				        x : 'left',
+				        data:arr1
+				    },
+				    toolbox: {
+				        show : true,
+				        feature : {
+				            mark : {show: true},
+				            dataView : {show: true, readOnly: false},
+				            magicType : {
+				                show: true, 
+				                type: ['pie', 'funnel'],
+				                option: {
+				                    funnel: {
+				                        x: '25%',
+				                        width: '50%',
+				                        funnelAlign: 'left',
+				                        max: 1548
+				                    }
+				                }
+				            },
+				            restore : {show: true},
+				            saveAsImage : {show: true}
+				        }
+				    },
+				    calculable : true,
+				    series : [
+				        {
+				            name:'访问来源',
+				            type:'pie',
+				            radius : '55%',
+				            center: ['50%', '60%'],
+				            data:data
+				        }
+				    ]
+				};
+			
+			no4Chart.setOption(no3Option);
+			
+            var ecConfig = require('echarts/config');
+            no3Chart.on(ecConfig.EVENT.CLICK, function (param){
+                //alert(param.name+":"+param.value); 
+                //var oneInfo ="";
+                tagLayer2(param.name);
+            });
+        }
+		);
+		
+function tagLayer2(temp){
+	var pageii = $.layer({
+	    type: 2,
+	    shadeClose: true,
+	    title: [
+       '人员详细信息 ',
+       //自定义标题风格，如果不需要，直接title: '标题' 即可
+       'border:1px solid rgb(221, 221, 221); background:linear-gradient(rgb(255, 255, 255) 0px, rgb(238, 238, 238) 100%) repeat-x rgb(247, 247, 247); color:rgb(102, 159, 199);' 
+    ],
+	    shade: [0.8, '#000'],
+	    border: [0],
+	    offset: ['20px',''],
+	    area: ['600px', '400px'],//($(window).height() - 50) +'px'
+	    shift: 'top', //从上动画弹出
+	    iframe: {src: '${ctxPath}/onestage/getbarinfo2?info='+temp}
+	});
+	$('#pagebtn').on('click', function(){
+	    layer.close(pageii);
+	});
+}
+		
+</script>
+  
+<body>
+<div id="top-left-box" style="width:50%;float:left;border-width:1px;border-right-style:dashed;border-color:#ccc;padding-bottom:20px">
+     <div style="width:100%">
+			<div style="color:000;font-size:18px;margin-left:20px">一号楼人数</div>
+			<div  style="background-image:url('${ctxPath}/static/img/sum.png');width:128px;height:128px;padding-top:25px;border-radius: 80px">
+				<span style="color:#1ab394;font-size:40px;margin-left:20px">${sumone}<span style="font-size:25px">人</span></span>
+			</div>
+	</div>
+	<div id="no1Chart" style="width:100%;height:250px"></div>
+	
+</div>
+
+<div id="top-right-box" style="width:48%;height:50%;float:left;border-width:1px;margin-left: 20px;border-color:#ccc;padding-bottom:20px">
+	<div style="color:000;font-size:18px;margin-left:20px">二号楼人数</div>
+	<div  style="background-image:url('${ctxPath}/static/img/sum.png');width:128px;height:128px;padding-top:25px;border-radius: 80px">
+		<span style="color:#1ab394;font-size:40px;margin-left:20px">${sumtwo}<span style="font-size:25px">人</span></span>
+	</div>
+	<div id="no2Chart" style="width:100%;height:250px"></div>
+</div>
+
+
+<div id="bottom-all-box" style="width:100%;float:left;background-color:#f5f5f5">
+		<div style="width:128px;float:left;padding-top:50px">
+					<div style="color:000;font-size:18px;margin-left:20px">园区总人数</div>
+					<div  style="background-image:url('${ctxPath}/static/img/sum.png');width:128px;height:128px;padding-top:25px;border-radius: 80px">
+						<span style="color:#1ab394;font-size:40px;margin-left:20px">${sumthree}<span style="font-size:25px">人</span></span>
+					</div>
+		</div>
+		<div  id ="no3Chart" style="width:50%;height:250px;float:left"></div>
+</div>
+
+<div id="bottom-all-box" style="width:100%;float:left;background-color:#f5f5f5">
+		<div style="width:128px;float:left;padding-top:50px">
+					<div style="color:000;font-size:18px;margin-left:20px">园区总人数</div>
+					<div  style="background-image:url('${ctxPath}/static/img/sum.png');width:128px;height:128px;padding-top:25px;border-radius: 80px">
+						<span style="color:#1ab394;font-size:40px;margin-left:20px">${sumthree}<span style="font-size:25px">人</span></span>
+					</div>
+		</div>
+		<div  id ="no3Chart" style="width:50%;height:250px;float:left"></div>
+</div>
+
+
+    
+
+</body>
+</html>

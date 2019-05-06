@@ -1,0 +1,94 @@
+<div class="tabbable">
+	<ul class="nav nav-tabs" id="myTab">
+		<li class="active"><a data-toggle="tab" href="#home"
+			id="selectInsert"> <i
+				class="green ace-icon fa fa-users bigger-120"></i> 兼职人员工资核算表 </a></li>
+		<li class=""><a data-toggle="tab" href="#profile"
+			id="selectHistory"> <i
+				class="green ace-icon fa fa-plus bigger-120"></i> 历史查询 </a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="home" class="tab-pane active clearfix">
+			<#search>
+			<form action="${ctxPath}/part_time_salary/list" method="post"
+				id="sysuser-save-form" target="list-page" class="center clearfix">
+				
+				<div class="row padding-tb-10">
+					<div class="col-sm-3">
+						<label class="inline">审核人员账号：</label>
+						<select class="width-60" name="account" id="account">
+							<option value="">--请选择--</option>
+							@for(item in accounts){
+							<option value="${item}">${item}</option>
+							@}
+						</select>
+					</div>
+					<div class="col-sm-3">
+						<label class="inline">统计开始时间：</label> <input type="text"
+							class="width-80" name="dateStart"  value="${startDefault!}"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:00:00'})" readonly />
+					</div>
+					<div class="col-sm-3">
+						<label class="inline">统计结束时间：</label> <input type="text"
+							class="width-80" name="dateEnd"   value="${endDefault!}"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:00:00'})" readonly />
+					</div>
+					<div class="col-sm-3">
+						<input type="text" class="width-45" id="search-btn"
+							style="cursor:pointer;text-align:center;color:#fff;background-color:#f8ac59;"
+							value="条件查询" readonly />
+					</div>
+				</div>
+			</form>
+			</#search>
+			<div class="space-6"></div>
+			<div id="list-page"></div>
+		</div>
+
+		<div id="profile" class="tab-pane">
+			<#search>
+			<form action="${ctxPath!}/part_time_salary/selectList" method="post"
+				id="search-form" target="list-page_1" class="center clearfix">
+				<div class="row padding-tb-10">
+					<div class="col-sm-4">
+						<label class="inline">审核人员账号：</label>
+						<select class="width-40" name="account" id="account">
+							<option value="">--请选择--</option>
+							@for(item in accounts){
+							<option value="${item}">${item}</option>
+							@}
+						</select>
+					</div>
+					<div class="col-sm-4">
+						<label class="inline">录入时间：</label> <input type="text"
+							class="width-80" name="createDate"  
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly />
+					</div>
+					<div class="col-sm-4">
+						<input type="text" class="width-45" id="search-btn1"
+							style="cursor:pointer;text-align:center;color:#fff;background-color:#f8ac59;"
+							value="条件查询" readonly />
+					</div>
+				</div>
+			</form>
+			</#search>
+			<div class="space-6"></div>
+			<div id="list-page_1"></div>
+		</div>
+	</div>
+</div>
+<script>
+	$("#search-form").getPageList({
+		'submitBtnId' : 'search-btn1'
+	});
+	$("#sysuser-save-form").getPageList({
+			'submitBtnId' : 'search-btn'
+	});
+	
+	$(function() {
+		$("#sx").show();
+		$("#tj").hide();
+	});
+</script>

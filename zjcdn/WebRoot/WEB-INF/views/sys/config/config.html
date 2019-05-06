@@ -1,0 +1,117 @@
+<div class="tabbable">
+	<ul class="nav nav-tabs" id="myTab">
+		<li class="active">
+		<a data-toggle="tab" href="#login"> 
+			<i class="green ace-icon fa fa-users bigger-120"></i> 登录配置
+		</a>
+		</li>
+
+		<li class=""><a data-toggle="tab" href="#attach"> 
+		<i class="green ace-icon fa fa-plus bigger-120"></i> 附件配置
+		</a></li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="login" class="tab-pane active clearfix">
+			<form action="${ctxPath!}/sysconfig/login/save" method="post" id="user-login-form" class="padding-10">
+				<table class="EditTable">
+					<tbody>
+						<tr class="FormData">
+							<td class="CaptionTD">启用登录验证码:</td>
+							<td class="DataTD width-100">
+								<div class="radio inline">
+									<label>
+										<input type="checkbox"  name="loginCaptchaOn" class="ace" ${decode(appConf.get('LOGIN_CAPTCHA_ON'),"1","checked","")} value="1"/>
+										<span class="lbl">  </span>
+									</label>
+								</div>
+							</td>
+						</tr>
+						<tr class="FormData">
+							<td class="CaptionTD">密码强校验：</td>
+							<td class="DataTD width-100">
+								<div class="radio inline">
+									<label>
+										<input type="checkbox" name="pwdStrongVerifcation" class="ace" ${decode(appConf.get('PWD_STRONG_VERIFCATION'),"1","checked","")} value="1"/>
+										<span class="lbl">  </span>
+									</label>
+								</div>
+							</td>
+						</tr>
+						<tr class="FormData">
+							<td class="CaptionTD">首次登录修改密码：</td>
+							<td class="DataTD width-100">
+								<div class="radio inline">
+									<label>
+										<input type="checkbox" name="pwdFristLoginMod" class="ace" ${decode(appConf.get('PWD_FIRST_LOGIN_MOD'),"1","checked","")} value="1"/>
+										<span class="lbl">  </span>
+									</label>
+								</div>
+							</td>
+						</tr>
+						<tr class="FormData">
+							<td class="CaptionTD">密码可错误次数：</td>
+							<td class="DataTD width-100">
+								<input style="color: white;" type="text" class="width-60"  name="loginErrorCount"
+									value="${appConf.get('LOGIN_ERROR_COUNT')}" datatype="n1-3"  nullmsg="请输入姓名！"/>
+								<span class="red">*密码错误次数达到设置值后，锁定账户,为0时不启用</span>	
+							</td>
+						</tr>
+						<tr class="FormData">
+							<td class="CaptionTD">锁定时间：</td>
+							<td class="DataTD width-100">
+								<input style="color: white;" type="text" class="width-60" datatype="n1-3" value="${appConf.get('LOGIN_UNLOCK_TIME')}" name="loginUnlockTime" />
+								<span class="red">*单位:分钟，锁定后的账号在设置分钟后可以再次登录</span>	
+							</td>
+						</tr>
+						<tr class="FormData">
+							<td class="CaptionTD">强制修改密码时间：</td>
+							<td class="DataTD width-100">
+								<input style="color: white;" type="text" class="width-60" datatype="n1-3" value="${appConf.get('PWD_NEXT_MOD_TIME')}" name="pwdNextModTime"/>
+								<span class="red">*单位:天，为0时不启用</span>	
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<div class="margin-t15">
+					<span style="width: 200px;margin: 0 auto;display: block;" class="btn btn-info btn-block bigger-120" id="user-login-form-btn">确 认 修 改</span>
+				</div>
+			</form>
+		</div>
+		
+		<div id="attach" class="tab-pane  clearfix">
+			<form action="${ctxPath!}/sysconfig/attach/save" method="post" id="attach-form" class="padding-10">
+				<table class="EditTable">
+					<tbody>
+						<tr class="FormData">
+							<td class="CaptionTD">附件保存路径：</td>
+							<td class="DataTD width-100">
+								<input style="color: white;" type="text" class="width-60"  name="path"
+									value="${appConf.get('FILE_SAVE_ROOT_PATH')}" datatype="*1-255"  nullmsg="请输入路径！"/>
+								<span class="red"></span>	
+							</td>
+						</tr>
+						<tr class="FormData">
+							<td class="CaptionTD">附件大小限制：</td>
+							<td class="DataTD width-100">
+								<input style="color: white;" type="text" class="width-60" datatype="n1-10" nullmsg="请输入大小限制！" value="${appConf.get('ATTACH_SIZE_LIMIT')}" name="size" />
+								<span class="red">*单位:MB,为0不允许上传附件</span>	
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<div class="margin-t15">
+					<span style="width: 200px;margin: 0 auto;display: block;" class="btn btn-info btn-block bigger-120" id="attach-form-btn">确 认 修 改</span>
+				</div>
+			</form>
+		</div>
+	</div>		
+</div>	
+<style>
+.EditTable{color: #c0c0c0}
+</style>
+<#save isHide="yes" subBtnId="user-login-form-btn" formId="user-login-form" />	
+<#save isHide="yes" subBtnId="attach-form-btn" formId="attach-form" />	
+

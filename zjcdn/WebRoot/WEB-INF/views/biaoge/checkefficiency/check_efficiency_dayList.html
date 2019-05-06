@@ -1,0 +1,132 @@
+<style type="text/css">
+#myTable {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+#myTable th,td {
+	text-align: center;
+	padding: .5em;
+	border: 1px solid #fff;
+}
+
+th {
+	background-color: #328aa4;
+	color: #fff;
+}
+
+td {
+	background: #e5f1f4;
+}
+
+tr.even td {
+	background: #e5f1f4;
+}
+
+tr.odd td {
+	background: #f8fbfc;
+}
+
+tr.over td {
+	background: #bce774;
+}
+
+tr.out td {
+	
+}
+</style>
+<table width="500" id="myTable" cellspacing="0" cellpadding="0">
+	<thead>
+		<tr class="menu">
+			<th id="name">账号</th>
+			<th class="date"></th>
+			<th class="date"></th>
+			<th class="date"></th>
+			<th class="date"></th>
+			<th class="date"></th>
+			<th class="date"></th>
+			<th class="date"></th>
+			<th>合计</th>
+		</tr>
+	</thead>
+	<tbody id="tbody">
+		
+	</tbody>
+</table>
+<script type="text/javascript">
+	$(function() {
+		var list = ${list};
+		var dateStart = new Date('${dateStart}');
+		for(var i=0;i<8;i++){
+			$(".menu .date").eq(i).text(addDay(dateStart,i));//填充日期栏（默认七天）
+		}
+		var tbody = $("#tbody");
+		tbody.empty();
+		for(var account in list){
+			var sum = 0;
+			var tr = $("<tr></tr>");
+			tr.data("account",account);
+			tr.append("<td class='center'><a href='javascript:void(0);' onclick='showChart(this)'>"+account+"</a></td>");
+			var dateCount = list[account];
+			$(".menu .date").each(function(){ //遍历日期栏与后台查找到的日期进行对比，并填写相应的审核量
+				var flag = false;
+				var value = $(this).text();
+				for(var date in dateCount){
+					if(date == value){
+						flag = true;
+						break;
+					}
+				}
+				if(flag){
+					tr.append("<td class='center'>"+dateCount[date]+"</td>");		
+					sum += parseInt(dateCount[date]);
+				}else{
+					tr.append("<td class='center'>"+0+"</td>");
+				}
+			})
+			tr.append("<td class='center'>"+sum+"</td>");
+			tbody.append(tr);	
+		}
+	})
+	
+	//开始日期往后顺延7天
+	function addDay(date,days){
+		var d = new Date(date);
+		d.setDate(d.getDate()+days);
+		var month = d.getMonth()+1;
+		var day = d.getDate();
+		if(month<10){
+			month = "0" + month;
+		}
+		if(day<10){
+			day = "0" + day;
+		}
+		var val = d.getFullYear()+"-"+month+"-"+day;
+		return val;
+	}
+	//点击账号显示当前账号审核量的折线统计图
+	function showChart(thiz){
+		var account = $(thiz).parent().parent().data("account");
+		var dateStart=$("input[name='dateStart']").val();
+		var dateEnd=$("input[name='dateEnd']").val();
+		var url = "${ctxPath}/check_efficiency/showDetail?account="+account+"&dateStart="+dateStart+"&dateEnd="+dateEnd;
+		window.open (url,'newwindow','height=600,width=1000,top=100px,left=600px,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no') 
+	}
+
+	//隔行变色
+	$(function() {
+		var changeTr = document.getElementById("myTable").getElementsByTagName(
+				"tr");
+		for (i = 0; i < changeTr.length; i++) {
+			changeTr[i].className = (i % 2 > 0) ? "even" : "odd";
+			changeTr[i].temp = changeTr[i].className;
+			changeTr[i].onmouseover = function() {
+				this.className = 'over';
+			}
+			changeTr[i].onmouseout = function() {
+				this.className = this.temp;
+			}
+		}
+	})
+</script>

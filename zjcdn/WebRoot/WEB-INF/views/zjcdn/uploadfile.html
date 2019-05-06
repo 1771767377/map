@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+</head>
+<body>
+		
+			<form id="fileForm" method="post" enctype="multipart/form-data">
+					<input type="file" id="file" name="file">
+					<input type="button" id="btn" value="提交">
+			</form>
+			
+			<script type="text/javascript">
+				$("#btn").click(function(){
+					var formdata = new FormData($("#fileForm")[0]);
+					  $.ajax({
+							url:"${ctxPath}/recordMessage/uploadFile",
+							data:formdata,
+							dataType:"text",
+							type : "post",
+							processData :false,
+							contentType :false,
+							success:function(data){
+								if(data=="success"){
+									window.close();
+									window.parent.reload();
+								}
+							},
+							error :function(){
+								alert("提交数据异常，请联系管理员！");
+							}
+					  })
+				})
+			</script>
+		
+</body>
+</html>

@@ -1,0 +1,104 @@
+<div class="tabbable">
+	<div class="tab-content">
+		<div id="home" class="tab-pane active clearfix">
+			<#search>
+			<form action="${ctxPath}/History_Text/ok_list" method="post" id="search-form" target="list-page"
+				class="center clearfix">
+				<div class="row padding-tb-10">
+					<div class="col-sm-6">
+						<label class="inline">省份：</label> <input type="text" class="width-80" name="province"
+							id="province" />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">文本地址：</label> <input type="text" class="width-60" name="texturl"
+							id="texturl" />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">IP地址：</label> <input type="text" class="width-60" name="iplist"
+							id="iplist" />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">初审账号：</label> <input type="text" class="width-80" name="trialAccount"
+							id="trialAccount" />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">复审账号：</label> <input type="text" class="width-80" name="retrialAccount"
+							id="retrialAccount" />
+					</div>
+				</div>
+				<div class="row padding-tb-10">
+					<div class="col-sm-4">
+						<label class="inline">初审时间：</label> <input type="text" class="width-30" name="trialTime1"
+							id="trialTime1" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" readonly /> 至 <input
+							type="text" class="width-30" name="trialTime2" id="trialTime2"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" readonly />
+					</div>
+					<div class="col-sm-4">
+						<label class="inline">复审时间：</label> <input type="text" class="width-30" name="retrialTime1"
+							id="retrialTime1" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" readonly /> 至 <input
+							type="text" class="width-30" name="retrialTime2" id="retrialTime2"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" readonly />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">导出账号：</label> <input type="text" class="width-80" name="username"
+							id="username" />
+					</div>
+				</div>
+				<div class="row padding-tb-10">
+					<div class="col-sm-4">
+						<label class="inline">审核时间：</label> <input type="text" class="width-30" name="checkdate1"
+							id="checkdate1" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" readonly /> 至 <input
+							type="text" class="width-30" name="checkdate2" id="checkdate2"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" readonly />
+					</div>
+					<div class="col-sm-4">
+						<label class="inline">采集时间：</label> <input type="text" class="width-30" name="date1"
+							id="date1" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly /> 至 <input
+							type="text" class="width-30" name="date2" id="date2"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">数据来源：</label>
+						 	<select class="width-60" name="exportStatus" id="exportStatus">
+						 		<option value="0">全部</option>
+						 		<option value="10000">正常</option>
+						 		<option value="10001">不良</option>
+						 	</select>
+					</div>
+
+					<div class="col-sm-3">
+					<a href="javascript:con();" class="width-45" id="search-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;">
+						<input type="text" class="width-45" id="search-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"
+							value="条件查询" readonly /> </a>
+					</div>
+				</div>
+			</form>
+			</#search>
+			<div id="list-page"></div>
+		</div>
+	</div>
+</div>
+<style>
+#profile .center>label {
+	width: 100px;
+	text-align: right;
+}
+</style>
+<script>
+	$("#search-btn").click(function() {
+		var value = $('#search-btn').val();
+		if (value == "条件查询") {
+			$("#sx").hide();
+		} else {
+			$("#sx").slideToggle();
+		}
+	});
+	
+	function con() {
+		$("#search-form").getPageList({
+			'submitBtnId' : 'search-btn'
+		});
+	}
+</script>

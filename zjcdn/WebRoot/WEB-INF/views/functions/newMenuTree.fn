@@ -1,0 +1,39 @@
+@for(menu in para0){//class="highlight"
+	<li data-level="${menu.level!}"
+		@if(menu.hasChild && menu.parentId!=0){
+			class="dropdown-submenu"
+		@}
+	>
+		<a 
+			@if(menu.hasChild){
+				class="dropdown-submenu" data-toggle="dropdown"
+				href="javascript:void(0);" haschild="${menu.hasChild}"
+			@}else if(!isEmpty(menu.url)){
+				href="${decode(menu.url,'','javascript:void(0);','#/ajax/'+menu.url)}" 
+				id="menu_${strutil.replace(menu.url!'','/','')}" 
+				haschild="${menu.hasChild!}"
+			@}
+		>
+			<i class="menu-icon ${menu.icon!'fa-caret-right'}"></i>
+			<span class="menu-text" 
+			@if(menu.level == 1) {
+				style="vertical-align: middle;"
+			@}
+			> ${menu.name!} </span>
+			@if(menu.hasChild){
+				@if(menu.parentId == 0){
+					<b class="arrow fa fa-angle-down"></b>
+				@}else{
+					<b class="arrow fa fa-angle-right pull-right"></b>
+				@}
+			@}
+		</a>
+		<b class="arrow"></b>
+		
+		@if(menu.hasChild){
+			<ul class="dropdown-menu">
+				@newMenuTree(menu.children!);
+			</ul>
+		@}
+	</li>
+@}elsefor{}

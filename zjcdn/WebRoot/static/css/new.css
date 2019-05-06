@@ -1,0 +1,112 @@
+/*页面子目录*/
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+    color: #06aae4;
+    cursor: default;
+    background-color: #18202d;
+    border: 2px solid #046584;
+    border-bottom-color: transparent;
+}
+.nav-tabs>li.active>a>.ace-icon{
+	color:#06aae4;
+}
+.nav-tabs>li>a, .nav-tabs>li>a:focus , .nav-tabs>li>a:hover{
+    border-radius: 0!important;
+    border-color: #046584;
+    background-color: #18202d;
+    color: #06aae4;
+}
+.tab-content{
+	border-color:#02f4ff;
+}
+.open .btn-white.btn-primary.dropdown-toggle {
+    background-color: #18202d!important;
+    border-color: #c0c0c0;
+    color:#c0c0c0!important;
+}
+.btn-white.btn-primary {
+    color:#c0c0c0!important;
+    background-color: #18202d!important;
+}
+
+/*表格样式*/
+.table>thead>tr{
+	background-color: #004759;
+}
+.table-bordered {
+	border:1px solid #02f4ff;
+}
+.table.table-bordered>thead>tr>th:first-child {
+    border-left-color: #02f4ff;
+}
+.table>thead>tr>th{
+	border-color:#02f4ff;
+}
+.table-bordered>tfoot>tr>td {
+    border: 1px solid #02f4ff;
+}
+.table tr td{
+	border: 1px solid #02f4ff!important;
+}
+.table th{
+	color:#fff;
+}
+.center{
+	color:#c0c0c0;
+}
+.center a{
+	color:#c0c0c0;
+}
+	
+/*菜单样式*/
+.dropdown-submenu>.dropdown-menu {
+	top: 0;
+	left: 100%;
+	margin-top: -6px;
+	margin-left: -1px;
+	-webkit-border-radius: 0 6px 6px 6px;
+	-moz-border-radius: 0 6px 6px;
+	border-radius: 0 6px 6px 6px;
+	background:#18202d;
+}
+
+.dropdown-submenu {
+	position: relative;
+	
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+	display: block;
+}
+
+.dropdown-submenu.pull-left {
+	float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+	left: -100%;
+	margin-left: 10px;
+	-webkit-border-radius: 6px 0 6px 6px;
+	-moz-border-radius: 6px 0 6px 6px;
+	border-radius: 6px 0 6px 6px;
+}
+.navbar-nav>li>.dropdown-menu{
+	background:#18202d;
+}
+.navbar{
+	background: #18202d;
+}
+.menu-text{
+	color:#00929f;
+} 
+.menu-icon{
+	color:#00929f;
+}
+.nav li a:hover .menu-icon{
+	color:#00eaf1;
+}
+.nav li a:hover .menu-text{
+	color:#00eaf1;
+}
+.dropdown-menu .dropdown-submenu:hover>a, .dropdown-menu>li.active>a, .dropdown-menu>li.active>a:hover, .dropdown-menu>li>a:active, .dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover {
+    background: none;
+}

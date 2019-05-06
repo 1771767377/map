@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	<div id="echart"  style="width: 400px; height: 300px"></div>
+</body>
+<script src="/pekingpf/static/jquery/jquery-2.1.1.min.js"></script>
+<script src="/pekingpf/static/app/echarts.js"></script>
+<script src="/pekingpf/static/app/js/beijing.js"></script>
+<script type="text/javascript">
+	$.ajax({
+		type : "post",
+		async : false,
+		contentType : "application/json",
+		url : "/pekingpf/overview/getTypeCount",
+		dataType : "json",
+		error : function() {
+			alert("不好意思,图表请求数据失败啦!");
+		},
+		success : function(json) {
+			require.config({
+				paths : {
+					echarts : '/pekingpf/static/app'
+				}
+			});
+			require([ 'echarts', 'echarts/chart/map' ], function(ec) {
+				var myChart = ec.init(document.getElementById('echart'));
+				var option = {
+					tooltip : {
+						trigger : 'item',
+						formatter: "{a}<br/>{b} : {c}"
+					},
+					toolbox: {  
+						show : false,  
+						feature : {  
+							mark : {show: true},  
+							dataView : {show: true, readOnly: false},  
+							restore : {show: true},  
+							saveAsImage : {show: true}
+							
+						},
+						x:"right",
+						y:"bottom"
+					},  
+					series : [{  
+					    name: '内容',  
+					    type: 'map',
+					    mapType: '北京',
+					    corsor: 'pointer',
+					    data: [
+					      {name:'合计', value:json.illegalCount}
+					    ]
+					}]
+				};
+				myChart.setOption(option);
+			});
+		},
+	});
+</script>
+</html>

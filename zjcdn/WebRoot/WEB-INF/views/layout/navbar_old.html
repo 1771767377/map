@@ -1,0 +1,83 @@
+<div id="navbar" class="navbar navbar-default navbar-fixed-top">
+			<script type="text/javascript">
+				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
+			</script>
+
+			<div class="navbar-container clearfix" id="navbar-container" style="padding-left:0px;background-image:url('${ctxPath}/static/app/img/login_head.png');
+			                                                          height:50px ; background-repeat: no-repeat; background-color: #131212;">
+			<!--<img  src="${ctxPath}/static/app/img/login_head.png">-->
+			<div style="margin-left:95%;margin-top:15px">
+				<a href="${ctxPath!}/logout" style="color:#fff">
+					<i class="ace-icon fa fa-power-off" style="color:#fff; " ></i>&nbsp;&nbsp;退出
+				</a>
+			</div>
+			
+				<!-- <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" >
+				
+					<span class="sr-only">Toggle sidebar</span>
+
+					<span class="icon-bar"></span>
+ 
+					<span class="icon-bar"></span>
+
+					<span class="icon-bar"></span>
+				</button> -->
+
+			<!-- 	<div class="navbar-header pull-left" style="min-width:190px;">
+					<a href="#" class="navbar-brand">
+						<small>
+							图片审核管理系统
+						</small>
+					</a>
+				</div> -->
+				<!-- <div class="navbar-header">
+					<ul class="nav navbar-nav">
+						<li class="">
+							<a href="#" data-trigger="ajax" data-target="#fill-main-content" class="bigger-120">
+							<i class="menu-icon fa "></i>&nbsp;
+							</a>
+						</li>
+					</ul>
+				</div> -->
+
+				<!-- <div class="navbar-buttons navbar-header pull-right" role="navigation">
+					<ul class="nav ace-nav">
+						
+						<li class="green">
+							<a class="dropdown-toggle" href="javascript:void(0);" id="fullscreen" title="全屏"
+							onclick="launchFullscreen(document.documentElement);">
+								<i class="ace-icon fa fa-arrows-alt "></i>
+							</a>
+						</li>
+						<li class="light-blue">
+							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+								<span class="user-info">
+									<small>你好,</small>
+									${auth.getLoginUser().name}
+								</span>
+
+								<i class="ace-icon fa fa-caret-down"></i>
+							</a>
+
+							<ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+								<li>
+									<a href="${ctxPath}/#/ajax/userCenter">
+										<i class="ace-icon fa fa-user"></i>
+										我的资料
+									</a>
+								</li>
+
+								<li class="divider"></li>
+
+								<li>
+									<a href="${ctxPath!}/logout">
+										<i class="ace-icon fa fa-power-off"></i>
+										退出
+									</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div> -->
+			</div><!-- /.navbar-container -->
+		</div>

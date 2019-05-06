@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.zicms.web.tool.mapper.DocMapper">
+
+	<sql id="docColumns">
+		ID,NAME,PATH,SUFFIX,SIZE,TYPE,DOWNLOAD_COUNT,FOLDER,MD5,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE,DEL_FLAG
+	</sql>
+
+	<sql id="aliasDocColumns">
+		a.ID,a.NAME,a.PATH,a.SUFFIX,a.SIZE,a.TYPE,a.DOWNLOAD_COUNT,a.FOLDER,a.MD5,a.CREATE_BY,a.CREATE_DATE,a.UPDATE_BY,a.UPDATE_DATE,a.DEL_FLAG
+	</sql>
+
+
+
+	<select id="findPageInfo" resultType="com.zicms.web.tool.model.Doc">
+		select  <include refid="aliasDocColumns" />,f.name as foldername
+			from doc  a
+			left join folder f on f.id = a.folder
+		<where>
+			1= 1
+			and a.del_flag = 0
+			<if test="@Ognl@isNotBlank(name)">
+			    and a.NAME like CONCAT( '%' , #{name}, '%') 
+			</if>
+			<if test="@Ognl@isNotBlank(path)">
+			    and a.PATH like CONCAT( '%' , #{path}, '%') 
+			</if>
+			<if test="@Ognl@isNotBlank(suffix)">
+			    and a.SUFFIX like CONCAT( '%' , #{suffix}, '%') 
+			</if>
+			<if test="@Ognl@isNotBlank(size)">
+			    and a.SIZE =  #{size}
+			</if>
+			<if test="@Ognl@isNotBlank(type)">
+			    and a.TYPE =  #{type}
+			</if>
+			<if test="@Ognl@isNotBlank(downloadCount)">
+			    and a.DOWNLOAD_COUNT =  #{downloadCount}
+			</if>
+			<if test="@Ognl@isNotBlank(folder) and folder != 0">
+			    and a.FOLDER =  #{folder}
+			</if>
+			<if test="@Ognl@isNotBlank(md5)">
+			    and a.MD_5 like CONCAT( '%' , #{md5}, '%') 
+			</if>
+			<if test="@Ognl@isNotBlank(createBy)">
+			    and a.CREATE_BY like CONCAT( '%' , #{createBy}, '%') 
+			</if>
+			<if test="@Ognl@isNotBlank(createDateStart)">
+			    and a.CREATE_DATE &gt;=  #{createDateStart}
+			</if>
+			<if test="@Ognl@isNotBlank(createDateEnd)">
+			    and a.CREATE_DATE &lt;=  #{createDateEnd}
+			</if>
+			<if test="@Ognl@isNotBlank(updateBy)">
+			    and a.UPDATE_BY like CONCAT( '%' , #{updateBy}, '%') 
+			</if>
+			<if test="@Ognl@isNotBlank(updateDateStart)">
+			    and a.UPDATE_DATE &gt;=  #{updateDateStart}
+			</if>
+			<if test="@Ognl@isNotBlank(updateDateEnd)">
+			    and a.UPDATE_DATE &lt;=  #{updateDateEnd}
+			</if>
+
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY a.${sortC}   ${order}
+		</if>
+	</select>
+	
+	<select id="findAttachByNotice" resultType="com.zicms.web.tool.model.Doc">
+			select  <include refid="aliasDocColumns" />
+			from doc a ,attach t 
+			<where>
+			  a.id = t.DOC and t.ARTICLE = #{id} and a.DEL_FLAG = 0
+			</where>
+	</select>
+		
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.zicms.web.tool.mapper.AttachMapper">
+
+	<sql id="attachColumns">
+		ID,ARTICLE,DOC,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE,DEL_FLAG
+	</sql>
+
+	<sql id="aliasAttachColumns">
+		a.ID,a.ARTICLE,a.DOC,a.CREATE_BY,a.CREATE_DATE,a.UPDATE_BY,a.UPDATE_DATE,a.DEL_FLAG
+	</sql>
+
+
+
+	<select id="findPageInfo" resultType="com.zicms.web.tool.model.Attach">
+		select  <include refid="aliasAttachColumns" /> 
+			from attach  a 
+		<where>
+			1= 1
+			and a.del_flag = 0
+			<if test="@Ognl@isNotBlank(article)">
+			    and a.ARTICLE =  #{article}
+			</if>
+			<if test="@Ognl@isNotBlank(doc)">
+			    and a.DOC =  #{doc}
+			</if>
+			<if test="@Ognl@isNotBlank(createBy)">
+			    and a.CREATE_BY like CONCAT( '%' , #{createBy}, '%') 
+			</if>
+			<if test="@Ognl@isNotBlank(createDateStart)">
+			    and a.CREATE_DATE &gt;=  #{createDateStart}
+			</if>
+			<if test="@Ognl@isNotBlank(createDateEnd)">
+			    and a.CREATE_DATE &lt;=  #{createDateEnd}
+			</if>
+			<if test="@Ognl@isNotBlank(updateBy)">
+			    and a.UPDATE_BY like CONCAT( '%' , #{updateBy}, '%') 
+			</if>
+			<if test="@Ognl@isNotBlank(updateDateStart)">
+			    and a.UPDATE_DATE &gt;=  #{updateDateStart}
+			</if>
+			<if test="@Ognl@isNotBlank(updateDateEnd)">
+			    and a.UPDATE_DATE &lt;=  #{updateDateEnd}
+			</if>
+
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY a.${sortC}   ${order}
+		</if>
+	</select>
+	
+		
+</mapper>

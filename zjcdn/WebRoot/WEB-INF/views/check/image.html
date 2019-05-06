@@ -1,0 +1,104 @@
+@var imageType = dict.getDictListByType("sys_check_pic"); //图片类型
+
+<head>
+<style>
+.test a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.content1{position:relative;}
+	.img_1{display:block;}
+    .img_2{width:500px;height:500px;position:fixed;top:200px;left:500px;display:none;}
+    .content1:hover img{display: block;}
+</style>
+</head>
+
+<table
+	class="table table-striped table-bordered table-hover nomargin-bottom">
+	<thead>
+		<tr>
+			<th class="center">图片预览</th>
+			<th class="center">图片域名</th>
+			<th class="center">IP地址</th>
+			<th class="center">分值</th>
+			<th class="center">检测日期</th>
+			<th class="center" hidden>审核日期</th>
+			<th class="center">省份</th>
+			<th class="center">是否是违规图片</th>
+		</tr>
+	</thead>
+
+	<tbody class="tbod">
+		@for(item in page){
+		<tr id="a">
+			<td class="center"><!-- <a><img src="http://${string.formatSubUrl(item.imageturl)}" width="150" height="110" 
+								onclick="javascript:window.open(this.src);" style="cursor:pointer;"/></a> -->
+          		<div align="center" class="content1">
+        		<img align="center" src="http://${string.formatSubUrl(item.imageturl)}" class="img_1" id="file3img" width="150px" height="110px" >
+        		<img src="http://${string.formatSubUrl(item.imageturl)}" class="img_2" > </div>
+        		<!-- <a><img src="http://${string.formatSubUrl(item.imageturl)}" width="150" height="110"
+								onclick="javascript:aa(this.src);" style="cursor:pointer;"/></a> -->
+        	</td>
+			<td class="center">${string.formatSubStr(item.imageturl)}</td>
+			<td class="center" name="iplist">${item.iplist}</td>
+			<td class="center">${item.score}</td>
+			<td class="center">${item.date}</td>
+			<td class="center">${item.province}</td>
+			<td class="test" width="261" height="127" id="b" background="white">
+				<a class="green" href="javascript:result('${item.province}','${item.city}','${item.information}','${item.iplist}','${item.linetype}','${item.imageturl}','${item.score}','${item.date}','${item.status}','${item.checkdate}','${item.serverip}','${item.type}','${item.uuid}')">
+					<input class="imageurl" type="hidden" value="${item.imageturl}" />
+					<i class="ace-icon fa fa-pencil bigger-130">确认</i>
+				</a>
+			</td>
+		</tr>
+		@}
+	</tbody>
+</table>
+<div class="space-8"></div>
+
+<script>
+	function aa(url){
+		window.open(url, 'newwindow', 'height=500, width=600, top=200, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no')
+	}
+
+	function result(province, city, information, iplist, linetype, imageturl,
+			score, date, checkdate, status, serverip, type, uuid) {
+		$('table tr').click(function() {
+			$.ajax({
+				url : "${ctxPath}/Check/result/result_image",
+				type : 'post',
+				//async : false,
+				data : {
+					'province' : province,
+					'city' : city,
+					'information' : information,
+					'iplist' : iplist,
+					'linetype' : linetype,
+					'imageturl' : imageturl,
+					'score' : score,
+					'date' : date,
+					'checkdate' : checkdate,
+					'status' : 1,
+					'serverip' : serverip,
+					'type' : type,
+					'uuid' : uuid
+				},
+				dataType : 'json'
+			});
+			
+			var oDiv = document.getElementById('a');
+		    oDiv.onclick=function(){
+		        if(this.style.backgroundColor == 'white'){
+		            this.style.backgroundColor = '#7A8B8B';
+		        }else{
+		            this.style.backgroundColor = 'white';
+		            $(this).toggleClass('backgroundColor'); 
+		        }
+		    };
+			$(this).attr("bgcolor", "#7A8B8B");
+			$(this).toggleClass('white'); 
+		});
+	}
+</script>

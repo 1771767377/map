@@ -1,0 +1,32 @@
+<div class="layer" >
+	<form name="FormPost" id="pro-save" class="FormGrid"  method="post"
+		action="${ctxPath}/check_standard/add_checkBase">
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData">
+					<td class="CaptionTD">编号</td>
+					<td class="DataTD">
+					<input type="text" value="${province.zone!}" name="zone" readonly="readonly" />
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">省份</td>
+					<td class="DataTD width-100"><input type="text"
+						name="name" value="${province.name!}" readonly="readonly">
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">审核基准值</td>
+					<td class="DataTD">
+					<input type="text"  name="checkBase"  value="${province.checkBase!}"
+					datatype="n" errormsg="请输入数字"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<#save formId="pro-save" reloadUrl="true"/>
+<script>
+
+</script>

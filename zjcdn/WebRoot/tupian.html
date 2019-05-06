@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="/pekingpf/static/jquery/jquery-2.1.1.min.js"></script>
+<title>Insert title here</title>
+<script type="text/javascript">
+	function subqq(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null)
+			return unescape(r[2]);
+		return null;
+	}
+
+	$(document).ready(function() {
+		var str = subqq("url");
+		var arr = str.split(",");
+		for (var i = 0; i < arr.length; i++) {
+			var li = "<li><img src=''/></li>";
+			$("body").append($(li));
+			$('<img>',{
+				src : arr[i]
+			}).appendTo('body');
+		}
+	});
+</script>
+</head>
+</html>

@@ -1,0 +1,39 @@
+<div id="navbar" class="navbar navbar-default">
+	<script type="text/javascript">
+		try {
+			ace.settings.check('navbar', 'fixed')
+		} catch (e) {
+		}
+		$(function() {
+		    $(".dropdown-toggle").dropdown('toggle');
+		});
+	</script>
+		<!--顶部导航开始-->
+		<!-- logo区 -->
+		<div class="navbar-header">
+		      <a class="navbar-brand">浙江移动</a>
+	    </div>
+	    
+	    <!-- 目录 -->
+		<ul class="nav navbar-nav">
+			@newMenuTree(menuList!);
+		</ul>
+	
+		<!-- 右边区域 -->
+		<ul class="nav navbar-nav navbar-right" style="padding-right: 10px;">
+			<!-- <li id="sx" style="display:none;"><a href="javascript:flush();" style="color: red">刷新</a>
+			</li>
+			<li id="tj" style="display:none;"><a href="javascript:submit();" style="color: red">提交</a>
+			</li> -->
+			<li><a title="编辑" style="color: #05f8de"
+				href="${ctxPath}/#/ajax/userCenter">欢迎您：${auth.getLoginUser().name}</a></li>
+			<li><a href="${ctxPath!}/logout" style="color: #05f8de"> <i
+					class="ace-icon fa fa-power-off" style="color: #05f8de;"></i>&nbsp;&nbsp;退出
+			</a></li>
+		</ul>
+</div>
+<!-- /.navbar-container -->
+
+<style type="text/css">
+
+</style>

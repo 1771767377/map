@@ -1,0 +1,14 @@
+<div class="layer">
+	<form name="FormPost" id="save_csv" class="FormGrid"  method="post"
+		action="${ctxPath}/Check/csvSave" >
+		请输入要导出的数据条数：<input type="text" id="limi" value="" />
+			
+		
+	</form>
+</div>
+<#save formId="save_csv" config="true" validId="roleEditForm"> 
+	var data = 'data=' + $("#limi").val(); 
+	roleEditForm.config({
+		 ajaxpost:{data:data}
+	});
+</#save>

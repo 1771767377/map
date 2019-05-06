@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>集群监控系统</title>
+</head>
+<body>
+	<div id="tab">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thin-border-bottom">
+				<tr>
+					<th class="center">数据库存储总量</th>
+					<th class="center">等待审核</th>
+					<th class="center">已审未上报</th>
+					<th class="center">已上报数</th>
+				</tr>
+			</thead>
+
+			<tbody class="tbod">
+				<tr>
+					<td class="center">${recordsAll}</td>
+					<td class="center">${waitingcheck}</td>
+					<td class="center">${checked_notoutput}</td>
+					<td class="center">${outputed}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<script>
+	document.getElementById("tab").onload = function() {
+		$.ajax({
+			url : "${ctxPath}/mondata/hn/getAllCount",
+			type : "get",
+			data :　{
+				'recordsAll' : recordsAll,
+				'waitingcheck' : waitingcheck,
+				'checked_notoutput' : checked_notoutput,
+				'outputed' : outputed
+			},
+			dataType : 'json'
+		});
+	}
+</script>
+</body>
+</html>
+

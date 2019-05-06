@@ -1,0 +1,66 @@
+<div class="tab-content">  
+		<div id="home" class="tab-pane active clearfix">
+			<#search>
+			<form action="${ctxPath}/violationMessage/getViolationMessageVideo" method="post" id="search-form" target="list-page"
+				class="center clearfix">
+				<div class="row padding-tb-10" style="margin-left:5%">
+					<div class="col-sm-6">
+						<label class="inline">厂家：</label> <input type="text" class="width-60" name="manufactor"
+							id="manufactor" />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">域名：</label> <input type="text" class="width-60" name="domain"
+							id="domain" />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">IP：</label> <input type="text" class="width-60" name="ip"
+							id="ip" />
+					</div>
+					<!-- <div class="col-sm-6">
+						<label class="inline">URL：</label> <input type="text" class="width-60" name="url"
+							id="url" />
+					</div> -->
+					<div class="col-sm-6">
+						<label class="inline">起始日期：</label> <input type="text" class="width-60" name="startdate" id="startdate"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">结束日期：</label> <input type="text" class="width-60" name="enddate" id="enddate"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly />
+					</div>
+
+					<div class="col-sm-3" style="margin-left:45%">
+						<input type="text" class="width-45" id="search-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"
+							value="条件查询" readonly /> <a href="javascript:con();" class="width-45" id="search-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"></a>
+					</div>
+				</div>
+			</form>
+			</#search>
+			<div id="list-page"></div>
+		</div>
+	</div>
+<style>
+	#profile .center>label {
+		width: 100px;
+		text-align: right;
+	}
+</style>
+<script>
+			$("#search-form").getPageList({
+				'submitBtnId' : 'search-btn'
+			});
+		
+			$(function() {
+				$("#sx").show();
+			});
+			
+			function submit(){
+				window.location.href="${ctxPath}/violationMessage/getViolationMessageVideo";
+			} 
+		
+			$(function(){
+				$("#tj").show();
+			})
+</script>

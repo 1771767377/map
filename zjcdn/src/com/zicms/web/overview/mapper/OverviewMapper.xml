@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.overview.mapper.OverviewMapper">
+	<!-- 获得当日数据详情 -->
+	<select id="getTodayCount" resultType="com.zicms.web.overview.model.GlobalData">
+		SELECT (illegal_image+illegal_text) as illegal_count,(day_process_image+day_process_text) AS day_process_count,(day_total_image+day_total_text) AS day_total_count FROM weekcount WHERE process_date = DATE(NOW());
+	</select>
+
+	<!-- 近期一周违规图片和文本总数量 -->
+	<select id="getWeekCount" resultType="com.zicms.web.overview.model.GlobalData">
+		SELECT SUM(illegal_image) AS illegal_image,SUM(illegal_text) AS illegal_text FROM 
+		(SELECT * FROM weekcount order by process_date desc limit 7) a
+	</select>
+
+	<!-- 最近一周不良文本和图片每天的数量统计 -->
+	<select id="getEveryDayCount" resultType="com.zicms.web.overview.model.GlobalData">
+		SELECT DATE_FORMAT(process_date,"%m-%d") process_date,day_total_image,day_total_text,day_process_image,day_process_text,illegal_image,illegal_text FROM weekcount order by process_date desc limit 7
+	</select>
+	
+	<!-- 最近一周违规ip topn -->
+	<select id="getIpTopn" resultType="com.zicms.web.overview.model.TopFive">
+		select * from ${table} order by DATE(insertdate) desc,ip_count limit ${limit}
+	</select>
+	
+	<!-- 最近一周违规域名topn -->
+	<select id="getDomainTopn" resultType="com.zicms.web.overview.model.TopFive">
+		select * from ${table} order by DATE(insertdate) desc,domain_count limit ${limit}
+	</select>
+	
+	<!-- 更新topn的ip运营商 -->
+	<update id="updateIpOperators">
+		update ${table} set ip_operators =
+		<foreach collection="ips" item="ip" open="CASE ip_id" close="end" separator=" ">
+			when ${ip.ipId} then #{ip.ipOperators}
+		</foreach>
+	</update>	
+	
+	<!-- 更新topn的域名所属公司 -->
+	<update id="updateDomainFirm">
+		update ${table} set domain_firm =
+		<foreach collection="domains" item="domain" open="CASE domain_id" close="end" separator=" ">
+			when ${domain.domainId} then #{domain.domainFirm}
+		</foreach>
+	</update>	
+</mapper>
+

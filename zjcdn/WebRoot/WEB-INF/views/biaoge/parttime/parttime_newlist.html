@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>不良信息审核系统统计报表</title>
+<meta content="text/html;charset=utf-8">
+<style type="text/css">
+#myTable_1 {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+#myTable_1 th,td.two {
+	text-align: center;
+	padding: .5em;
+	border: 1px solid #fff;
+}
+
+th {
+	background-color: #328aa4;
+	color: #fff;
+}
+
+td.two {
+	background: #e5f1f4;
+}
+
+tr.even td.two {
+	background: #e5f1f4;
+}
+
+tr.odd td.two {
+	background: #f8fbfc;
+}
+
+tr.over td.two {
+	background: #bce774;
+}
+
+tr.out td.two {
+	
+}
+</style>
+</head>
+<body>
+	<table width="500" id="myTable_1" cellspacing="0" cellpadding="0">
+		<thead>
+			<tr class="newlist">
+				<th class="center">审核账号</th>
+				<th class="center">结算标准（条/元）</th>
+				<th class="center">审核量</th>
+				<th class="center">应付工资</th>
+				<th class="center">姓名</th>
+				<th class="center">联系电话</th>
+				<th class="center">银行账号</th>
+				<th class="center">开户行</th>
+				<th class="center">录入日期</th>
+				<th class="center">操作</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			@for(item in page.list){
+			<tr class="newlist">
+				<td class="two center">${item.username!}</td>
+				<td class="two center">${item.standardSettlement!}</td>
+				<td class="two center">${item.auditVolume!}</td>
+				<td class="two center">${item.salary!}</td>
+				<td class="two center">${item.name!}</td>
+				<td class="two center">${item.telephone!}</td>
+				<td class="two center">${item.bankAccount!}</td>
+				<td class="two center">${item.openBank!}</td>
+				<td class="two center">${item.createDate!,dateFormat='yyyy-MM-dd'}</td>
+				<td class="two center">
+					<div class="hidden-sm hidden-xs action-buttons">
+						<a class="green" href="javascript:void(0);" title="编辑"
+							data-mode="page" data-title="${item.username!}编辑"
+							data-url="${ctxPath}/part_time_salary/edit/showlayer"
+							data-data="{id:'${item.id}'}" data-width="50%"> <i
+							class="ace-icon fa fa-pencil bigger-130"></i> </a> <a class="red"
+							href="javascript:void(0);" title="删除" data-mode="del"
+							data-title="删除操作" data-msg="你确定删除此数据吗?"
+							data-url="${ctxPath}/part_time_salary/delete"
+							data-data="{id:'${item.id}'}"> <i
+							class="ace-icon fa fa-trash-o bigger-130"></i> </a>
+					</div></td>
+			</tr>
+			@}
+		</tbody>
+	</table>
+	<div class="space-8"></div>
+	<#paginate page="${page}"/>
+</body>
+<script type="text/javascript">
+	//隔行变色
+	$(function() {
+		var changeTr = document.getElementById("myTable_1")
+				.getElementsByTagName("tr");
+		for (i = 0; i < changeTr.length; i++) {
+			changeTr[i].className = (i % 2 > 0) ? "even" : "odd";
+			changeTr[i].temp = changeTr[i].className;
+			changeTr[i].onmouseover = function() {
+				this.className = 'over';
+			}
+			changeTr[i].onmouseout = function() {
+				this.className = this.temp;
+			}
+		}
+	})
+</script>
+</html>

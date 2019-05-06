@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta content="text/html;charset=utf-8">
+<style type="text/css">
+#myTable_1 {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+#myTable_1 th,td {
+	text-align: center;
+	padding: .5em;
+	border: 1px solid #fff;
+}
+
+th {
+	background-color: #328aa4;
+	color: #fff;
+}
+
+td {
+	background: #e5f1f4;
+}
+
+tr.even td {
+	background: #e5f1f4;
+}
+
+tr.odd td {
+	background: #f8fbfc;
+}
+
+tr.over td {
+	background: #bce774;
+}
+
+tr.out td {
+	
+}
+</style>
+</head>
+<body>
+	<table width="500" id="myTable_1" cellspacing="0" cellpadding="0">
+		<thead>
+		<tr>
+			<th class="center">编号</th>
+			<th class="center">省份</th>
+			<th class="center">审核任务基准值</th>
+			<th class="center">操作</th>
+		</tr>
+		</thead>
+	
+		<tbody>
+			@for(item in page.list){
+			<tr>
+				<td class="center">${item.zone!}</td>
+				<td class="center">${item.name!}</td>
+				<td class="center">${item.checkBase!}</td>
+				<td class="center">
+					<div class="hidden-sm hidden-xs action-buttons">
+						<a class="green" href="javascript:void(0);" title="编辑"
+							data-mode="page" data-title="${item.name!}"
+							data-url="${ctxPath}/check_standard/show_layer"
+							data-data="{province:'${item.zone}'}" data-width="50%">
+							<i class="ace-icon fa fa-pencil bigger-130"></i>
+						</a>
+					<!-- 
+						<a class="red" href="javascript:void(0);" title="删除"
+							data-mode="del" data-title="删除操作"
+							data-msg="你确定删除此数据吗?"
+							data-url="${ctxPath}/sysuser/delete" data-data="{id:'${item.id}'}">
+							<i class="ace-icon fa fa-trash-o bigger-130"></i>
+						</a> -->
+					</div>
+				</td>
+			</tr>
+			@}
+		</tbody>
+		<tfoot id="tfoot">
+			<tr>
+				<td class="center">${total.zone!}</td>
+				<td class="center">${total.name!}</td>
+				<td class="center">${total.checkBase!}</td>
+				<td class="center">
+					<div class="hidden-sm hidden-xs action-buttons">
+						<a class="green" href="javascript:void(0);" title="编辑"
+							data-mode="page" data-title="${total.name!}"
+							data-url="${ctxPath}/check_standard/show_layer"
+							data-data="{province:'${total.zone}'}" data-width="50%">
+							<i class="ace-icon fa fa-pencil bigger-130"></i>
+						</a>
+					</div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	<div class="space-8"></div>
+	<#paginate page="${page}" formId="checkBase-form" />
+</body>
+<script>
+	//隔行变色样式
+		$(function() {
+			var changeTr = document.getElementById("myTable_1").getElementsByTagName("tr");
+			for (i = 0; i < changeTr.length; i++) {
+				changeTr[i].className = (i % 2 > 0) ? "even" : "odd";
+				changeTr[i].temp = changeTr[i].className;
+				changeTr[i].onmouseover = function() {
+					this.className = 'over';
+				}
+				changeTr[i].onmouseout = function() {
+					this.className = this.temp;
+				}
+			}
+		})
+</script>

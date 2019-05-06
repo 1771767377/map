@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>登录</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="${ctxPath!}/static/login/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="${ctxPath!}/static/login/css/camera.css" />
+	<link rel="stylesheet" href="${ctxPath!}/static/login/css/bootstrap-responsive.min.css" />
+	<link rel="stylesheet" href="${ctxPath!}/static/login/css/matrix-login.css" />
+	<link href="${ctxPath!}/static/css/font-awesome.min.css" rel="stylesheet" />	
+	<script type="text/javascript" src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+	
+	<style type="text/css">
+		.pull-right {
+		    float: right;
+		    margin-right: 3px;
+		}
+		.codediv {
+		    width: 20%;
+		}
+		.login_code {
+		    width: 68%;
+		}
+	</style>
+</head>
+<body onkeypress="clickBtn(event)">
+	<div style="height:100%;width:100%;margin: 0 auto;position: absolute; background:url('${ctxPath}/static/app/img/login-bg.png') no-repeat center ;">
+	   <!-- <div style="height:47px; background-image: url('${ctxPath}/static/app/img/login_head.png') ;position:relative ;background-repeat:no-repeat ; background-color:#131212;">
+	   </div> -->
+	   
+		<div id="loginbox" style="height:69% ;width:405px;margin-left:60%;">
+			<form action="" method="post" name="loginForm" id="loginForm">
+				<div style="height:316px; position:relative ;background:rgba(12,25,49.0.3);">
+					<div style="padding-top:50px;margin-bottom:40px;">
+						<img src="${ctxPath}/static/app/img/login-logo.png"/><span style="color:#00f6fd;font-size:20px;">|互联网不良信息管控平台</span>
+					</div>
+					<div>
+						<div style="width:299px;height:39px;margin-left:55px;margin-bottom:20px; border-radius:10px;background: url('${ctxPath!}/static/app/img/login-name.png') no-repeat center;background-size:98% 100%;position:relative;">
+							<input type="text" name="username" id="username" placeholder="请输入用户名" style="border:0;margin-top:5px" />
+						</div>
+						<div style="width:299px;height:39px;margin-left:55px;;margin-bottom:20px;border-radius:10px; background: url('${ctxPath!}/static/app/img/login-psw.png') no-repeat center;background-size:98% 100%;position:relative;">
+							<input type="password"  name="password" id="password" placeholder="请输入密码" style="border:0;margin-top:5px" />
+						</div>
+						
+						<div>
+							<!-- <span><input id="flag" name="flag" type="checkbox" value="1" onclick="remember();"/>记住账号</span> -->
+                        </div>
+                        
+						<div style="width:299px;height:39px;margin-left:55px; border-radius:10px;    background: #04b4c0;
+    color: #fff;position:relative;line-height:39px;font-size:16px;cursor:pointer" onclick="severCheck();" id="to-recover"  >
+						登录</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+<script type="text/javascript">
+	$(document).ready(function(){
+        //记住密码功能
+        var str = getCookie("loginInfo");
+        str = str.substring(1,str.length-1);
+        var username = str.split(",")[0];
+        var password = str.split(",")[1];
+        //自动填充用户名和密码
+        $("#username").val(username);
+        $("#password").val(password);
+	});
+
+	//获取cookie
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i=0; i<ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0)==' ') c = c.substring(1);
+	        if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+	    }
+	    return "";
+	}
+
+	//记住密码功能
+	function remember(){
+	    var remFlag = $("input[type='checkbox']").is(':checked');
+	    alert(remFlag)
+	    if(remFlag==true){ //如果选中设置remFlag为1
+	        //cookie存用户名和密码,回显的是真实的用户名和密码,存在安全问题.
+	        var conFlag = confirm("记录密码功能不宜在公共场所(如网吧等)使用,以防密码泄露.您确定要使用此功能吗?");
+	        if(conFlag){ //确认标志
+	            $("#remFlag").val("1");
+	        }else{
+	            $("input[type='checkbox']").removeAttr('checked');
+	            $("#remFlag").val("");
+	        }
+	    }else{ //如果没选中设置remFlag为""
+	        $("#remFlag").val("");
+	    }
+	}
+	
+	function clickBtn(event){
+		if (event.keyCode==13)  //回车键的键值为13
+			severCheck();
+	}
+	
+	//服务器校验
+	function severCheck(){
+		if(check()){
+			var username = $("#username").val();
+			var password = $("#password").val();
+			$.ajax({
+				type: "POST",
+				url: '${ctxPath}/login',
+		    	data: {
+		    		username:username,
+		    		password:password,
+		    		code:$("#code").val()
+		    	},
+				dataType:'json',
+				cache: false,
+				success: function(data){
+					if(undefined != data.error){
+						$t = $("#username");
+						if("验证码错误" == data.error){
+							$t =$("#code");
+						}
+						$t.tips({
+							side : 1,
+							msg : data.error,
+							bg : '#FF5080',
+							time : 15
+						});
+						$t.focus();
+					}else{
+						window.location.href = "${ctxPath!}/#/ajax/overview/globalData";
+						/*if(username == 'hunan'){
+							window.location.href = "${ctxPath!}/#/ajax/HN";
+						}else{
+							window.location.href = "${ctxPath!}/#/ajax/Echart";
+						} */
+					}
+				}
+			});
+		}
+	}
+
+	//客户端校验
+	function check() {
+		if ($("#username").val() == "") {
+			$("#username").tips({
+				side : 2,
+				msg : '用户名不得为空',
+				bg : '#AE81FF',
+				time : 3
+			});
+
+			$("#username").focus();
+			return false;
+		} else {
+			$("#username").val(jQuery.trim($('#username').val()));
+		}
+
+		if ($("#password").val() == "") {
+
+			$("#password").tips({
+				side : 2,
+				msg : '密码不得为空',
+				bg : '#AE81FF',
+				time : 3
+			});
+
+			$("#password").focus();
+			return false;
+		}
+		if ($("#code").val() == "") {
+
+			$("#code").tips({
+				side : 1,
+				msg : '验证码不得为空',
+				bg : '#AE81FF',
+				time : 3
+			});
+
+			$("#code").focus();
+			return false;
+		}
+
+		$("#loginbox").tips({
+			side : 1,
+			msg : '正在登录 , 请稍后 ...',
+			bg : '#68B500',
+			time : 10
+		});
+
+		return true;
+	}
+
+	function savePaw() {
+		if (!$("#saveid").attr("checked")) {
+			$.cookie('username', '', {
+				expires : -1
+			});
+			$.cookie('password', '', {
+				expires : -1
+			});
+			$("#username").val('');
+			$("#password").val('');
+		}
+	}
+
+	function saveCookie() {
+		if ($("#saveid").attr("checked")) {
+			$.cookie('username', $("#username").val(), {
+				expires : 7
+			});
+			$.cookie('password', $("#password").val(), {
+				expires : 7
+			});
+		}
+	}
+	function quxiao() {
+		$("#username").val('');
+		$("#password").val('');
+	}
+	
+	jQuery(function() {
+		var username = $.cookie('username');
+		var password = $.cookie('password');
+		if (typeof(username) != "undefined"
+				&& typeof(password) != "undefined") {
+			$("#username").val(username);
+			$("#password").val(password);
+			$("#saveid").attr("checked", true);
+			$("#code").focus();
+		}
+	});
+</script>
+<script>
+	//TOCMAT重启之后 点击左侧列表跳转登录首页 
+	if (window != top) {
+		top.location.href = location.href;
+	}
+</script>
+	<script type="text/javascript" src="${ctxPath!}/static/login/js/jquery-1.7.2.js"></script>
+	<script src="${ctxPath!}/static/bootstrap/bootstrap.min.js"></script>
+	<script src="${ctxPath!}/static/login/js/jquery.easing.1.3.js"></script>
+	<script src="${ctxPath!}/static/login/js/jquery.mobile.customized.min.js"></script>
+	<script src="${ctxPath!}/static/login/js/camera.min.js"></script>
+	<script src="${ctxPath!}/static/login/js/templatemo_script.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/login/js/jquery.tips.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/login/js/jquery.cookie.js"></script>
+	<script src="${ctxPath!}/static/login/js/jquery.singlePageNav.js"></script>
+	<script src="${ctxPath!}/static/login/js/jquery.singlePageNav.min.js"></script>
+</body>
+</html>

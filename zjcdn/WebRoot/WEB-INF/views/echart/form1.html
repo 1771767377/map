@@ -1,0 +1,24 @@
+<title>审核数量统计分析</title>
+</head>
+<body>
+	<table border="1">
+		<thead>
+			<tr>
+				<th class="center">用户名</th>
+				<th class="center">日期</th>
+				<th class="center">uuid</th>
+				<th class="center">标识值(0:未确认,1:已确认)</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for(item in list){
+			<tr>
+				<td class="center">${item.username}</td>
+				<td class="center">${item.date}</td>
+				<td class="center">${item.uuid}</td>
+				<td class="center">${item.flag}</td>
+			</tr>
+			@}
+		</tbody>
+	</table>
+</body>

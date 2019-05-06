@@ -1,0 +1,80 @@
+<div class="tab-content">  
+		<div id="home" class="tab-pane active clearfix">
+			<#search>
+			<form action="${ctxPath}/recordMessage/getRecordMessage" method="post" id="search-form" target="list-page"
+				class="center clearfix">
+				<div class="row padding-tb-10" style="margin-left:5%">
+					<div class="col-sm-6">
+						<label class="inline">域名：</label> <input type="text" class="width-60" name="domain"
+							id="domain" />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">IP：</label> <input type="text" class="width-60" name="ip"
+							id="ip" />
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">URL：</label> <input type="text" class="width-60" name="url"
+							id="url" />
+					</div>  
+					<div class="col-sm-6">
+						<label class="inline">起始日期：</label> <input type="text" class="width-60" name="startdate" id="startdate"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly />
+					</div>
+					<div class="col-sm-6" style="margin-left:2%">
+						<label class="inline">结束日期：</label> <input type="text" class="width-60" name="enddate" id="enddate"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly />
+					</div>
+
+					<div id="seardiv" class="col-sm-3" style="margin-left:45% ;display: '';">
+						<input type="text" class="width-45" id="search-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"
+							value="条件查询" readonly /> <a href="javascript:con();" class="width-45" id="search-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"></a>
+					</div>
+					
+					<div id="filediv" class="col-sm-3" style="margin-left:40%;display: none;">
+						<input type="text" class="width-45" id="search1-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"
+							value="条件查询" readonly /> <a href="javascript:con();" class="width-45" id="search-btn1"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"></a>
+				  		<input type="text" class="width-45" id="file-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"
+							value="文件上传" readonly /> <a href="javascript:file();" class="width-45" id="file-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"></a>
+					</div>
+				</div>
+			</form>
+			</#search>
+			<div id="list-page"></div>
+		</div>
+	</div>
+<style>
+	#profile .center>label {
+		width: 100px;
+		text-align: right;
+	}
+</style>
+<script>
+			var username = "${username}";
+			if(username=="admin"||username=="manual"){
+				$("#seardiv").css("display","none");
+				$("#filediv").css("display","");
+			}else{
+				
+			} 
+			
+
+			$("#search-form").getPageList({
+				'submitBtnId' : 'search-btn'
+			});
+			
+			$("#search-form").getPageList({
+				'submitBtnId' : 'search1-btn'
+			});
+			
+			$("#file-btn").click(function(){
+				window.open("${ctxPath}/recordMessage/jumpUploadFile","newwindow",
+				"method='post',height=450, width=600,top=100, left=350, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no");		
+			})
+		
+</script>

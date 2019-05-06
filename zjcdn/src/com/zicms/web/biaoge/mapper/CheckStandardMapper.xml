@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.biaoge.mapper.CheckStandardMapper">
+
+	<select id="getCheckStandard" resultType="com.zicms.web.biaoge.model.CheckStandard">
+		<![CDATA[
+			{call checkstandard (#{params.province,mode=IN,jdbcType=VARCHAR},#{params.dateStart,mode=IN,jdbcType=VARCHAR},#{params.dateEnd,mode=IN,jdbcType=VARCHAR})}
+		]]>
+	</select>
+	
+	<!-- 查找字典表 -->
+	<select id="findPro" resultType="com.zicms.web.datacenter.model.ProvinceDict">
+		select * from pro_dict
+		<where>
+			del_flag = 0
+			<if test="@Ognl@isNotBlank(params.province)">
+				and zone like concat('%', #{params.province},'%')
+				or name like concat('%', #{params.province}, '%')
+			</if>
+			and zone like "%0000"
+		</where>
+	</select>
+	
+	<!-- 根据编号查询省份信息 -->
+	<select id="findByPro" resultType="com.zicms.web.datacenter.model.ProvinceDict">
+		select * from pro_dict where zone = #{province}
+	</select>
+	
+	<!-- 添加审核基准值 -->
+	<update id="addCheckBase" parameterType="com.zicms.web.datacenter.model.ProvinceDict">
+		update pro_dict set check_base = #{checkBase} where zone = #{zone}
+	</update>
+	
+	<!-- 获取合计的审核基准值 -->
+	<select id="getTotalStandard" resultType="java.lang.Integer">
+		select check_base from pro_dict where zone = "001111";
+	</select>
+	
+	<!-- 获取合计的详细信息 -->
+	<select id="findTotal" resultType="com.zicms.web.datacenter.model.ProvinceDict">
+		select * from pro_dict where zone = "001111"
+	</select>
+</mapper>

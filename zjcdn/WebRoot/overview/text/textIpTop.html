@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>不良网站</title>
+</head>
+<style type="text/css">
+	table{
+		width:100%;
+	}
+	th,td{
+		border: 1px solid #bbb;
+		text-align: center;
+		font-size:14px;
+		padding:5px 10px;
+	}
+	th{
+		background:#eee;
+		color:#58abda;
+		
+	}
+</style>
+<body>
+	<table cellspacing="0" cellpadding="0">
+		<thead>
+			<tr>
+				<th>ip</td>
+				<th>出现次数</th>
+				<th>运营商</th>
+			</tr>
+		</thead>
+		<tbody id="tbody">
+		</tbody>
+	</table>
+</body>
+<script src="/pekingpf/static/jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript">
+function flushdata(){
+	$.ajax({
+		type : 'post',
+		url : '/pekingpf/overview/getIpTopn/text',
+		contentType : "application/json",
+		dataType : "json",
+		error : function(){
+			alert("文本ip数据请求错误！");
+		},
+		success : function(data){
+			var tbody = $("#tbody");
+			tbody.empty();
+			for(var index in data){
+				var tr = $("<tr></tr>");
+				tr.append("<td>"+data[index].resourceIp+"</td>");
+				tr.append("<td>"+data[index].ipCount+"</td>");
+				tr.append("<td>"+data[index].ipOperators+"</td>");
+				tbody.append(tr);
+			}
+		}
+	})
+}
+$(document).ready(function(){
+	flushdata();
+	//window.setInterval(flushdata, 2000);
+})
+</script>
+
+</html>

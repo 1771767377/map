@@ -1,0 +1,174 @@
+@var userOffice = office.getUserOfficeList(); //用户持有的机构 
+@var userRoles = role.getUserRoleList(); //用户角色
+<div class="tabbable">
+	<ul class="nav nav-tabs" id="myTab">
+		<li class="active">
+		<a data-toggle="tab" href="#home"> 
+			<i class="ace-icon fa fa-users bigger-120"></i> 用户列表
+		</a>
+		</li>
+
+		<li class=""><a data-toggle="tab" href="#profile"> 
+		<i class="ace-icon fa fa-plus bigger-120"></i> 用户添加
+		</a></li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="home" class="tab-pane active clearfix">
+			<#search>
+				<form action="${ctxPath}/sysuser/list" method="post" id="search-form" 
+				target="list-page" class="center clearfix">
+				<div class="row padding-tb-10">
+					<div class="col-sm-6">
+						<label class="inline">归属机构：</label>
+						<#pullDownTree order="one" treeData="${userOffice}" name="officeId" 
+							class="width-80" cName="officeType" >
+							$("#pullDownTreeCurCidone").val(treeNode.type);
+						</#pullDownTree>
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">真实姓名：</label>
+						<input style="background:#18202d;color:#fff;" type="text" class="width-80"  name="name"/>
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">所属角色：</label>
+						<select name="roles" class="width-80"  multiple class="chosen-select tag-input-style" id="role-select" data-placeholder="选择角色">
+							@for(role in userRoles){
+								<option value="${role.id!}">
+								${role.name!}
+								@var sostr = office.getOfficeStrByOfficeId(role.officeId);
+								@if(!isEmpty(sostr)){
+								&nbsp;(${sostr})
+								@}
+								</option>
+							@}
+						</select>
+					</div>
+					<div class="col-sm-6">
+						<label class="inline">人员工号：</label>
+						<input style="background:#18202d;color:#fff;" type="text" class="width-80"  name="no"/>
+					</div>
+					<div class="col-sm-6">
+						<input type="text" class="width-45"  onclick="$curmenu.trigger('click'); " style ="cursor:pointer;text-align:center;color:#fff;background-color:#f8ac59;" value="全部用户" readonly/>
+						<input type="text" class="width-45"  id="search-btn" style ="cursor:pointer;text-align:center;color:#fff;background-color:#f8ac59;" value="条件查询" readonly/>
+					</div>
+					
+				</div>
+				
+				</form>
+			</#search>
+			<div class="space-6"></div>
+			<div id="list-page"></div>
+		</div>
+
+		<div id="profile" class="tab-pane">
+			<form action="${ctxPath!}/sysuser/save" method="post" id="sysuser-save-form">
+				<input type="hidden" value="${userSource}" name="userSource" />
+				<div class="center padding-10">
+					<label>登录名：</label>
+					<input style="background:#18202d;color:#fff;"  type="text" class="width-50" name="username" id="username"
+					ajaxurl="${ctxPath!}/sysuser/checkname" datatype="*"  nullmsg="请输入登录名！" />
+				</div>
+				<div class="center padding-10">
+					<label>密码：</label>
+					<input style="background:#18202d;color:#fff;" type="password" class="width-50" name="password" 
+					datatype="*6-16" errormsg="密码范围在6~16位之间！" nullmsg="请输入密码！" />
+				</div>
+				<div class="center padding-10">
+					<label>确认密码：</label>
+					<input style="background:#18202d;color:#fff;" type="password" class="width-50" name="repassword" 
+					 datatype="*" recheck="password" errormsg="您两次输入的密码不一致！" nullmsg="请输入确认密码！"/>
+				</div>
+				<div class="center padding-10">
+					<label>真实姓名：</label>
+					<input style="background:#18202d;color:#fff;" type="text" class="width-50" name="name" datatype="*"  nullmsg="请输入姓名！"/>
+				</div>
+				<div class="center padding-10">
+					<label>归属机构：</label>
+					<div class="width-50 inline text-left" id="gsoffice">
+						<#pullDownTree order="two" treeData="${userOffice}" name="officeId" 
+							class="width-100" isRoot="false" rootNodeName="请选择归属机构" />
+					</div>
+				</div>
+				<div class="center padding-10" >
+					<label>所属角色：</label>
+					<div class="width-50 inline text-left">
+						<select name="roleIds" multiple class="chosen-select tag-input-style" id="role-choose" data-placeholder="选择角色">
+							@for(role in userRoles){
+							<option value="${role.id!}">
+							${role.name!}
+							@var sostr = office.getOfficeStrByOfficeId(role.officeId);
+							@if(!isEmpty(sostr)){
+								&nbsp;(${sostr})
+							@}
+							</option>
+						@}
+						</select>
+					</div> 
+				</div>
+				<div class="center padding-10">
+					<label>工号：</label>
+					<input style="background:#18202d;color:#fff;" type="text" class="width-50" name="no"/>
+				</div>
+				<div class="center padding-10">
+					<label>邮箱：</label>
+					<input style="background:#18202d;color:#fff;" type="text" class="width-50" name="email" />
+				</div>
+				<div class="center padding-10">
+					<label>电话：</label>
+					<input style="background:#18202d;color:#fff;" type="text" class="width-50" name="phone"/>
+				</div>
+				<div class="center padding-10">
+					<label>手机：</label>
+					<input style="background:#18202d;color:#fff;" type="text" class="width-50" name="mobile"/>
+				</div>
+				<div class="center padding-10">
+					<label>省份：</label>
+					<input style="background:#18202d;color:#fff;" type="text" class="width-50" name="province"/>
+				</div>
+				<div class="center padding-10">
+					<label>审核人员类型：</label>
+					<input style="background:#18202d;color:#fff;" type="text" class="width-50" name=checkType datatype="*" nullmsg="请输入审核人员类型！"/>
+				</div>
+				<div class="center padding-10">
+					<label>审核人员标准值：</label>
+					<input style="background:#18202d;color:#fff;" type="text" class="width-50" name="checkStandard" datatype="n" nullmsg="请输入审核人员标准值！"/>
+				</div>
+				<div class="center padding-10">
+					<label>审核任务基准值：</label>
+					<input style="background:#18202d;color:#fff;" type="text" class="width-50" name="checkBase" datatype="n" nullmsg="请输入审核任务基准值！"/>
+				</div>
+				<div class="center padding-10" >
+					<label style="vertical-align: top;">描述：</label>
+					<textarea style="background:#18202d;color:#fff;" type="text" class="width-50" name="remarks"></textarea>
+				</div>
+				<div class="margin-t15">
+					<span style="width: 200px;margin: 0 auto;display: block;" class="btn btn-info btn-block bigger-120" id="sysuser-save-btn">保 存</span>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<style>
+#profile .center>label{width: 100px;text-align: right;}
+#profile .chosen-choices{background: #18202d;}
+#home .chosen-choices{background: #18202d;}
+</style>
+<#save isHide="yes" subBtnId="sysuser-save-btn" formId="sysuser-save-form" 
+validId="sysuserForm" config="true">
+	sysuserForm.config({
+		beforeCheck:function(curform){
+			var flag = $("#username")[0].validform_valid;
+			if(flag != "true" && $.trim($("#username").val())!=""){
+				 $("#username")[0].focus();
+				 tip.errorTip(flag,$("#username"));
+				 return false;
+			}
+		} 
+	});
+</#save>
+<script>
+	$("#role-select").chosen({width: "60%",search_contains: true});
+	$("#role-choose").chosen({width: "100%",search_contains: true}); 
+	$("#search-form").getPageList({'submitBtnId':'search-btn'}); 
+</script>

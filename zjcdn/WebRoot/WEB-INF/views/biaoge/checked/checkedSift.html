@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>不良信息审核系统统计报表</title>
+<meta content="text/html;charset=utf-8">
+<script type="text/javascript"
+	src="${ctxPath}/static/jquery/jquery-2.1.1.min.js"></script>
+<script>
+$(function(){
+	var ctime = $("div[name='dateStart']").text().trim();
+	var date1 = new Date(ctime);
+	ctime=$("div[name='dateEnd']").text().trim();
+	//判断是否为一天的24点和明天的0点
+	var regex=new RegExp("\\d{4}(\-)(\\d{2})(\\-)(\\d{2})(\\s)([0]{2})(:)(\\d{2})(:)(\\d{2})");
+	var date2 = new Date(ctime);
+	var day1=date1.getDate();
+	var day2=date2.getDate();
+	if(regex.test(ctime)){
+			//天数间隔一天0点到24点（对应月跳转）
+			if(day2-day1==1||(day1==28&&day2==1)||(day1==29&&day2==1)||(day1==30&&day2==1)||(day1==31&&day2==1)){
+				day2=day1;
+			}
+	}
+	if(day2==day1){
+		$("iframe").attr("src","${ctxPath}/report/getCheckedByHour.html");
+	}else{
+		$("iframe").attr("src","${ctxPath}/report/getCheckedByDay.html");
+	}
+});
+</script>
+<style>
+<!--
+.box {
+	align: center;
+	width: 1200px;
+	height: 500px;
+}
+-->
+</style>
+</head>
+<body>
+	<!-- 在此处展示分析折线图 -->
+	<div class="first box">
+		<div name="province" hidden>${province}</div>
+		<div name="dateStart" hidden>${dateStart}</div>
+		<div name="dateEnd" hidden>${dateEnd}</div>
+		<iframe src="${ctxPath}/report/getCheckedByHour.html" scrolling="no"
+			width="100%" frameborder="0" height="800px"></iframe>
+	</div>
+</body>
+</html>
+

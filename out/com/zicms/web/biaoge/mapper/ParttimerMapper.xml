@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.biaoge.mapper.ParttimerMapper">
+	
+	<!-- 兼职人员名单 -->
+	<select id="findUsername" resultType="java.lang.String">
+		select username from sys_user where check_type = '0' and del_flag='0';
+	</select>
+	
+	<!--兼职人员时间段内的账号 -->
+	<select id="findAccount" statementType="CALLABLE"
+		resultType="com.zicms.web.biaoge.model.Parttimer">
+		<![CDATA[
+		{
+		call parttimeAccount(#{username,mode=IN,jdbcType=VARCHAR},
+		#{dateStart,mode=IN,jdbcType=VARCHAR},
+		#{dateEnd,mode=IN,jdbcType=VARCHAR})
+		}
+		]]>
+	</select>
+	
+	<!-- 兼职人员工资核算表列表(用以查询并分页) -->
+	<select id="findPageInfo" resultType="com.zicms.web.biaoge.model.Parttimer">
+		select
+		id,username,standard_settlement,audit_volume,salary,name,telephone,bank_account,open_bank,create_date,update_date
+		from parttimer
+		<where>
+			del_flag='0'
+			<if test="@Ognl@isNotBlank(createDate)">
+				and create_date like concat('%', #{createDate} ,'%')
+			</if>
+			<if test="@Ognl@isNotBlank(username)">
+				and username  like concat('%', #{username} ,'%')
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,37 @@
+<title>审核数量统计分析</title>
+</head>
+<body>
+	<div align="center" style="top:120px">
+		<input type="text" id="type" value="${auth.getLoginUser().userType}" hidden />
+		<a href="javascript:sub();" class="100px" id="search-btn" style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;">
+			<input type="text" value="导出表格" class="100px" id="search-btn" style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;">
+		</a>
+	</div>
+	
+	<table border="1" align="center" width="600px" height="200px" style="margin-top: 100px">
+		<thead>
+			<tr style="background-color: yellow;font-size: 20px;height: 80px">
+				<th class="center" width="100px">用户名</th>
+				<th class="center" width="300px">日期</th>
+				<th class="center" width="100px">审核数量</th>
+				<th class="center" width="100px">已审数量</th>
+			</tr>
+		</thead>
+		<tbody>
+		@for(item in list){
+			<tr>
+				<td class="center" style="font-size: 20px;">${item.username}</td>
+				<td class="center" style="font-size: 20px;">${item.dt}</td>
+				<td class="center" style="font-size: 20px;">${item.count}</td>
+				<td class="center" style="font-size: 20px;">${item.checked}</td>
+			</tr>
+			@}
+		</tbody>
+	</table>
+	
+	<script type="text/javascript">
+		function sub() {
+			window.location.href = "${ctxPath}/Form/csvSaveAll";
+		}
+	</script>
+</body>

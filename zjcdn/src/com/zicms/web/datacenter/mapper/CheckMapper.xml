@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.datacenter.mapper.CheckMapper">
+	<!-- 将登陆名插入到数据库 -->
+	<insert id="insertCheck" parameterType="com.zicms.web.datacenter.model.Check">
+	   replace INTO piccheck(username,date,uuid,flag) VALUES ('${username}','${logindate}','${uuid}','${flag}')
+	</insert>
+	
+	<!-- 更新check表的flag字段 -->
+	<update id="updateCheck" parameterType="com.zicms.web.datacenter.model.Check"  >
+	   update piccheck set flag = '${flag}' where uuid='${uuid}' and username='${username}'
+	</update>
+	
+	<!-- 查询check表 -->
+	<select id="findCheck" parameterType="com.zicms.web.datacenter.model.Check" resultType="com.zicms.web.datacenter.model.Check">	
+		select username,DATE_FORMAT(date,'%Y-%m-%d %H') as dt,count(uuid) as count,sum(flag) as checked from piccheck 
+		where date like '${date}%' group by username,dt
+	</select>
+</mapper>

@@ -1,0 +1,74 @@
+<div class="main-container" id="main-container"style="width:100%;height:100%;overflow:auto">
+	<script type="text/javascript">
+		try{ace.settings.check('main-container' , 'fixed')}catch(e){}
+	</script>
+	
+	<!-- 閫氳繃layout鏍囩鍔犲叆sidebar椤甸潰锛岃鐗堜腑鏈姞杞� -->
+
+	<!-- <div class="main-content" > -->
+		<!-- <div class="breadcrumbs breadcrumbs-fixed" id="breadcrumbs">
+			<script type="text/javascript">
+				try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+			</script>
+			
+			<div  style="width:100%;">
+				<ul class="breadcrumb" id="breadcrumb">
+					<li><i class="ace-icon fa fa-home home-icon"></i><a href="${ctxPath}">棣栭〉</a>
+					</li>
+				</ul>
+				<input id="fh" type="text"  onclick="rollback();" hidden
+						style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;
+						width: 8%;height: 35px;" value="杩斿洖" readonly/>
+		        <input id="sx" type="text"  onclick="$curmenu.trigger('click');" hidden
+						style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;
+						width: 8%;height: 35px;" value="鎻愪氦骞跺埛鏂�" readonly/>
+			 	<input id="tj" type="text"  onclick="submit();" hidden
+						style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;
+						width: 8%;height: 35px;" value="鎻愪氦" readonly/>
+			</div>
+			
+			<div class="widget-toolbar  no-border" style="display:none;">
+				<div class="dropdown dropdown-colorpicker dropdown-temp-menu">
+			         <a href="#" data-position="auto" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						 <i class="ace-icon fa fa-spinner fa-history orange bigger-125" title="鏈�杩戣闂�"></i>
+					 </a>
+			         <ul class="dropdown-menu dropdown-caret dropdown-menu-right dropdown-125" id="historyMenu">
+
+					 </ul>
+				</div>
+			</div>
+			<style type="text/css">
+				.dropdown-temp-menu> .dropdown-menu > li {
+					display: block;
+					float: none;
+					height: auto;
+					width: auto;
+					margin: 2px;
+				}/img
+				.dropdown-temp-menu > .dropdown-menu {
+					min-width: 200px;
+				}
+			</style>
+
+		</div> -->
+		
+		<div class="page-content" style="width:100%;height:100vh; background: url(${ctxPath}/static/app/img/bg.png) no-repeat center;
+			margin-top:0; background-size: 100% 100%; overflow: auto;">
+			<div class="row">
+				<div class="col-xs-12">
+					${layoutContent!}
+				</div>
+			</div>
+			
+		</div><!-- /.page-content -->
+		
+	<!-- </div> --><!-- /.main-content -->	
+
+	<a href="javascript:void(0);" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse"  style="z-index:1111">
+		<i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+	</a>
+</div><!-- /.main-container -->
+<script type="text/javascript">
+	$("sx").hide();
+	$("tj").hide();
+</script>

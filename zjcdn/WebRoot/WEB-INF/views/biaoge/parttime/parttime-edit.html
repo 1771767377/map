@@ -1,0 +1,101 @@
+<div class="layer">
+	<form name="FormPost" id="sysuser-save" class="FormGrid"  method="post"
+		action="${ctxPath}/part_time_salary/edit">
+		<input type="hidden" value="${parttimer.id!}" name="id"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData">
+					<td class="CaptionTD">审核账号</td>
+					<td class="DataTD">
+					<input type="text" value="${parttimer.username!}" name="username"
+					datatype="*" readonly="readonly"  nullmsg="请输入审核账号！"/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">结算标准（条/元）</td>
+					<td class="DataTD width-100"><input type="text"
+						name="standardSettlement" value="${parttimer.standardSettlement!}" datatype="*"  nullmsg="请输入结算标准！">
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">审核量</td>
+					<td class="DataTD">
+					<input type="text"  name="auditVolume"  value="${parttimer.auditVolume!}"
+					datatype="*"  nullmsg="请输入审核量！"/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">应付工资</td>
+					<td class="DataTD">
+						<input type="text" value="${parttimer.salary!}" name="salary"/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">姓名</td>
+					<td class="DataTD">
+						<input type="text" value="${parttimer.name!}" name="name"/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">联系电话</td>
+					<td class="DataTD">
+					<input type="text" value="${parttimer.telephone!}" name="telephone"/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">银行账号</td>
+					<td class="DataTD">
+					<input type="text" value="${parttimer.bankAccount!}" name="bankAccount"/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">开户行</td>
+					<td class="DataTD">
+					<input type="text" value="${parttimer.openBank!}" name="openBank"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+			<input type="submit" id="ok" class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  value="确认"/>
+			<input  type="button"  class="btn btn-yellow btn-sm bigger-110 width-50 pull-right"  id="cancel" value="取消"/>
+			 
+		</div>
+	</form>
+</div>
+<script>
+//表单提交验证
+$("#sysuser-save").submit(function(e){
+	var standardSettlement=$("input[name='standardSettlement']").val();
+	var auditVolume=$("input[name='auditVolume']").val();
+	var salary=$("input[name='salary']").val();
+	var telephone=$("input[name='telephone']").val();
+	//数字验证
+	 var reg = new RegExp("^[0-9]+$");
+	  if(!reg.test(standardSettlement)||!reg.test(auditVolume)){
+       			alert("审核标准或审核量输入有误，请输入数字");
+       			return false;
+      }
+	//工资验证
+	reg=new  RegExp("^(([1-9][0-9]*)|((([1-9][0-9]*)|0)\.[0-9]{1,2}))$");
+	if(!reg.test(salary)){
+       			alert("工资输入有误，请输入正确类型的工资（最多保存俩位数）");
+       			return false;
+      }
+	//联系电话验证
+	//手机
+	reg=new  RegExp("^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\\d{8})?$");
+	//座机
+	var reg_1=new  RegExp("^(0[0-9]{2,3}\\-)?([1-9][0-9]{6,7})$");
+	if(!reg.test(telephone)&&!reg_1.test(telephone)){
+       	alert("联系电话输入有误");
+       	return false;
+     }
+	//银行账号验证（无验证，待做）
+});
+//取消按钮
+$("#cancel").click(function(){
+		layer.closeAll();
+		return false;
+});
+</script>

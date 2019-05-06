@@ -1,0 +1,24 @@
+﻿
+
+<input type="file" name="fileInput" id="fileInput" />
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+$('#fileInput').fileUpload ({
+
+'uploader' : 'uploader.swf', //指定上传控件的主体文件，默认‘uploader.swf’
+'script' : 'upload.php', //指定服务器端上传处理文件，默认‘upload.php’
+'cancelImg' : 'cancel.png', //指定取消上传的图片，默认‘cancel.png’
+'auto' : true, //选定文件后是否自动上传，默认false
+'folder':'/uploads',//要上传到的服务器路径，默认‘/’
+'muti' : true, //是否允许同时上传多文件，默认false
+'fileDesc' : 'rar文件或zip文件', //出现在上传对话框中的文件类型描述
+'fileExt' : '*.rar;*.zip', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc
+'sizeLimit': 86400, //控制上传文件的大小，单位byte
+'simUploadLimit' :5 //多文件上传时，同时上传文件数目限制
+});
+});
+
+</script>

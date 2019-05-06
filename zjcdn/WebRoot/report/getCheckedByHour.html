@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>审核完成率统计</title>
+<script src="/pekingpf/static/jquery/jquery-2.1.1.min.js"></script>
+<script src="/pekingpf/static/app/echarts.js"></script>
+</head>
+<body>
+	<div id="echart"
+		style="width: 1200px; height: 500px;border: 1px solid #d8d8d8;margin-top: 14px;">
+	</div>
+	<script type="text/javascript">
+		var province = $("div[name='province']", window.parent.document).text()
+				.trim();
+		var dateStart = $("div[name='dateStart']", window.parent.document)
+				.text().trim();
+		var dateEnd = $("div[name='dateEnd']", window.parent.document).text()
+				.trim();
+				$.ajax({
+					type : "GET",
+					async : false,
+					contentType : "application/json",
+					url : "/pekingpf/check/checkedEchart",
+					dataType : "json",
+					data : {
+						'province' : province,
+						'dateStart' : dateStart,
+						'dateEnd' : dateEnd
+					},
+					error : function() {
+						alert("不好意思,图表请求数据失败啦!");
+					},
+					success : function(json) {
+						var columLabel = [ '未审核', '已审核', '审核完成率' ];//存放图例
+						var arr_unchecked = new Array();//存放待审核
+						var arr_checked = new Array();//存放已审核
+						var arr_count = new Array();//存放小时内审核率
+						var arrdate = new Array(24);//存放时间，默认24小时
+						//为横坐标赋值,纵坐标默认为0
+						for ( var i = 0; i < arrdate.length; i++) {
+							arrdate[i] = i;
+							arr_checked[i] = 0;
+							arr_unchecked[i] = 0;
+							arr_count[i] = 0;
+						}
+						//为纵坐标取值
+						$.each(json, function(n, value) {
+							//为不存在的时间赋值0
+							if (value.uncheckCount == undefined) {
+								arr_unchecked.splice(value.hour, 1, 0);
+							} else {
+								arr_unchecked.splice(value.hour, 1,
+										value.uncheckCount);
+							}
+							if (value.checkCount == undefined) {
+								arr_checked.splice(value.hour, 1, 0);
+							} else {
+								arr_checked.splice(value.hour, 1,
+										value.checkCount);
+							}
+						});
+						//通过待审核和已审核获得审核率
+						for ( var i = 0; i < arrdate.length; i++) {
+							if (arr_checked[i] != 0) {
+								arr_count[i] = (arr_checked[i] * 100 / (arr_checked[i] + arr_unchecked[i]))
+										.toFixed(2);
+							}
+						}
+						require.config({
+							paths : {
+								echarts : '/pekingpf/static/app'
+							}
+						});
+						require([ 'echarts', 'echarts/chart/line' ], function(
+								ec) {
+							var myChart = ec.init(document
+									.getElementById('echart'));
+							var option = {
+								title : {
+									x : 'center',
+									text : province + '省审核完成率统计分析图'
+								},
+								tooltip : {
+									trigger : 'axis'
+								},
+								grid : {
+									x : 100,
+									x2 : 60,
+									y2 : 100,
+									containLabel : true
+								},
+								toolbox : {
+									show : true,
+									y : 'bottom',
+									feature : {
+										mark : {
+											show : true
+										},
+										dataZoom : {
+											show : true,
+											title : {
+												dataZoom : '区域缩放',
+												dataZoomReset : '区域缩放后退'
+											}
+										},
+										dataView : {
+											show : true,
+											readOnly : false
+										},
+										magicType : {
+											show : true,
+											type : [ 'tiled' ]
+										},
+										restore : {
+											show : true
+										},
+										saveAsImage : {
+											show : true
+										}
+									}
+								},
+								color : [ "#fd87ab", "#48cda6", "green" ],
+								legend : {
+									x : 'center',
+									y : 'bottom',
+									data : columLabel,
+									textStyle : { //图例文字的样式
+										fontSize : 14,
+										color : 'black'
+									},
+									itemWidth : 40, //图例标记的图形宽度
+									itemHeight : 20
+								},
+								xAxis : [ {
+									type : 'category',
+									axisLabel : {
+										interval : 0,
+										margin : 2,
+									},
+									textStyle : {
+										color : "black", //刻度颜色
+										fontSize : 16
+									//刻度大小
+									},
+									data : arrdate
+								} ],
+								yAxis : [ {
+									type : 'value',
+									name : '单位:(个)',
+									position : 'left'
+								}, {
+									name : '审核完成率(%)',
+									max : 100,
+									type : 'value',
+									position : 'right'
+								} ],
+								series : [ {
+									name : '未审核',
+									type : 'line',
+									data : arr_unchecked,
+									yAxis : 0,
+									yAxisIndex : 0,
+									itemStyle : {
+										normal : {
+											color : '#fd87ab'
+										}
+									}
+								}, {
+									name : '已审核',
+									type : 'line',
+									data : arr_checked,
+									yAxis : 0,
+									yAxisIndex : 0,
+									itemStyle : {
+										normal : {
+											color : '#48cda6'
+										}
+									}
+								}, {
+									name : '审核完成率',
+									type : 'line',
+									data : arr_count,
+									yAxis : 1,
+									yAxisIndex : 1,
+									itemStyle : {
+										normal : {
+											color : "green"
+										}
+									}
+								} ]
+							};
+							myChart.setOption(option);
+						});
+					},
+
+				});
+	</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<div class="widget-box widget-color-green2 ">
+	<div class="widget-header clearfix">
+		<h5 class="widget-title">字典管理</h5>
+		<!-- <div class="widget-toolbar">
+			<a href="#" data-action="fullscreen" class="orange2"> 
+				<i class="ace-icon fa fa-expand"></i>
+			</a>
+		</div> -->
+		<div class="widget-toolbar  width-40" style="padding-top: 2px;">
+			<form method="post" class="form-search" id="search-form" target="list-page"
+				action="${ctxPath}/dict/list">
+				<div class="input-group" style="line-height: 0px;">
+					<span class="input-group-btn">
+						<span class=" btn btn-success btn-sm"
+							id="search-all-btn">
+							 显示全部 
+						</span>
+					</span>
+					<input type="text" class="form-control search-query"
+						name="name" placeholder="字典标签或类型" id="search-input">
+					@if(auth.hasPermission("sys:dict:find")){
+					<span class="input-group-btn">
+						<span class="btn  btn-success btn-sm"
+							id="search-btn">
+							搜索 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+						</span>
+					</span>
+					@}
+				</div>
+				<input type="hidden" name="type" />
+			</form>
+		</div>
+		<div class="widget-toolbar no-border">
+			<div class="progress progress-striped active pos-rel" style="width:200px;display: none;" 
+			data-percent="0%" id="excel-progress">
+				<div class="progress-bar progress-bar-pink" style="width:0%"></div>
+			</div>
+		</div>
+		<div class="widget-toolbar no-border">
+			<a href="javascript:void(0);" class="btn btn-purple btn-sm" 
+				data-mode="page" data-title="添加字典"
+				data-url="${ctxPath}/dict/add/showlayer"
+				data-width="50%"
+			>
+				<i class="ace-icon fa fa-plus ">添加字典</i>
+			</a>
+		</div>
+	</div>
+
+	<div class="widget-body" style="background:transparent;">
+		<div class="widget-main padding-8">
+			<div class="row">
+				<div class="col-sm-3">
+					<div>
+						<ul id="treeMenu" class="ztree"></ul>
+					</div>
+				</div>
+				<div class="col-sm-9" id="list-page">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<#systree editUrl="dict/type/edit/showlayer" delUrl="dict/type/delete" 
+	addUrl="dict/type/add/showlayer" treeData="${treeList}" 
+	rootNodeName="分类列表" addTitle="添加分类"/>
+	

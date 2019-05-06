@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.datacenter.mapper.ProvinceDictMapper">
+
+	<sql id="provinceDictColumns">
+		ID,PROVINCE,CITY,ZONE,NAME,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE,DEL_FLAG,CHECK_BASE
+	</sql>
+
+	<sql id="aliasprovinceDictColumns">
+		a.ID,a.PROVINCE,a.CITY,a.ZONE,a.NAME,a.CREATE_BY,a.CREATE_DATE,a.UPDATE_BY,a.UPDATE_DATE,a.DEL_FLAG,a.CHECK_BASE
+	</sql>
+
+	<!--查询出所有的省的信息 ,用于首页显示和统计报表中省份下拉框选择 -->
+	<select id="findProvinces" resultType="com.zicms.web.datacenter.model.ProvinceDict">
+		select  zone,name
+			from pro_dict   
+		<where>
+			del_flag = 0 
+			and zone like '%0000' 
+		</where>
+	</select>
+
+</mapper>

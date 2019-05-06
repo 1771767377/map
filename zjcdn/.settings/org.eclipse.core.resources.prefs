@@ -1,0 +1,14 @@
+eclipse.preferences.version=1
+encoding//WebRoot/WEB-INF/views/htmltag/comtree.tag=UTF-8
+encoding//WebRoot/WEB-INF/views/htmltag/dict.tag=UTF-8
+encoding//WebRoot/WEB-INF/views/htmltag/iconselect.tag=UTF-8
+encoding//WebRoot/WEB-INF/views/htmltag/paginate.tag=UTF-8
+encoding//WebRoot/WEB-INF/views/htmltag/pullDownTree.tag=UTF-8
+encoding//WebRoot/WEB-INF/views/htmltag/save.tag=UTF-8
+encoding//WebRoot/WEB-INF/views/htmltag/search.tag=UTF-8
+encoding//WebRoot/WEB-INF/views/htmltag/systree.tag=UTF-8
+encoding//WebRoot/WEB-INF/views/htmltag/treeselect.tag=UTF-8
+encoding//resources/beetl/beetl.properties=UTF-8
+encoding//src/com/zicms/web/datacenter/mapper/ImageCheckMapper.xml=UTF-8
+encoding/<project>=UTF-8
+separateDerivedEncodings=true

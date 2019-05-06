@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+</head>
+<style type="text/css">
+	.widget-title{
+		width:100%;
+		height:50px;
+		box-shadow: 3px 3px 3px #cdcdcd;
+		line-height:50px;
+		color:#333;
+		font-size:16px;
+	}
+	
+	.widget-list{
+		float:left;
+		width: 330px;
+	    height: 170px;
+	    border-radius: 20px;
+	    color: #fff;
+	    font-size: 26px;
+	    line-height: 70px;
+	    padding-left: 3%;
+	    position: relative;
+	}
+	.widget-body{
+		width:100%;
+		height:200px;
+		display: flex;
+    	justify-content: space-around;
+	}	
+	.widget-list h2{
+		display:block;
+		height:40px;
+		font-size:30px;
+	    position: absolute;
+    	left: 10%;
+    	top: 0;
+		
+	}
+	.widget-list p{
+		font-size: 18px;
+		position: absolute;
+    	left: 8%;
+    	top: 25%;
+	}	
+</style>
+<body>
+	<div class="widget-box">
+		<h3 class="widget-title">
+			整体情况
+		</h3>
+		<div class="widget-body">
+			<div class="widget-list" style="background:url('/pekingpf/static/app/img/dayTotalbg.png') no-repeat center;">
+				<h2 id="dayTotal"></h2>
+				<p>当日发现</p>
+			</div>
+			<div class="widget-list" style="background:url('/pekingpf/static/app/img/dayProcessbg.png') no-repeat center;">
+				<h2 id="dayProcess"></h2>
+				<p>当日处理</p>
+			</div>
+			<div class="widget-list" style="background:url('/pekingpf/static/app/img/illegalCountbg.png') no-repeat center;">
+				<h2 id="illegalCount" ></h2>
+				<p>人工审核（不良）</p>
+		
+			</div>
+		</div>
+	</div>
+</body>
+<script src="/pekingpf/static/jquery/jquery-2.1.1.min.js"></script>
+<script>
+var interval;
+    function flushdata(){
+		$.ajax({
+			type: 'post',
+			async : false,
+			contentType : "application/json",
+			url : "/pekingpf/overview/getData",
+			dataType : "json",
+			error : function() {
+				alert("不好意思,统计数据获取失败!");
+			},
+			success: function(data){
+				$("#dayProcess").text(data.dayProcessCount);
+				$("#dayTotal").text(data.dayTotalCount);
+				$("#illegalCount").text(data.illegalCount);
+			}
+		})
+    }
+    $(document).ready(function(){
+    	flushdata();
+    	//interval = window.setInterval(flushdata, 2000);
+    })
+</script>
+</html>

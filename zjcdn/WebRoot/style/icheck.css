@@ -1,0 +1,28 @@
+/* iCheck plugin Square skin, blue
+----------------------------------- */
+.icheckbox_square-blue,
+.iradio_square-blue {
+    display: inline-block;
+    *display: inline;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    background: url(../images/icheck.png) no-repeat;
+    border: none;
+    cursor: pointer;
+}
+
+.icheckbox_square-blue input,.iradio_square-blue input{cursor:pointer;}
+label{ padding-left:8px;cursor:pointer;}
+
+/*复选框*/
+.icheckbox_square-blue {background-position:0px 0; width:14px; height:14px; margin-top:-3px; }
+/*.icheckbox_square-blue.hover{background-position:-24px 0;}*/
+.icheckbox_square-blue.checked{background-position:-14px 0;}
+
+/*单选框*/
+.iradio_square-blue{background-position:-33px 0; width:18px; height:18px; margin-top:-3px;}
+/*.iradio_square-blue.hover{background-position:-96px 0;}*/
+.iradio_square-blue.checked{ background-position:-54px 0;}
+  
+

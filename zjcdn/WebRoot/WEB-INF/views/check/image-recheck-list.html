@@ -1,0 +1,147 @@
+<head>
+<style type="text/css">
+body {
+	color: #222;
+	font-family: Microsoft YaHei, Helvitica, Verdana, Tohoma, Arial,
+		san-serif;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+}
+
+img {
+	border: 0;
+}
+
+ul {
+	list-style: none outside none;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color: #eee;
+}
+
+body .mainmenu:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+
+body .mainmenu li {
+	float: left;
+	margin-left: 4%;
+	width: 20%;
+	border-radius: 3px;
+	overflow: hidden;
+	margin-bottom: 10px;
+	/* border:1px solid #ff0000; */
+}
+
+body .mainmenu li b {
+	display: block;
+	color: #FFF;
+	text-align: center
+}
+
+body .mainmenu li a {
+	display: block;
+	color: #FFF;
+	text-align: center;
+	font-size: 16px;
+	line-height: 30px;
+}
+
+/* body .mainmenu li a:hover {
+	background:#146C9C;
+	color:#fff;
+	}
+	body .mainmenu li a.last {
+	border-right:0;
+	} */
+body .mainmenu li a b {
+	display: block;
+	height: 140px;
+}
+
+body .mainmenu li b img {
+	margin: 10px auto 10px;
+	width: 200px;
+	height: 150px;
+}
+
+body .mainmenu li a {
+	display: block;
+	height: 20px;
+	line-height: 15px;
+	background-color: #FFF;
+	color: #999;
+	font-size: 16px;
+}
+
+body .mainmenu li span {
+	display: block;
+	height: 40px;
+	line-height: 15px;
+	background-color: #FFF;
+	color: #999;
+	font-size: 14px;
+	text-align: center;
+}
+
+body .mainmenu li span a {
+	display: inline-block;
+	height: 20px;
+	line-height: 10px;
+	background-color: #FFF;
+	color: #999;
+	font-size: 14px;
+	text-align: center;
+}
+
+#body .mainmenu li:nth-child(8n+1)
+</style>
+
+<script type="text/javascript">
+	function big(url){
+		window.open(url, 'newwindow', 'height=500, width=600, top=200, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no')
+	}	
+
+	function check(thiz,temp){
+		$(thiz).parents("#cc").css("background-color","#7FFF00"); 
+		$.ajax({
+			url: "${ctxPath}/Recheck/revoke_image",
+			type: 'post',
+			data: {'uuid':temp},
+			dataType: 'json'
+		});
+	}
+	
+	function cancel(thiz,temp){
+		$(thiz).parents("#cc").css("background-color","white");
+		$.ajax({
+			url: "${ctxPath}/Recheck/cancel_check",
+			type: 'post',
+			data: {'uuid': temp},
+			dataType: 'json'
+		});
+	}
+
+</script>
+</head>
+<body>
+	<ul class="mainmenu">
+		@for(item in page){
+		<li><div id="cc" class="mu" id="mu" style="border: 1px solid red;">
+			<b><img align="center" src="http://${string.formatSubUrl(item.imageturl)}" width="150px"
+				height="110px" ondblclick="check(this,'${item.uuid}')" />
+			</b>
+			<a href="javascript:big('http://${string.formatSubUrl(item.imageturl)}');">大图链接</a> 
+			<span id="bb" background="white">IP地址:${item.iplist}<br />
+			<a class="green" id="qx" href="javascript:void(0)" onclick="cancel(this,'${item.uuid}')"><input class="uuid" type="hidden" value="${item.uuid}" />取消</a>
+			</span>
+		</div></li>
+		@}
+	</ul>
+</body>

@@ -1,0 +1,208 @@
+			<font color="#fff">年份：</font><select id="ipSelectone">
+				<option value="2018">2018</option>
+				<option value="2019">2019</option>
+				<!-- <option value="2017">2017</option> -->
+			</select>
+			<font color="#fff">类型：</font><select id="ipSelecttwo">
+				<option value="img_history">图片</option>
+				<option value="video_history">视频</option>
+			</select>
+			<input type="button" value="搜索" onclick="clicks()">
+			
+			<span id="spanid" style="display:none"><input type="button" value="返回上一级" onclick="backClick()" ></span><br><br>
+
+<!-- 每月不合规信息数量柱状图  -->
+<div id="Echartone" style="width:100%;height:550px"></div>	
+				
+		<script type="text/javascript">
+		
+		var table;
+		
+		$(function(){
+			
+			clicks();
+			
+		})
+		
+		function clicks(tablename){
+			var years = $("#ipSelectone").val();
+			var tablename = $("#ipSelecttwo").val();
+			//var months = $("#ipSelecttwo").val();
+			document.getElementById("spanid").style.display="none";
+			//alert("展示12个月");
+			$.ajax({
+			url:"${ctxPath}/timeStatistics/getUnqualifiedYear",
+			data:{"years":years,"tablename":tablename},
+			dataType:"json",
+			type:"post",
+			async:false,
+			success:function(data){
+				//console.log(data);
+				var months = [1,2,3,4,5,6,7,8,9,10,11,12];
+				var counts = [0,0,0,0,0,0,0,0,0,0,0,0];
+				//月份和数据做一一对应
+				$.each(data,function(index,value){
+					for(var i=0; i<months.length; i++){
+						if(months[i]==value.dates){
+							counts[i] = value.count;
+							break;
+						}
+					}
+				})
+				//在数字后面加上"月"字
+				for(var i=0; i<months.length; i++){
+					months.splice(i,1,i+1+"月");
+				}
+				//console.log(counts);
+				var myChart1 = echarts.init(document.getElementById('Echartone'));
+				option = {
+						title:{
+	            			text: '每月不合规信息数量柱状图',
+	            			x: 'center',
+	            			textStyle : {
+								color : '#fff'
+							}
+	            		}, 
+	            		tooltip : {
+							trigger : 'axis',
+							axisPointer : {
+								type : 'line'
+							}
+						},
+						grid: {
+							left: '0%',
+		            	        right: '0%',
+		            	        bottom: '3%',
+		            	        top: '10%',
+		            	        containLabel: true
+						},
+					    xAxis: {
+					        type: 'category',
+					        data: months,
+					        axisLabel : {
+								textStyle : {
+									color : '#fff'
+								},
+								interval : 0
+							}
+					    },
+					    yAxis: {
+					        type: 'value',
+					        axisLabel : {
+								textStyle : {
+									color : '#fff'
+								}
+							}
+					    },
+					    series: [{
+					        data: counts,
+					        type: 'bar'
+					    }]
+					};
+					// 使用刚指定的配置项和数据显示图表。
+	           		myChart1.setOption(option);
+	           		myChart1.on('click',function(param){
+	           			checkMonth(param,years,tablename);
+	           		});
+			},
+			error : function(){
+				alert("请求数据失败，请联系管理员！");
+			}
+		}) 
+	}
+			
+			function checkMonth(param,years,tablename){
+				
+				table = tablename;
+				var months = param.name.replace("月","");
+				document.getElementById("spanid").style.display="";
+				
+				$.ajax({
+    				url:"${ctxPath}/timeStatistics/getUnqualifiedMonth",
+    				data:{"year":years,"month":months,"tablename":tablename},
+    				dataType:"json",
+    				type:"post",
+    				async:false,
+    				success:function(data){
+    					
+    	    			var curDate = new Date();
+    	    			var year = curDate.getFullYear();
+    	    			var newday = new Date(year, months, 0).getDate();
+    	    			var day = new Array();
+    					var dayCount = new Array();
+    	    			for(var i=1; i<=newday; i++){
+    	    				day.push(i);
+    	    				dayCount.push(0);
+    	    			}
+    					
+				       $.each(data, function(index, value) {
+						   for (var i = 0; i < day.length; i++) {
+								if (day[i] == value.dates) {
+									dayCount[i] = value.count;
+								}
+							}
+						})
+						var myChart1 = echarts.init(document.getElementById('Echartone'));
+						option = {
+								title:{
+			            			text: '每月不合规信息数量柱状图',
+			            			x: 'center',
+			            			textStyle : {
+										color : '#fff'
+									}
+			            		}, 
+			            		tooltip : {
+									trigger : 'axis',
+									axisPointer : {
+										type : 'line'
+									}
+								},
+								grid: {
+									left: '0%',
+				            	        right: '0%',
+				            	        bottom: '3%',
+				            	        top: '10%',
+				            	        containLabel: true
+								},
+							    xAxis: {
+							        type: 'category',
+							        data: day,
+							        axisLabel : {
+										textStyle : {
+											color : '#fff'
+										},
+										interval : 0
+									}
+							    },
+							    yAxis: {
+							        type: 'value',
+							        axisLabel : {
+										textStyle : {
+											color : '#fff'
+										}
+									}
+							    },
+							    series: [{
+							        data: dayCount,
+							        type: 'bar'
+							    }]
+							};
+						    
+							// 使用刚指定的配置项和数据显示图表。
+			           		myChart1.setOption(option);
+							myChart1.off('click');
+					},
+					error : function() {
+						alert("请求数据失败！");
+					}
+				})
+			}
+		
+		
+		//返回上一级
+		function backClick(){
+			
+			clicks(table);
+		}
+		
+		</script>

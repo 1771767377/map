@@ -1,0 +1,124 @@
+.top,.bot{
+    overflow: hidden;
+    padding: 0px 50px 0px;
+}
+.top_module{
+    float: left;
+    width: 200px;
+    height: 230px;
+    background: #fff;
+    border: 1px solid #ccc;
+    margin-left: 20px;
+    padding: 10px;
+}
+.top_module h3{
+    color: #666;
+    font-size: 18px;
+}
+.top_module h4{
+    color: #666;
+    font-size: 12px;
+}
+.top_module ul{
+    margin-top: 10px;
+}
+.top_module ul li{
+    height:35px;
+    line-height:35px;
+    color: #666;
+    font-size: 12px;
+}
+.top_module ul li span{
+    float: right;
+    margin-right:5px;
+}
+.top_module ul li b{
+    color: skyblue;
+    margin-right: 10px;
+}
+.top_mo_l{
+    float: left;
+    width:220px;
+    height: 300px;
+}
+.top_mo_l li{
+    width:218px;
+    height:100px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    margin-bottom: 30px;
+    padding-top: 20px;
+}
+.top_mo_l li:last-child{
+    margin-bottom: 0;
+}
+.top_mo_l li img{
+    float: left;
+    width: 100px;
+    height: 80px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.top_mo_l li p{
+    line-height: 25px;
+    margin:0 !important;
+}
+.bot_module{
+    float: left;
+    width: 300px;
+    height:600px;
+    margin-right: 22px;
+}
+.bot_module:first-child{
+    margin-right: 0;
+}
+.bot_module .bot_tit{
+    width:300px;
+    height:180px;
+    background-color: orange;
+    text-align: center;
+    box-shadow: #00a0d2;
+}
+.bot_module .bot_tit h2{
+    font-size: 32px;
+    color: #fff;
+    padding-top: 65px;
+}
+.bot_module .bot_tit p{
+    font-size: 18px;
+    color: #fff;
+}
+.bot_module ul{
+    width: 298px;
+    height: 258px;
+    background: #fff;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+}
+.bot_module ul li{
+    height: 40px;
+    line-height: 60px;
+    padding: 0 10px;
+    color: #666;
+    font-size: 12px;
+}
+.bot_module ul li span{
+    display: inline-block;
+    float: right;
+    width: 60px;
+    height: 15px;
+    background:purple ;
+    text-align: center;
+    line-height: 15px;
+    color: #fff;
+    margin-top: 24px;
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,478 @@
+/*---------------enter----------------*/
+body{
+	overflow: hidden;
+}
+a,ul,li{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+.enter-intro{
+    width: 100%;
+    position: fixed;
+    top:50%;
+    left: 50%;
+    -webkit-transform:translate(-50%,-50%);
+    -moz-transform:translate(-50%,-50%);
+    transform:translate(-50%,-50%);
+}
+.enter-intro .intro-logo{
+    overflow: hidden;
+    text-align: center;
+}
+.enter-intro .intro-cen{
+    width: 50%;
+    margin-left:auto;
+    margin-right: auto;
+    overflow: hidden;
+    margin-top: 20px;
+    text-align: center;
+    padding-bottom: 40px;
+}
+.enter-intro .intro-cen p{
+    color: #4d4d4d;
+    margin-top: 10px;
+}
+.enter a{
+    position:fixed;
+    color: #737373;
+    bottom:20px;
+    left: 50%;
+    -webkit-transform:translate(-50%,0);
+    -moz-transform:translate(-50%,0);
+    transform:translate(-50%,0);
+}
+
+
+/*---------------login----------------*/
+
+.login-input-box{
+    width: 80%;
+    margin-top:0%;
+    position: absolute;
+    top:50%;
+    left: 50%;
+    -webkit-transform:translate(-50%,-50%);
+    -moz-transform:translate(-50%,-50%);
+    transform:translate(-50%,-30%);
+}
+.logo{
+    background-color: #25baf0;
+}
+
+ .user,.lock,.mail{
+    float: left;
+    width:75%;
+    height: 35px;
+    border: none;
+    padding-left: 3%;
+    line-height: 2.4rem;
+    font-size: 1.2rem;
+    outline: none;
+    color: #4d4d4d;
+    background: none;
+}
+.line1, .line2,.line3{
+    width: 98%;
+    overflow: hidden;
+    border-bottom:1px solid #aaa ;
+    padding-left: 2%;
+    margin-top: 40px;
+}
+.login-wrap {
+    margin-top:80px;
+}
+.line1{
+	margin-top;80px;
+}
+
+.line1 img,.line2 img,.line3 img{
+    float: left;
+    padding-top:2px;
+}
+.register, .forgive{
+    margin-top: 20px;
+    color: #4d4d4d !important;
+    font-weight: normal;
+    padding: 0px 2%;
+}
+.register{
+    float: left;
+}
+.forgive{
+    float: right;
+}
+.chose .login{
+    float: left;
+    margin: 40px 0;
+    width: 100%;
+    font-size: 1.2rem%;
+    font-family: "宋体";
+    line-height:2.6rem;
+    text-align: center;
+    color: #ffffff!important;
+    background:#0885b1;
+    border-radius: 20px;
+}
+/*---------------register----------------*/
+.head-img{
+    position: relative;
+    margin-top: 60px;
+    text-align: center;
+}
+
+.head-img img{
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
+.head-img img:hover{
+    filter:alpha(opacity=50);
+    -moz-opacity:0.5;
+    -khtml-opacity: 0.5;
+    opacity: 0.5;
+}
+.head-img a{
+    position: absolute;
+    top:50%;
+    left: 50%;
+    -webkit-transform:translate(-50%,-50%);
+    -moz-transform:translate(-50%,-50%);
+    transform:translate(-50%,-50%);
+    font-size:2.5rem ;
+    font-weight: normal;
+    color: #4d4d4d;
+}
+
+.hidden{
+    display: none;
+}
+/*---------------reg-tip----------------*/
+
+.tip{
+    padding-top: 100px;
+    width: 80%;
+    margin: auto;
+    text-align: center;
+}
+.tip p{
+    font-size: 1.3rem;
+    margin-bottom: 50px;
+}
+
+/*---------------index----------------*/
+.ch-write{
+    width: 80%;
+    margin: auto;
+    font-family:"Times New Roman";
+    color: #4d4d4d;
+    font-weight: normal;
+}
+.page{
+	background-image: url(../img/indexImg/CM1_02.png)
+}
+.indexPage{
+	background-image: url(../img/indexImg/CM02.png);
+	background-repeat: round;
+	width: 100%;
+}
+.indexPage h1{
+	font-family: "微软雅黑";
+	font-weight: normal;
+	color: white;
+}
+.indexLogo{
+	margin: 100% 0 0 0;
+}
+.indexLogo img{
+	margin-left: 25% ;
+}
+.footer{
+	margin: 0 auto;
+}
+.footer h4{
+	font-family: "微软雅黑";
+	color: #FFFFFF;
+	text-align: center;
+	width: 100%;
+}
+.caijiProduct{
+	margin-top: 10%;
+	float: left;
+}
+.caijiProduct img{
+	max-width: 50%;
+	max-height: 50%;
+}
+.caijiProduct span{
+	font-family: "微软雅黑";
+	font-size: 50%;
+	text-align: center;
+}
+.caijiPage{
+	height: 600px;;
+}
+table{
+	font-size: 90%;
+	font-family: "微软雅黑";
+	width: 100%; 
+	margin: 5% 0 0 0;
+}
+td{
+	text-align: center;
+	vertical-align: middle;
+}
+td img{
+	width: 50%;
+	height: 40%;
+}
+tr{
+	text-align: center;
+	align-content: center;
+}
+.erhaoPei{
+	width: 94%;
+	height: 25%;
+	margin:2% 3% 0 3%;
+	border: 1px solid #ccc;
+	box-shadow:0 0 10px rgba(0, 204, 204, .5);
+}
+.echarts{
+	float: left;
+	width: 50%;
+	height: 90%;
+}
+.chuqinDiv{
+  float: left;
+  width: 40%;
+  height: 90%;
+  margin: 5% 0% 0% 7%;
+  -webkit-box-shadow:0 0 10px rgba(0, 204, 204, .5);  
+  -moz-box-shadow:0 0 10px rgba(0, 204, 204, .5);  
+  box-shadow:0 0 10px rgba(0, 204, 204, .5);  
+}
+.erhaoClass{
+	width: 100%;
+}
+.tr123{
+	text-align: center;
+}
+.tr123 td{
+	font-family: "微软雅黑";
+	font-size: 200%;
+}
+.td123{
+	font-family: "微软雅黑";
+	font-size: 200%;
+	text-align: right;
+}
+.tr1{
+	text-align: center;
+}
+.tr1 td{
+	font-family: "微软雅黑";
+	font-size: 150%;
+	color: blue;
+}
+.tr2{
+	text-align: center;
+}
+.tr2 td{
+	font-family: "微软雅黑";
+	font-size: 150%;
+	color:#fff100;
+}
+.tr3{
+	text-align: center;
+}
+.tr3 td{
+	font-family: "微软雅黑";
+	font-size: 150%;
+	color:#f8c427;
+}
+.tr4{
+	text-align: center;
+}
+.tr4 td{
+	font-family: "微软雅黑";
+	font-size: 150%;
+	color:#e8f424;
+}
+.tr5{
+	text-align: center;
+}
+.tr5 td{
+	font-family: "微软雅黑";
+	font-size: 150%;
+	color:#06e792;
+}
+.tr6{
+	text-align: center;
+}
+.tr6 td{
+	font-family: "微软雅黑";
+	font-size: 150%;
+	color:#51f745;
+}
+.biaoti1{
+	  height: 3%;
+	  width: 94%;
+	  margin: 1% 3% 0% 3%;
+	  -webkit-box-shadow:0 0 10px rgba(0, 204, 204, .5);  
+	  -moz-box-shadow:0 0 10px rgba(0, 204, 204, .5);  
+	  box-shadow:0 0 10px rgba(0, 204, 204, .5); 
+}
+.biaoti1 h2{
+	font-family: "微软雅黑";
+	font-size: 1rem;
+	text-align: center;
+	font-weight: bold;
+	color: #7d7e7e;
+}
+.divTable{
+	/*width: 100%;*/
+}
+.table1{
+	width: 94%;
+	margin: 2% 3% 0 3%;
+}
+.table1Tr1 td {
+	font-size: 200%;
+	background-color: #ccc;
+}
+/*.table1Tr2 td{
+	font-size: 180%;
+	vertical-align: middle;
+	text-align: center;
+	background-color: white;
+}*/
+.table1Tr2 td{
+	font-size: 180%;
+    border-right: 1px solid #ddd;
+    height: 2.0rem;
+    color: #666;
+    line-height: 2.0rem;
+}
+.table1 tr td a{
+    background: #3cc3f3;
+    padding: .1rem .5rem;
+    color: #fff;
+}
+.select{
+	color: #7d7e7e;
+	float: left;
+	margin-left: 1%;
+	width: 32%;
+}
+.select_1{
+	text-indent: -1%;
+	font-size: 50%;
+	font-family: "微软雅黑";
+	font-weight: 100;
+	text-align: left;
+	color: #7d7e7e;
+}
+.query_content{
+	background-color: #f5f6f6;
+	width: 94%;
+	margin: 0 3% 0 4%;
+	height: 50%;
+}
+.caijiPage h1{
+	font-family: "微软雅黑";
+	color: white;
+	font-weight: normal;
+}
+.select_2_1 {
+	float: left;
+	width: 50%;
+}
+.select_2 {
+	margin: 3% 0 0 0 ;
+	width: 100%;
+	font-size: 80%;
+	font-family: "微软雅黑";
+	font-weight: 100;
+	text-align: left;
+	color: #7d7e7e;
+}
+.zhongdianneitong{
+	width: 96%;
+	margin: 0 2% 0 2%;
+}
+.zhongdianneitong tr td{
+	text-align: left;
+	font-family: "微软雅黑";
+	font-size: 150%;
+	color: #7d7e7e;
+}
+.zhongdianneitong tr td input{
+	font-size: 120%;
+	color: #7d7e7e;
+}
+#tips{
+	width: 96%;
+	margin: 0 2% 0 2%;
+	height: 70%;
+	
+}
+h2{
+    height: 3rem;
+    /*line-height: 3rem;*/
+    text-align: center;
+    /*box-shadow: 1px 1px 1px 1px #f2f2f2;
+    border: 1px solid #ddd;*/
+    margin-top: .0rem;
+}
+h2 span{
+    color: red;
+}
+.tit_tab ul li{
+    float: left;
+    width: 33%;
+    line-height: 3rem;
+    text-align: center;
+    color: #999;
+    font-size: 1.1rem;
+}
+.tit_tab ul li a{
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    display: block;
+    height: 3rem;
+    /*margin: 0 3rem;*/
+}
+.tit_tab ul li a.reco_head_tab_on{
+    border-bottom: 2px solid #2cc15e;
+}
+.tit_tab{
+    width: 100%;
+    height: 3rem;
+    border-bottom: 1px solid #ddd;
+    background: #fff;
+}
+.tit_tab1 ul li{
+    float: left;
+    width: 50%;
+    line-height: 3rem;
+    text-align: center;
+    color: #999;
+    font-size: 1.2rem;
+}
+.tit_tab1 ul li a{
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    display: block;
+    height: 3rem;
+    /*margin: 0 3rem;*/
+}
+.tit_tab1 ul li a.reco_head_tab_on{
+    border-bottom: 2px solid #2cc15e;
+}

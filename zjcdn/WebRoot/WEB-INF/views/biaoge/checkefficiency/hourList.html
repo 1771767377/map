@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+    <div id="echart" style="width: 900px; height: 500px;border: 1px solid #d8d8d8;margin-top: 14px;"></div>
+	<script src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+	<script src="${ctxPath!}/static/app/echarts.js"></script>
+
+	<script type="text/javascript">
+	$(function() {
+		var jsonObject = ${json};
+		for(var i in jsonObject){
+			var jsonArray = eval ("(" + jsonObject[i]+ ")");
+		}
+		require.config({
+			paths : {
+				echarts : '${ctxPath!}/static/app'
+			}
+		});
+		require([ 'echarts', 'echarts/chart/line' ], function(ec) {
+			var myChart = ec.init(document.getElementById('echart'));
+			var option = {
+				title : {
+					x:'center',
+					text : i+'工作效率分析图'
+				},
+				tooltip : {
+					trigger : 'axis'
+				},
+				grid : {
+					x:60,
+					x2:100,
+					y2:80,
+				},
+				toolbox: {
+			        show : true,
+			        y: 'bottom',
+			        feature : {
+			            mark : {show: true},
+			            dataView : {show: true, readOnly: false},
+			            magicType : {show: true, type: ['stack', 'tiled']},
+			            restore : {show: true},
+			            saveAsImage : {show: true}
+			        }
+			    },
+			    calculable : true,
+				legend : {
+					orient : 'vertical',  
+					x : 'right',
+					data : [i]
+				},
+				xAxis : [{
+					type : 'category',
+					axisLabel:{
+                         interval:0,
+                         rotate:45,
+                         margin:2,
+                     },
+					data : ['0点','1点','2点','3点','4点','5点','6点','7点','8点','9点','10点','11点','12点','13点','14点','15点','16点','17点','18点','19点','20点','21点','22点','23点']
+				}],
+				yAxis : [{
+					type : 'value',
+					axisLabel : {
+	                    formatter: '{value} 条'
+	                }
+				}],
+				series : [ {
+					name : i,
+					type : 'line',
+					data : jsonArray
+				}
+			]
+			};
+			myChart.setOption(option);
+		});
+	});
+	</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<div class="tabbable">
+	<ul class="nav nav-tabs" id="myTab">
+		<li class="active"><a data-toggle="tab" href="#home"> <i
+				class="green ace-icon fa fa-users bigger-120"></i> 检出量达标情况分析
+		</a></li>
+		
+		<li class=""><a data-toggle="tab" href="#profile"> <i
+				class="green ace-icon fa fa-users bigger-120"></i> 省份审核基准值管理
+		</a></li>
+	</ul>
+
+	<div class="tab-content">
+		
+		<div id="home" class="tab-pane active clearfix">
+			<#search>
+			<form action="${ctxPath}/check_standard/checkStandard" method="post"
+				id="search-form" target="list-page" class="center clearfix">
+				<div class="row padding-tb-10">
+					<div class="col-sm-2">
+						<label class="inline">省份：</label>
+						<select class="width-60" name="province" id="province">
+							<option value="">--请选择--</option>
+							@for(item in provinces){
+							<option value="${item.zone}">${item.name}</option>
+							@}
+						</select>
+					</div>
+					<div class="col-sm-2">
+						<label class="inline">是否达标：</label>
+						<select class="width-35" name="standard" id="standard">
+							<option value="0">全部</option>
+							<option value="1">是</option>
+							<option value="2">否</option>
+						</select>
+					</div>
+					<div class="col-sm-2">
+						<label class="inline">开始时间：</label> <input type="text"
+							name="dateStart" id="dateStart" value="${date.startDefault}"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:00'})" readonly />
+					</div>
+					<div class="col-sm-2">
+						<label class="inline">结束时间：</label> <input type="text"
+							name="dateEnd" id="dateEnd" value="${date.endDefault}"
+							onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:00'})" readonly />
+					</div>
+					<div class="col-sm-3">
+						<input type="text" class="width-45" id="search-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"
+							value="条件查询" readonly />
+						<input type="text" class="width-45" id="export-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"
+							value="数据导出" readonly />
+					</div>
+				</div>
+			</form>
+			</#search>
+			<div class="space-6"></div>
+			<div id="list-page"></div>
+		</div>
+		
+		<div id="profile" class="tab-pane">
+			<#search>
+			<form action="${ctxPath}/check_standard/pro_show" method="post" class="center clearfix"
+			id="checkBase-form" target="pro-list-page">
+				<div class="row padding-tb-10">
+					<div class="col-sm-3">
+						<label class="inline">省份：</label>
+						<input type="text" name="province" id="province"/>
+					</div>
+
+					<div class="col-sm-2">
+						<input type="text" class="width-80" id="checkBase-btn"
+							style="cursor: pointer; text-align: center; color: #fff; background-color: #f8ac59;"
+							value="条件查询" readonly />
+					</div>
+				</div>
+			</form>
+			</#search>
+			<div class="space-6"></div>
+			<div id="pro-list-page"></div>
+		</div>
+		
+	</div>
+</div>
+<style>
+#profile .center>label {
+	width: 100px;
+	text-align: right;
+}
+</style>
+<script>
+	$("#checkBase-form").getPageList({
+		'submitBtnId' : 'checkBase-btn'
+	})
+	
+	$("#search-form").getPageList({
+		'submitBtnId' : 'search-btn'
+	});
+	
+	$(function() {
+		$("#sx").hide();
+		$("#tj").hide();
+	});
+	
+	$("#export-btn").click(function(){
+		$("#myTable").table2excel({
+			exclude: ".noExl",
+            filename: "检出量达标情况分析"+new Date().format("yyyyMMddhhmmss"),
+            exclude_img: true,
+            exclude_links: true,
+            exclude_inputs: true
+		});
+	});
+</script>

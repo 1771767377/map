@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	<div id="echart" style="width: 100%; height: 200px; "></div>
+</body>
+<script src="/pekingpf/static/jquery/jquery-2.1.1.min.js"></script>
+<script src="/pekingpf/static/app/echarts.js"></script>
+<script type="text/javascript">
+function flushdata(){
+	$.ajax({
+		type : "post",
+		async : false,
+		contentType : "application/json",
+		url : "/pekingpf/overview/everyDayCount/image",
+		dataType : "json",
+		error : function() {
+			alert("不好意思,一周违规图片数据请求失败!");
+		},
+		success : function(json) {
+			var date = new Array(7);
+			var count = [0,0,0,0,0,0,0];
+			for(var i=6,j=0; i>=0; i--,j++){
+				date[j] = getDateStr(i);
+			}
+			$.each(json, function(n, value){
+				for(var i=0; i<date.length; i++){
+					if(date[i] == value.processDate){
+						count.splice(i, 1, value.illegalImage);
+						break;
+					}
+				}
+			});
+			require.config({
+				paths : {
+					echarts : '/pekingpf/static/app'
+				}
+			});
+			require([ 'echarts', 'echarts/chart/line' ], function(ec) {
+				var myChart = ec.init(document.getElementById('echart'));
+				var option = {
+					animation : false,
+					tooltip : {
+						trigger : 'axis',
+						formatter: "{b}:<br/>{c}(条)"
+					},
+					title: {
+						x: 'center',
+						text: '违规图片一周趋势'
+					},
+					xAxis: {
+						type : 'category',
+			            data : date,
+			            axisLabel: {
+			            	interval : 0,
+							rotate : -30
+			            }
+					},
+					yAxis: {
+						type: 'value'
+					},
+					series : [{  
+						data: count,
+						type: 'line'
+					}]
+				};
+				myChart.setOption(option);
+			});
+		},
+	});
+}
+$(document).ready(function(){
+	flushdata();
+	//window.setInterval(flushdata, 2000);
+});
+	function getDateStr(day){
+		var today = new Date();  
+	    var targetday_milliseconds = today.getTime() - 1000*60*60*24*day;          
+	    today.setTime(targetday_milliseconds); 
+	    var year = today.getFullYear();
+	    var month = today.getMonth()+1;
+	    var day = today.getDate();
+	    return year + "-" + (month<10? ('0'+month): month) + "-" + (day<10? ('0'+day): day);
+	}
+</script>
+</html>

@@ -1,0 +1,45 @@
+<div class="tabbable">
+	<ul class="nav nav-tabs" id="myTab">
+		<li class="active"><a data-toggle="tab" href="#home"> <i
+				class="green ace-icon fa fa-users bigger-120"></i> 图片学习库管理
+		</a></li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="home" class="tab-pane active clearfix">
+			<#search>
+			<form action="${ctxPath}/Learn_image/learn_list" method="post" id="search-form"
+				target="list-page" class="center clearfix">
+				<div class="row padding-tb-10">
+					<div class="col-sm-6">
+						<select name="status" class="width-45">
+							<option value="">全部</option>
+							<option value="2">正常</option>
+							<option value="1">不良</option>
+						</select>
+					</div>
+					<div class="col-sm-3">
+						<input type="text" class="width-45" id="search-btn" style ="cursor:pointer;text-align:center;color:#fff;background-color:#f8ac59;" value="查询" readonly/>
+					</div>
+				</div>
+			</form>
+			</#search>
+			<div id="list-page"></div>
+		</div>
+	</div>
+</div>
+<style>
+#profile .center>label {
+	width: 100px;
+	text-align: right;
+}
+</style>
+<script>
+	$("#search-form").getPageList({
+		'submitBtnId' : 'search-btn'
+	});
+	
+	$(function() {
+		$("#sx").hide();
+	});
+</script>

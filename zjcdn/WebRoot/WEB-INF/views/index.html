@@ -1,0 +1,19 @@
+<!-- 头部 -->
+@layout("/layout/header.html"){
+	<link rel="stylesheet" href="${ctxPath!}/static/ztree/metro.css" />
+	<link rel="stylesheet" href="${ctxPath}/static/validate/css/validform.css" />
+	<link rel="stylesheet" href="${ctxPath!}/static/css/custom.css" />
+@}
+
+<!-- 顶部条 -->
+@layout("/layout/navbar.html"){}
+
+<!-- 主体 -->
+@layout("/layout/main.html",{menuList:menuList!}){
+	<div id="fill-main-content" style="height:100%">
+		
+	</div>
+@}
+
+@layout("/layout/footer.html",{menuList:menuList!}){
+@}

@@ -1,0 +1,136 @@
+@var imageType = dict.getDictListByType("sys_check_pic"); //图片类型
+<div class="layer">
+	<form name="FormPost" id="pic_save" class="FormGrid">
+	
+		<input type="hidden" value="${page.province!}" id="province" />		
+		<input type="hidden" value="${page.city!}" id="city"/>
+		<input type="hidden" value="${page.information!}" id="information"/>
+		<input type="hidden" value="${page.iplist!}" id="iplist"/>
+		<input type="hidden" value="${page.linetype!}" id="linetype"/>
+		<input type="hidden" value="${page.imageturl!}" id="imageturl"/>
+		<input type="hidden" value="${page.score!}" id="score"/>
+		<input type="hidden" value="${page.date!}" id="date"/>
+		<input type="hidden" value="1" id="statusa"/>
+		<input type="hidden" value="${page.serverip!}" id="serverip"/>
+		<input type="hidden" value="${page.type!}" id="type"/>
+		<table class="EditTable" width="100%" hidden>
+			<tbody>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">省份</td>
+					<td class="DataTD width-100"><input type="text"
+						name="name" datatype="*"  nullmsg="请输入角色名！"
+						value="${page.province!}"></td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">城市</td>
+					<td class="DataTD">
+					<input type="text" value="${page.city!}" name="username"
+					datatype="*" readonly="readonly"  nullmsg="请输入登录名！"/>
+					</td>
+				</tr>
+				
+				
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">信息</td>
+					<td class="DataTD">
+					<input type="text" value="${page.information!}" name="moblie"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">IP</td>
+					<td class="DataTD">
+					<input type="text" value="${page.iplist!}" name="phone"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">类型</td>
+					<td class="DataTD">
+					<input type="text" value="${page.linetype!}" name="email"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">图片地址</td>
+					<td class="DataTD">
+					<input type="text" value="${page.imageturl!}" id="turl"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">图片分数</td>
+					<td class="DataTD">
+					<input type="text" value="${page.score!}" name="score"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">图片日期</td>
+					<td class="DataTD">
+					<input type="text" value="${page.date!}" name="date"/>
+					</td>
+				</tr>
+				<!-- <tr class="FormData">
+					<td class="CaptionTD">图片类型</td>
+					<td class="DataTD">
+					<input type="text" value="${page.status!}" name="status"/>
+					</td>
+				</tr> -->
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">服务器地址</td>
+					<td class="DataTD">
+					<input type="text" value="${page.serverip!}" name="serverip"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">图片备用</td>
+					<td class="DataTD">
+					<input type="text" value="${page.type!}" name="type"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		
+		
+		请选择图片类型：
+		<select id="chosenSelectEdit" class="width-80"   multiple class="chosen-select tag-input-style" id="pic-select" data-placeholder="选择类型">
+		@for(type in imageType){
+			<option value="${type.value!}">
+				${type.label}
+			</option>
+		@}
+		</select>
+		
+		<a href="javascript:result('${page.province}','${page.city}','${page.information}','${page.iplist}','${page.linetype}','${page.imageturl}','${page.score}','${page.date}','${page.status}','${page.serverip}','${page.type}')"><input type="button"  value="确定">
+		</a>
+		<a href="javascript:window.opener=null;window.open('','_self');window.close();"><input type="button" value="取消"></a>
+		
+		</form>
+</div>
+
+<script>
+$("#pic-select").chosen({width: "40%",search_contains: true}); 
+var temp;
+$("#chosenSelectEdit").change(function(){
+		alert($(this).val());
+		temp = $(this).val();
+		
+});
+function result(province,city,information,iplist,linetype,imageturl,score,date,status,serverip,type){
+		alert(temp);
+		$('table tr').click(function(){
+			$(this).attr("bgcolor","#7A8B8B");
+	    });
+		$.ajax({
+			url:"${ctxPath}/Check/result/result_image",
+			type:'post',
+			data: {'province':province,'city':city,'information':information,'iplist':iplist,'linetype':linetype,'imageturl':imageturl,'score':score,'date':date,'status':status,'serverip':serverip,'type':type,'tempa':temp},
+			dataType:'json',
+			success:function(){
+				alert("成功");
+				$(".layer").hide();
+				window.close();
+			}
+		});
+}
+function clo(){
+	window.close();
+}
+</script>

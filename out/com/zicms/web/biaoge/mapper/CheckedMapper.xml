@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.biaoge.mapper.CheckedMapper">
+	<!-- 显示审核完成率统计中 各省份的审核统计量 -->
+	<select id="findPageAll" parameterType="java.util.Map"
+		resultType="com.zicms.web.biaoge.model.Checked">
+		select province,zone,uncheck_count,check_count from checknumall
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(zone)">
+				and zone=#{zone}
+			</if>
+		</where>
+	</select>
+	 <!--显示审核完成率统计条件查询的结果 (按省统计)-->
+	<select id="findPageAllByDate" statementType="CALLABLE"
+		parameterType="com.zicms.web.biaoge.model.Checked" resultType="com.zicms.web.biaoge.model.Checked">
+		<![CDATA[
+		{
+		call checknum(#{zone,mode=IN,jdbcType=VARCHAR},
+		#{dateStart,mode=IN,jdbcType=VARCHAR},
+		#{dateEnd,mode=IN,jdbcType=VARCHAR})
+		}
+		]]>
+	</select>
+	 <!--显示审核完成率统计条件查询的结果 (按省和小时统计)-->
+	<select id="findAllByHour" statementType="CALLABLE"
+		parameterType="com.zicms.web.biaoge.model.Checked" resultType="com.zicms.web.biaoge.model.Checked">
+		<![CDATA[
+		{
+		call checkedByHour(#{zone,mode=IN,jdbcType=VARCHAR},
+		#{dateStart,mode=IN,jdbcType=VARCHAR},
+		#{dateEnd,mode=IN,jdbcType=VARCHAR})
+		}
+		]]>
+	</select>
+	 <!--显示审核完成率统计条件查询的结果 (按省和天统计)-->
+	<select id="findAllByDay" statementType="CALLABLE"
+		parameterType="com.zicms.web.biaoge.model.Checked" resultType="com.zicms.web.biaoge.model.Checked">
+		<![CDATA[
+		{
+		call checkedByDay(#{zone,mode=IN,jdbcType=VARCHAR},
+		#{dateStart,mode=IN,jdbcType=VARCHAR},
+		#{dateEnd,mode=IN,jdbcType=VARCHAR})
+		}
+		]]>
+	</select>
+</mapper>

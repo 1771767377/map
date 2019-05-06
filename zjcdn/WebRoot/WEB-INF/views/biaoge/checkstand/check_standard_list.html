@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta content="text/html;charset=utf-8">
+<style type="text/css">
+#myTable {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+#myTable th,td {
+	text-align: center;
+	padding: .5em;
+	border: 1px solid #fff;
+}
+
+th {
+	background-color: #328aa4;
+	color: #fff;
+}
+
+td {
+	background: #e5f1f4;
+}
+
+tr.even td {
+	background: #e5f1f4;
+}
+
+tr.odd td {
+	background: #f8fbfc;
+}
+
+tr.over td {
+	background: #bce774;
+}
+
+tr.out td {
+	
+}
+</style>
+</head>
+<body>
+	<table width="500" id="myTable" cellspacing="0" cellpadding="0">
+		<thead>
+			<tr>
+				<th class="center">省份</th>
+				<th class="center">送审量</th>
+				<th class="center">待审核量</th>
+				<th class="center">已审核量</th>
+				<th class="center">审核任务基准值(条/天)</th>
+				<th class="center">不良信息检出量</th>
+				<th class="center">需审总量</th>
+				<th class="center">达标率</th>
+				<th class="center">是否达标</th>
+			</tr>
+		</thead>
+	
+		<tbody id="tbody">
+		</tbody>
+		<tfoot id="tfoot">
+			<tr>
+				<td class="center">合计</th>
+				<td class="center"></th>
+				<td class="center"></th>
+				<td class="center"></th>
+				<td class="center"></th>
+				<td class="center"></th>
+				<td class="center"></th>
+				<td class="center">---</th>
+				<td class="center">---</th>
+			</tr>
+		</tfoot>
+	</table>
+</body>
+<script>
+	$(function(){
+		var page = ${page};
+		var tbody = $("#tbody");
+		tbody.empty();
+		for(var index in page){
+			if(typeof(page[index])=='function'){
+				continue;
+			}else{
+				var checkCount = page[index].checkCount;
+				var uncheckCount = page[index].uncheckCount;
+				var checkBase = page[index].checkBase;
+				var checkOut = page[index].checkOut;
+				if(!uncheckCount) uncheckCount = 0;
+				if(!checkCount) checkCount = 0;
+				if(!checkOut) checkOut = 0;
+				if(!checkBase) checkBase=99999;
+				var totleCount = checkCount + uncheckCount;
+				var checkNeed = checkBase - checkOut;
+				var standardRate = Math.round(checkOut/checkBase*10000)/100;
+				var standard = standardRate>100?"是":"否";
+				var isStandard = ${standard};
+				var tr = $("<tr></tr>");
+				tr.append("<td class='center'>"+page[index].name+"</td>");
+				tr.append("<td class='center'>"+totleCount+"</td>");
+				tr.append("<td class='center'>"+uncheckCount+"</td>");
+				tr.append("<td class='center'>"+checkCount+"</td>");
+				tr.append("<td class='center'>"+checkBase+"</td>");
+				tr.append("<td class='center'>"+checkOut+"</td>");
+				tr.append("<td class='center'>"+checkNeed+"</td>");
+				tr.append("<td id=standardRate"+index+" class='center'>"+standardRate+"%</td>");
+				tr.append("<td id=standard"+index+" class='center'>"+standard+"</td>");
+				if(isStandard == 0){  //显示全部
+					tbody.append(tr);
+				}else if(isStandard==1 && standardRate>100){  //显示已达标
+					tbody.append(tr);
+				}else if(isStandard==2 && standardRate<100){  //显示未达标
+					tbody.append(tr);
+				}
+				if(standardRate>100){
+					$("#standardRate"+index).attr("class","center green");
+					$("#standard"+index).attr("class","center green");
+				}else{
+					$("#standardRate"+index).attr("class","center red");
+					$("#standard"+index).attr("class","center red");
+				}
+			}
+		}
+	})
+	
+	//合计
+	$(function() {
+		var totalSum = 0;
+		var checkSum = 0;
+		var uncheckSum = 0;
+		var baseTotal = ${baseTotal};
+		if(baseTotal == 0) {
+			baseTotal = 99999;
+		}
+		var outSum = 0;
+		var needSum = 0;
+		$("#tbody tr").each(function(){
+			totalSum += Number($(this).children().eq(1).text());
+			uncheckSum += Number($(this).children().eq(2).text());
+			checkSum += Number($(this).children().eq(3).text());
+			outSum += Number($(this).children().eq(5).text());
+		})
+		$("#tfoot tr").children().eq(1).text(totalSum);
+		$("#tfoot tr").children().eq(2).text(uncheckSum);
+		$("#tfoot tr").children().eq(3).text(checkSum);
+		$("#tfoot tr").children().eq(4).text(baseTotal);
+		$("#tfoot tr").children().eq(5).text(outSum);
+		$("#tfoot tr").children().eq(6).text(baseTotal-outSum);
+	})
+	
+	//隔行变色样式
+		$(function() {
+			var changeTr = document.getElementById("myTable").getElementsByTagName("tr");
+			for (i = 0; i < changeTr.length; i++) {
+				changeTr[i].className = (i % 2 > 0) ? "even" : "odd";
+				changeTr[i].temp = changeTr[i].className;
+				changeTr[i].onmouseover = function() {
+					this.className = 'over';
+				}
+				changeTr[i].onmouseout = function() {
+					this.className = this.temp;
+				}
+			}
+		})
+</script>

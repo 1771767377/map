@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>不良信息审核系统统计报表</title>
+<meta content="text/html;charset=utf-8">
+<style type="text/css">
+#myTable {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+#myTable th,td.one,td.one_1  {
+	text-align: center;
+	padding: .5em;
+	border: 1px solid gray;
+}
+
+th {
+	background-color: #328aa4;
+	color: #fff;
+}
+
+td.one_1 {
+	background: #e5f1f4;
+} 
+
+</style>
+</head>
+<body>
+<table  width="500" id="myTable" cellspacing="0" cellpadding="0">
+	<thead>
+		<tr class="abc">
+			<th width="15%" class="center">审核账号</th>
+			<th width="12%" class="center">结算标准（条/元）</th>
+			<th class="center">审核量</th>
+			<th class="center">应付工资</th>
+			<th class="center">姓名</th>
+			<th class="center">联系电话</th>
+			<th class="center">银行账号</th>
+			<th class="center">开户行</th>
+			<th class="center">操作</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@for(item in accounts){
+			<tr class="abc">
+				<td  class="one center">${item.username!}</td>
+				<td contentEditable="plaintext-only" class="one center">${item.standardSettlement!}</td>
+				<td contentEditable="plaintext-only" class="one center">${item.auditVolume!}</td>
+				<td contentEditable="plaintext-only" class="one center">${item.salary!}</td>
+				<td contentEditable="plaintext-only" class="one center">${item.name!}</td>
+				<td contentEditable="plaintext-only" class="one center">${item.telephone!}</td>
+				<td contentEditable="plaintext-only" class="one center">${item.bankAccount!}</td>
+				<td contentEditable="plaintext-only"  class="one center">${item.openBank!}</td>
+				<td class="one center">
+					<div class="hidden-sm hidden-xs action-buttons">
+						<a class="red" href="javascript:save('${item.id!}','${itemLP.index}');" title="保存">
+							<i class="glyphicon glyphicon-plus-sign bigger-130"></i>
+						</a>
+					</div>
+				</td>
+			</tr>
+		@}
+		<tr class="abc">
+		<td class="one_1">合计</td>
+		<td class="one_1">无</td>
+		<td class="one_1">无</td>
+		<td contentEditable="plaintext-only" class="one_1" ></td>
+		<td class="one_1">无</td>
+		<td class="one_1">无</td>
+		<td class="one_1">无</td>
+		<td class="one_1">无</td>
+		<td class="one_1">无</td>
+		</tr>
+	</tbody>
+</table>
+<div class="space-8"></div>
+</body>
+<script type="text/javascript">
+function save(id,index) {//异步批量删除
+		 //获取编辑后的数据
+	 	//去除换行符
+		var reg = new RegExp("<br>","g");
+	    var username=$.trim($("tr").eq(index).find("td").eq(0).html()).replace(reg,"");
+	    var standardSettlement=$.trim($("tr").eq(index).find("td").eq(1).html()).replace(reg,"");
+	    var auditVolume=$.trim($("tr").eq(index).find("td").eq(2).html()).replace(reg,"");
+	    var salary=$.trim($("tr").eq(index).find("td").eq(3).html()).replace(reg,"");
+	    var name=$.trim($("tr").eq(index).find("td").eq(4).html()).replace(reg,"");
+	    var telephone=$.trim($("tr").eq(index).find("td").eq(5).html()).replace(reg,"");
+	    var bankAccount=$.trim($("tr").eq(index).find("td").eq(6).html()).replace(reg,"");
+	  	var openBank= $.trim($("tr").eq(index).find("td").eq(7).html()).replace(reg,""); 
+		//验证
+		//数字验证
+		 reg = new RegExp("^[0-9]+$");
+	  if(!reg.test(standardSettlement)||!reg.test(auditVolume)){
+       			alert("审核标准或审核量输入有误，请输入数字");
+       			return false;
+      }
+	//工资验证
+	reg=new  RegExp("^(([1-9][0-9]*)|((([1-9][0-9]*)|0)\.[0-9]{1,2}))$");
+	if(!reg.test(salary)){
+       			alert("工资输入有误，请输入正确类型的工资（最多保存俩位数）");
+       			return false;
+      }
+	//联系电话验证
+	//手机
+	reg=new  RegExp("^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\\d{8})?$");
+	//座机
+	var reg_1=new  RegExp("^(0[0-9]{2,3}\\-)?([1-9][0-9]{6,7})$");
+	if(!reg.test(telephone)&&!reg_1.test(telephone)){
+       	alert("联系电话输入有误");
+       	return false;
+     }
+	//银行账号验证（无验证，待做）
+		//保存时变色
+		 // $(this).css("background", "#D1EEEE"); 
+		$(".abc").eq(index).css("background", "#e5f1f4"); 
+		$.ajax({
+			url:"${ctxPath}/part_time_salary/save",
+			type:'post',
+			data: {'id':id,'username':username,'standardSettlement':standardSettlement,'auditVolume':auditVolume,'salary':salary,'name':name,'telephone':telephone,'bankAccount':bankAccount,'openBank':openBank},
+			dataType:'json',
+			success:function(){
+			alert("成功保存！");
+			}
+		});
+	}
+</script>
+</html>

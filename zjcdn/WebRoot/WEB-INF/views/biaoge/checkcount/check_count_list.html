@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>不良信息审核系统统计报表</title>
+<meta content="text/html;charset=utf-8">
+<style type="text/css">
+#myTable {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+#myTable th,td {
+	text-align: center;
+	padding: .5em;
+	border: 1px solid #fff;
+}
+
+th {
+	background-color: #328aa4;
+	color: #fff;
+}
+
+td {
+	background: #e5f1f4;
+}
+
+tr.even td {
+	background: #e5f1f4;
+}
+
+tr.odd td {
+	background: #f8fbfc;
+}
+
+tr.over td {
+	background: #bce774;
+}
+
+tr.out td {
+	
+}
+</style>
+</head>
+<body>
+	<table width="500" id="myTable" cellspacing="0" cellpadding="0">
+		<thead>
+			<tr>
+				<th>审核人员</th>
+				<th>已审核量</th>
+				<th>审核标准值（条/人*天）</th>
+				<th>人员工作量达标率</th>
+				<th>贡献率</th>
+				<th>排名</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for(item in page){
+			<tr class="main">
+				<td><a class="green"
+					href="javascript:checkSelect('${item.account}')">${item.account}</a>
+				</td>
+				<td class="checkCount">${item.checkCount}</td>
+				<td class="checkStandard">@if(item.checkStandard==null){
+					<script type="text/javascript">
+					alert("请提前录入审核标准值");
+					$(".checkStandard").eq(${itemLP.index-1}).text("0");
+					</script>
+				@}else{
+					${item.checkStandard}
+				@}
+				</td>
+				<td class="checkrate">@if(item.checkStandard==null){
+					0
+				@}else{
+					 ${parseInt(item.checkCount)/parseInt(item.checkStandard),numberFormat='##.##%'}
+				@}
+				</td>
+				<td>@if(count==null){
+					0
+				@}else{
+					 ${parseInt(item.checkCount)/parseInt(count),numberFormat='##.##%'}
+				@}
+				</td>
+				<td>${itemLP.index}</td>
+			</tr>
+			@}
+			<tr class="total">
+				<td class="center">合计</td>
+				<td class="center"></td>
+				<td class="center"></td>
+				<td class="center"></td>
+				<td class="center">贡献率</td>
+				<td class="center">无</td>
+			</tr>
+		</tbody>
+	</table>
+	<script type="text/javascript">
+		//合计计算	
+		$(function() {
+			var checkCount = 0;
+			var checkStandard = 0;
+			for ( var i = 0; i < $("tr").length - 2; i++) {
+				checkCount = parseInt(checkCount)
+						+ parseInt($(".main .checkCount").eq(i).text().trim());//已审核
+				checkStandard = parseInt(checkStandard)
+						+ parseInt($(".main .checkStandard").eq(i).text()
+								.trim());//审核标准
+			}
+			$(".total td").eq(1).text(checkCount);
+			$(".total td").eq(2).text(checkStandard);
+			$(".total td").eq(3).text(
+					(checkCount * 100 / checkStandard).toFixed(2) + "%");//达标率
+		})
+		//跳转审核人员工作量分析表格
+		function checkSelect(account) {
+		var dateStart=$("input[name='dateStart']").val();
+		var dateEnd=$("input[name='dateEnd']").val();
+		var url  = "${ctxPath}/check_count/checkwork?account=" + account+"&dateStart="+dateStart+"&dateEnd="+dateEnd;	
+		window.open (url,'newwindow','height=300,width=800,top=200px,left=300px,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no') ;	
+		}
+		//隔行变色样式
+		$(function() {
+			var changeTr = document.getElementById("myTable").getElementsByTagName("tr");
+			for (i = 0; i < changeTr.length; i++) {
+				changeTr[i].className = (i % 2 > 0) ? "even" : "odd";
+				changeTr[i].temp = changeTr[i].className;
+				changeTr[i].onmouseover = function() {
+					this.className = 'over';
+				}
+				changeTr[i].onmouseout = function() {
+					this.className = this.temp;
+				}
+			}
+		})
+	</script>
+</body>
+</html>

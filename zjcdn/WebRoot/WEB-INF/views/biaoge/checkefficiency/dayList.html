@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+    <div id="echart" style="width: 900px; height: 500px;border: 1px solid #d8d8d8;margin-top: 14px;"></div>
+	<script src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+	<script src="${ctxPath!}/static/app/echarts.js"></script>
+
+	<script type="text/javascript">
+	$(function() {
+		var list = ${list};
+		console.log(list);
+		var dateStart = new Date('${dateStart}');
+		var xList = new Array(7);  //给x轴赋值
+		var xdata = new Array(7);  //获取日期对应的审核量
+		for(var i=0; i<xList.length; i++){
+			xList[i] = addDay(dateStart,i);
+		}
+		console.log(xList);
+		for(var account in list){
+			var dateCount = list[account];
+			console.log(xList.length);
+			for(var i=0; i<xList.length; i++){
+				var flag = false;
+				console.log(xList[i]);
+				for(var date in dateCount){
+					if(date == xList[i]){
+						flag = true;
+						break;
+					}
+				}
+				if(flag){
+					xdata[i] = dateCount[date];		
+				}else{
+					xdata[i] = 0;
+				}
+			}
+		}
+		console.log(xdata);
+		require.config({
+			paths : {
+				echarts : '${ctxPath!}/static/app'
+			}
+		});
+		require([ 'echarts', 'echarts/chart/line' ], function(ec) {
+			var myChart = ec.init(document.getElementById('echart'));
+			var option = {
+				title : {
+					x: 'center',
+					text : account + '工作效率分析图'
+				},
+				tooltip : {
+					trigger : 'axis'
+				},
+				grid : {
+					x:60,
+					x2:100,
+					y2:80,
+				},
+				toolbox: {
+			        show : true,
+			        y: 'bottom',
+			        feature : {
+			            mark : {show: true},
+			            dataView : {show: true, readOnly: false},
+			            magicType : {show: true, type: ['stack', 'tiled']},
+			            restore : {show: true},
+			            saveAsImage : {show: true}
+			        }
+			    },
+			    calculable : true,
+				legend : {
+					orient : 'vertical',  
+					x : 'right',
+					data : [account],
+				    textStyle : { //图例文字的样式
+						fontSize : 14,
+						color : 'black'
+					},
+					itemWidth : 40, //图例标记的图形宽度
+					itemHeight : 20
+				},
+				xAxis : [{
+					type : 'category',
+					axisLabel:{
+                         interval: 0,
+                         rotate: 45,
+                         margin: 2,
+                     },
+                     textStyle : {
+							color : "black", //刻度颜色
+							fontSize : 16
+						//刻度大小
+					},
+					data : xList
+				}],
+				yAxis : [{
+					type : 'value',
+					axisLabel : {
+	                    formatter: '{value} 条'
+	                }
+				}],
+				series : [ {
+					name : account,
+					type : 'line',
+					data : xdata
+				}
+			]
+			};
+			myChart.setOption(option);
+		});
+	});
+	
+	//开始日期往后顺延7天
+	function addDay(date,days){
+		var d = new Date(date);
+		d.setDate(d.getDate()+days);
+		var month = d.getMonth()+1;
+		var day = d.getDate();
+		if(month<10){
+			month = "0" + month;
+		}
+		if(day<10){
+			day = "0" + day;
+		}
+		var val = d.getFullYear()+"-"+month+"-"+day;
+		return val;
+	}
+	</script>
+</body>
+</html>

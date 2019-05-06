@@ -1,0 +1,1484 @@
+<div class="tabbable">
+	<ul class="nav nav-tabs" id="myTab">
+		<li class="active">
+		<a data-toggle="tab" href="#ip" id="aip"> 
+			<i class="green ace-icon fa fa-users bigger-120"></i>ip topn
+		</a>
+		</li>
+
+		<li class="">
+		<a data-toggle="tab" href="#domain" id="adomain"> 
+			<i class="green ace-icon fa fa-plus bigger-120"></i>域名 topn
+		</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="ip" class="tab-pane active clearfix">
+			<!-- ip分析 -->
+			<div style="border:1px solid white;width:650px;height:52px;padding: 10px;text-align: center">
+			<font color="#fff">年份：</font><select id="ipSelectone">
+				<option value="2018">2018</option>
+				<option value="2019" selected>2019</option> 
+			</select>
+			<font color="#fff">月份：</font><select id="ipSelecttwo">
+				<option value="">--请选择--</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+			</select>
+			<font color="#fff">类型：</font><select id="ipSelectthree" >
+				<option value="img_ip_top">图片</option>
+				<option value="video_ip_top">视频</option>
+				<!-- <option value="text_ip_top">文本</option> -->
+			</select>
+			<input type="button" value="搜索" class="button" onclick="ipSearch()">
+			</div>
+            <div id="ipEchartone" style="width:650px;height:490px;float:left;margin-top:10px"></div>
+            <div id="ipEcharttwo" style="width:50%;height:300px;float:left;display:'';margin-top:-50px"></div>
+			<div id="ipEchartthree" style="width:49%;height:230px;float:right;display:'';margin-top:20px"></div>
+		</div>
+    
+		<div id="domain" class="tab-pane clearfix">
+			<!-- 域名分析 -->
+			<div style="border:1px solid white;width:650px;height:52px;padding: 10px;text-align:center">
+			<font color="#fff">年份：</font><select id="domainSelectone">
+				<option value="2018">2018</option>
+				<option value="2019" selected>2019</option> 
+			</select>
+			<font color="#fff">月份：</font><select id="domainSelecttwo">
+				<option value="">--请选择--</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+			</select>
+			<font color="#fff">类型：</font><select id="domainSelectthree">
+				<option value="img_domain_top">图片</option>
+				<option value="video_domain_top">视频</option>
+				<!-- <option value="text_domain_top">文本</option> -->
+			</select>
+			<input type="button" value="搜索" class="button" onclick="domainSearch()">
+			</div>
+		    <div id="domainEchartone" style="width:650px; height:490px;float:left;margin-top:10px"></div>
+            <div id="domainEcharttwo" style="width:50%;height:300px;float:left;display:'';margin-top:-50px"></div>
+			<div id="domainEchartthree" style="width:49%;height:250px;float:right;display:'';overflow:auto;margin-top:-2px"></div>
+		</div>
+	</div>
+</div>
+<style>
+		
+.button { /* 按钮美化 */
+	width: 100px; /* 宽度 */
+	height: 30px; /* 高度 */
+	border-width: 0px; /* 边框宽度 */
+	border-radius: 3px; /* 边框半径 */
+	background: #1E90FF; /* 背景颜色 */
+	cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
+	outline: none; /* 不显示轮廓线 */
+	font-family: Microsoft YaHei; /* 设置字体 */
+	color: white; /* 字体颜色 */
+	font-size: 17px; /* 字体大小 */
+	margin-left: 30px;
+}
+
+</style>
+
+
+<script type="text/javascript">
+
+				$(function(){
+					ipSearch();
+				})
+
+				/* ip */
+				function ipSearch(){
+					
+					document.getElementById('ipEcharttwo').style.display='none';
+	     		    document.getElementById('ipEchartthree').style.display='none';
+					
+					var years = $("#ipSelectone").val();
+					var months = $("#ipSelecttwo").val();
+					var tablename = $("#ipSelectthree").val();
+					if(years==""){
+						alert("请先选择年份");
+					}else if(years!=""&&months==""){
+						
+						$.ajax({
+							url:"${ctxPath}/topnStatistics/getMonthCountIP",
+							data:{"year":years,"table":tablename},
+							dataType:"json",
+							type:"post",
+							async:false,
+							success:function(data){
+								finddataIpMonth(data,tablename,years);
+							},
+							error : function(){
+								alert("请求数据失败！");
+							}
+						})
+					}else if(years!=""&&months!=""){
+						//alert("展示月份");
+						
+						$.ajax({
+							url:"${ctxPath}/topnStatistics/getDayCountIP",
+							data:{"year":years,"monthdata":months,"table":tablename},
+							dataType:"json",
+							type:"post",
+							async:false,
+							success:function(data){
+								finddataIpDay(data,tablename,years);
+							},
+							error : function(){
+								alert("请求数据失败！");
+							}
+						})
+					}
+				}		
+
+				//月
+	    		function finddataIpMonth(data,tablename,years){
+					
+					//console.log(data);
+					
+	    			var datearr = [1,2,3,4,5,6,7,8,9,10,11,12]
+	    			var iparr1=[0,0,0,0,0,0,0,0,0,0,0,0]
+	    			var iparr2=[0,0,0,0,0,0,0,0,0,0,0,0]
+	    			var iparr3=[0,0,0,0,0,0,0,0,0,0,0,0]
+	    			var iparr4=[0,0,0,0,0,0,0,0,0,0,0,0]
+	    			var iparr5=[0,0,0,0,0,0,0,0,0,0,0,0]
+	    			var valuearr1= [0,0,0,0,0,0,0,0,0,0,0,0]
+	    			var valuearr2= [0,0,0,0,0,0,0,0,0,0,0,0]
+	    			var valuearr3= [0,0,0,0,0,0,0,0,0,0,0,0]
+	    			var valuearr4= [0,0,0,0,0,0,0,0,0,0,0,0]
+	    			var valuearr5= [0,0,0,0,0,0,0,0,0,0,0,0]
+	    			
+	    			var ipname = new Array();
+					//console.log(iparr1);
+	    			$.each(data,function(index,value){
+	    				for (var j = 0; j < datearr.length; j++) {
+	    					//alert(datearr[j]);
+	    					if(datearr[j]==value.dates){
+	    						//alert(value.dates);
+	    						var iplength = value.ip.split(",");
+	    						//console.log(iplength);
+	    						var dalength = value.count.split(",");
+	    						iparr1.splice(j, 1, iplength[0]);
+	    						iparr2.splice(j, 1, iplength[1]);
+	    						iparr3.splice(j, 1, iplength[2]);
+	    						iparr4.splice(j, 1, iplength[3]);
+	    						iparr5.splice(j, 1, iplength[4]); 
+	    						valuearr1.splice(j, 1, dalength[0]);
+	    						valuearr2.splice(j, 1, dalength[1]);
+	    						valuearr3.splice(j, 1, dalength[2]);
+	    						valuearr4.splice(j, 1, dalength[3]);
+	    						valuearr5.splice(j, 1, dalength[4]);
+	    						break;
+	    					}
+	    				}
+	    				
+					}) 
+	    			
+	    			for (var j = 0; j < valuearr1.length; j++) {
+						if(valuearr1[j]==undefined){
+							valuearr1[j]="";
+						}
+						if(valuearr2[j]==undefined){
+							valuearr2[j]="";
+						}
+						if(valuearr3[j]==undefined){
+							valuearr3[j]="";
+						}
+						if(valuearr4[j]==undefined){
+							valuearr4[j]="";
+						}
+						if(valuearr5[j]==undefined){
+							valuearr5[j]="";
+						}
+					}
+					
+					for (var i = 0; i < datearr.length; i++) {
+						datearr.splice(i, 1, i+1+"月");
+					} 
+	    			
+		    		var myChart1 = echarts.init(document.getElementById('ipEchartone'));
+		            // 指定图表的配置项和数据
+		            var option = {
+		            	    title: {
+		            	        text: years+'年TOP5分析图',
+		            	        x: 'center',
+								textStyle : {
+									color : '#fff'
+								}
+		            	    },
+		            	    //backgroundColor: '#fff',
+		            	    color: ['#FF9E10','#FF9E67', '#FFC376', '#FFD6B7', '#cccccc'],
+		            	    barWidth: 50,
+		            	    tooltip: {
+		            	        trigger: 'axis',
+		            	        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+		            	            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+		            	        },
+		            	        backgroundColor: '#fff',
+		            	        extraCssText: 'box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.2);',
+		            	        textStyle: {
+		            	            color: "#333",
+		            	        }
+		            	    },
+		            	    grid: {
+		            	        left: '0%',
+		            	        right: '0%',
+		            	        bottom: '3%',
+		            	        top: '10%',
+		            	        containLabel: true
+		            	    },
+		            	    legend: {
+		            	        align: 'left',
+		            	        position: 'left',
+		            	        left: 150,
+		            	        top: 30,
+		            	        textStyle: {
+		            	            color: '#fff',
+		            	        },
+		            	        data:[{
+		            	            type: 'bar',
+		            	            name: 'top1',
+		            	            stack: '总量',
+		            	            data: valuearr1
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: 'top2',
+		            	            stack: '总量',
+		            	            data: valuearr2
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: 'top3',
+		            	            stack: '总量',
+		            	            data: valuearr3
+		            	        },{
+		            	            type: 'bar',
+		            	            name: 'top4',
+		            	            stack: '总量',
+		            	            data: valuearr4
+		            	        },{
+		            	            type: 'bar',
+		            	            name: 'top5',
+		            	            stack: '总量',
+		            	            data: valuearr5
+		            	        }]
+		            	    },  
+		            	    xAxis: {
+		            	        type: 'category',
+		            	        data: datearr,
+		            	        axisLabel : {
+									textStyle : {
+										color : '#fff'
+									},
+									interval : 0
+								}
+		            	    },
+		            	    yAxis: {
+		            	        type: 'value',
+		            	        splitLine: {
+		            	            show: true,
+		            	            lineStyle: {
+		            	                color: ['#f2f2f2']
+		            	            }
+		            	        },
+		            	        axisLabel : {
+									textStyle : {
+										color : '#fff'
+									}
+								}
+		            	    },
+		            	    series: [{
+		            	            type: 'bar',
+		            	            name: "top1",
+		            	            stack: '总量',
+		            	            data: valuearr1
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: "top2",
+		            	            stack: '总量',
+		            	            data: valuearr2
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: "top3",
+		            	            stack: '总量',
+		            	            data: valuearr3
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: "top4",
+		            	            stack: '总量',
+		            	            data: valuearr4
+		            	        },{
+		            	            type: 'bar',
+		            	            name: "top5",
+		            	            stack: '总量',
+		            	            data: valuearr5
+		            	        }
+		            	    ]
+		            	};
+		            myChart1.clear();
+		            myChart1.setOption(option);
+		            myChart1.off('click');
+		            myChart1.on('click',function(param){
+						getYearDataIp(param,tablename);
+					});
+	    		}
+				
+	    		function getYearDataIp(paramone,tablename){
+
+	    			document.getElementById('ipEcharttwo').style.display='';
+	     		    document.getElementById('ipEchartthree').style.display='';
+	    			
+	    			var years = $("#ipSelectone").val();
+	    			var tablename = $("#ipSelectthree").val();
+	    			var month = paramone.name;
+	    			
+	    			$.ajax({
+	    				url:"${ctxPath}/topnStatistics/checkMonthIP",
+	    				data:{"year":years,"monthdata":month,"table":tablename},
+	    				type:"post",
+	    				dataType:"json",
+	    				async:false,
+	    				success:function(data){
+	    					
+	    				   var ipEchart = '<table class="table table-striped table-bordered table-hover nomargin-bottom" id="table"><thead><tr><th class="center">IP</th><th class="center">数量</th></tr></thead><tbody class="tbod">';
+	     				   for (var i = 0; i < data.length; i++) {
+	     					   //console.log(data[i].name+"......"+data[i].value);
+	     					   ipEchart+='<tr><td class="center">'+data[i].name+'</td>'+'<td class="center">'+data[i].value+'</td></tr>';
+	     				   }
+	     				   ipEchart += '</tbody></table>';
+	     				   $("#ipEchartthree").html(ipEchart);
+	     				   //console.log(ipEchart);
+	     				   var myChart1 = echarts.init(document.getElementById("ipEcharttwo"));
+	     	    		   
+	     	    		   var scale = 1;
+	     	    		   var rich = {
+	     	    		       yellow: {
+	     	    		           color: "#ffc72b",
+	     	    		           fontSize: 20 * scale,
+	     	    		           padding: [5, 4],
+	     	    		           align: 'center'
+	     	    		       },
+	     	    		       total: {
+	     	    		           color: "#ffc72b",
+	     	    		           fontSize: 40 * scale,
+	     	    		           align: 'center'
+	     	    		       },
+	     	    		       white: {
+	     	    		           color: "#fff",
+	     	    		           align: 'center',
+	     	    		           fontSize: 14 * scale,
+	     	    		           padding: [21, 0]
+	     	    		       },
+	     	    		       blue: {
+	     	    		           color: '#49dff0',
+	     	    		           fontSize: 16 * scale,
+	     	    		           align: 'center'
+	     	    		       },
+	     	    		       hr: {
+	     	    		           borderColor: '#0b5263',
+	     	    		           width: '100%',
+	     	    		           borderWidth: 1,
+	     	    		           height: 0,
+	     	    		       }
+	     	    		   }
+	     	    		   option = {
+	     	    		       title: {
+	     	    		           text:'topn总数',
+	     	    		           left:'center',
+	     	    		           top:'50%',
+	     	    		           padding:[24,0],
+	     	    		           textStyle:{
+	     	    		               color:'#fff',
+	     	    		               fontSize:18*scale,
+	     	    		               align:'center'
+	     	    		           }
+	     	    		       },
+	     	    		       legend: {
+	     	    		           selectedMode:false,
+	     	    		           formatter: function(name) {
+	     	    		               var total = 0; 
+	     	    		               var averagePercent; 
+	     	    		               data.forEach(function(value, index, array) {
+	     	    		                   total += value.value;
+	     	    		               });
+	     	    		               return '{total|' + total + '}';
+	     	    		           },
+	     	    		           data: [data[0].name],
+	     	    		           left: 'center',
+	     	    		           top: 'center',
+	     	    		           icon: 'none',
+	     	    		           align:'center',
+	     	    		           textStyle: {
+	     	    		               color: "#fff",
+	     	    		               fontSize: 16 * scale,
+	     	    		               rich: rich
+	     	    		           },
+	     	    		       },
+	     	    		       series: [{
+	     	    		           type: 'pie',
+	     	    		           radius: ['55%', '70%'],
+	     	    		           hoverAnimation: false,
+	     	    		           minAngle: 5,         　　 //最小的扇区角度（0 ~ 360），用于防止某个值过小导致扇区太小影响交互
+	     	    	               avoidLabelOverlap: true,   //是否启用防止标签重叠策略
+	     	    		           color: ['#c487ee', '#deb140', '#49dff0', '#034079', '#6f81da', '#00ffb4'],
+	     	    		           label: {
+	     	    		        	  normal: {
+		     	 			                formatter: function(params, ticket, callback) {
+		     	 			                    var total = 0; 
+		     	 			                    var percent = 0; 
+		     	 			                    data.forEach(function(value, index, array) {
+		     	 			                        total += value.value;
+		     	 			                    });
+		     	 			                    percent = ((params.value / total) * 100).toFixed(1);
+		     	 			                   
+		     	 			                    return '{white|' + params.name + '}{yellow|(}{blue|' + percent + '%}{yellow|)}';
+		     	 			                },
+		     	 			                rich: rich
+		     	 			            },
+	     	    		           },
+	     	    		           labelLine: {
+	     	    		               normal: {
+	     	    		                   length: 30 * scale,
+	     	    		                   length2: 0,
+	     	    		                   lineStyle: {
+	     	    		                       color: '#0b5263'
+	     	    		                   }
+	     	    		               }
+	     	    		           },
+	     	    		           data: data
+	     	    		       }]
+	     	    		   };
+	     	    		   myChart1.setOption(option);
+	    		    		
+	    				},
+	    				error : function(){
+	    					alert("请求数据失败！");
+	    				}
+	    			}) 
+	    		}
+	    		
+	    		//天
+	    		function finddataIpDay(data,tablename,years){
+	    			
+	    			var months = $("#ipSelecttwo").val();
+	    			var month = months.replace("月","");
+	    			var curDate = new Date();
+	    			var year = curDate.getFullYear();
+	    			var newday = new Date(year, month, 0).getDate();
+	    			var day = new Array();
+					var dayCount = new Array();
+	    			for(var i=1; i<=newday; i++){
+	    				day.push(i);
+	    				dayCount.push(0);
+	    			}
+	    			//console.log(day);
+	    			
+	    			dayCount1thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	    			dayCount2thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	    			dayCount3thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	    			dayCount4thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	    			dayCount5thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	    			$.each(data,function(index,value){
+	    				//var datalength = value.count.split(",");
+	    				//console.log(datalength.length);
+	    				
+	    				for (var i = 0; i < day.length; i++) {
+	    					if(day[i]==value.dates){
+	        					var dalength = value.count.split(",");
+	        					if(dalength.length==1){
+	        						dayCount1thirty.splice(i, 1, dalength[0]);
+	        						break;
+	        					}else if(dalength.length==2){
+	        						dayCount1thirty.splice(i, 1, dalength[0]);
+	            					dayCount2thirty.splice(i, 1, dalength[1]);
+	            					break;
+	        					}else if(dalength.length==3){
+	        						dayCount1thirty.splice(i, 1, dalength[0]);
+	            					dayCount2thirty.splice(i, 1, dalength[1]);
+	            					dayCount3thirty.splice(i, 1, dalength[2]);
+	            					break;
+	        					}else if(dalength.length==4){
+	        						dayCount1thirty.splice(i, 1, dalength[0]);
+	            					dayCount2thirty.splice(i, 1, dalength[1]);
+	            					dayCount3thirty.splice(i, 1, dalength[2]);
+	            					dayCount4thirty.splice(i, 1, dalength[3]);
+	            					break;
+	        					}else {
+	        						dayCount1thirty.splice(i, 1, dalength[0]);
+	            					dayCount2thirty.splice(i, 1, dalength[1]);
+	            					dayCount3thirty.splice(i, 1, dalength[2]);
+	            					dayCount4thirty.splice(i, 1, dalength[3]);
+	            					dayCount5thirty.splice(i, 1, dalength[4]);
+	            					break;
+	        					}
+	            			}
+						}
+	    				
+	    			})
+	    			//console.log(dayCount1thirty);
+		    		var myChart3 = echarts.init(document.getElementById('ipEchartone'));
+		            // 指定图表的配置项和数据
+		            var option = {
+		            	    title: {
+		            	        text: years+'年TOP5分析图',
+		            	        x: 'center',
+		            	        textStyle : {
+									color : '#fff'
+								}
+		            	    },
+		            	    //backgroundColor: '#fff',
+		            	    color: ['#FF9E10','#FF9E67', '#FFC376', '#FFD6B7', '#cccccc'],
+		            	    barWidth: 20,
+		            	    tooltip: {
+		            	        trigger: 'axis',
+		            	        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+		            	            type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
+		            	        },
+		            	        backgroundColor: '#fff',
+		            	        extraCssText: 'box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.2);',
+		            	        textStyle: {
+		            	            color: "#333",
+		            	        }
+		            	    },
+		            	    grid: {
+		            	        left: '0%',
+		            	        right: '0%',
+		            	        bottom: '3%',
+		            	        top: '10%',
+		            	        containLabel: true
+		            	    },
+		            	    legend : {
+		            	        align: 'left',
+		            	        position: 'left',
+		            	        left: 150,
+		            	        top: 30,
+		            	        textStyle: {
+		            	            color: '#fff',
+		            	        },
+		            	        data:[{
+		            	            type: 'bar',
+		            	            name: 'top1',
+		            	            stack: '总量',
+		            	            data: dayCount1thirty
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: 'top2',
+		            	            stack: '总量',
+		            	            data: dayCount2thirty
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: 'top3',
+		            	            stack: '总量',
+		            	            data: dayCount3thirty
+		            	        },{
+		            	            type: 'bar',
+		            	            name: 'top4',
+		            	            stack: '总量',
+		            	            data: dayCount4thirty
+		            	        },{
+		            	            type: 'bar',
+		            	            name: 'top5',
+		            	            stack: '总量',
+		            	            data: dayCount5thirty
+		            	        }]
+		            	    },
+		            	    xAxis: {
+		            	        type: 'category',
+		            	        data: day,
+		            	        axisLabel : {
+									textStyle : {
+										color : '#fff'
+									},
+									interval : 0
+								}
+		            	    },
+		            	    yAxis: {
+		            	        type: 'value',
+		            	        splitLine: {
+		            	            show: true,
+		            	            lineStyle: {
+		            	                color: ['#f2f2f2']
+		            	            }
+		            	        },
+		            	        axisLabel : {
+									textStyle : {
+										color : '#fff'
+									}
+								}
+		            	    },
+		            	    series: [{
+		            	            type: 'bar',
+		            	            name: 'top1',
+		            	            stack: '总量',
+		            	            data: dayCount1thirty
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: 'top2',
+		            	            stack: '总量',
+		            	            data: dayCount2thirty
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: 'top3',
+		            	            stack: '总量',
+		            	            data: dayCount3thirty
+		            	        },
+		            	        {
+		            	            type: 'bar',
+		            	            name: 'top4',
+		            	            stack: '总量',
+		            	            data: dayCount4thirty
+		            	        },{
+		            	            type: 'bar',
+		            	            name: 'top5',
+		            	            stack: '总量',
+		            	            data: dayCount5thirty
+		            	        }
+		            	    ]
+		            	};
+		            myChart3.clear();
+		            myChart3.setOption(option);
+		            myChart3.off('click');
+		            myChart3.on('click',function(param){
+						getMonthDataIp(param,tablename,months);
+					});
+	    	}
+	    		
+	    		function getMonthDataIp(param,tablename,months){
+	    			
+	    			document.getElementById('ipEcharttwo').style.display='';
+	     		    document.getElementById('ipEchartthree').style.display='';
+	    			
+	    			var years = $("#ipSelectone").val();
+	    			var dayname = param.name;
+	    			$.ajax({
+	    				url:"${ctxPath}/topnStatistics/checkDayIP",
+	    				data:{"year":years,"monthname":months,"table":tablename,"dayname":dayname},
+	    				dataType:"json",
+	    				type:"post",
+	    				async:false,
+	    				success:function(data){
+	    					
+	    				   var ipEchart = '<table class="table table-striped table-bordered table-hover nomargin-bottom" id="table"><thead><tr><th class="center">IP</th><th class="center">数量</th></tr></thead><tbody class="tbod">';
+	     				   for (var i = 0; i < data.length; i++) {
+	     					   //console.log(data[i].name+"......"+data[i].value);
+	     					   ipEchart+='<tr><td class="center">'+data[i].name+'</td>'+'<td class="center">'+data[i].value+'</td></tr>';
+	     				   }
+	     				   ipEchart += '</tbody></table>';
+	     				   $("#ipEchartthree").html(ipEchart);
+	     				   //console.log(ipEchart);
+	     				   var myChart1 = echarts.init(document.getElementById("ipEcharttwo"));
+	     	    		   
+	     	    		   var scale = 1;
+	     	    		   var rich = {
+	     	    		       yellow: {
+	     	    		           color: "#ffc72b",
+	     	    		           fontSize: 20 * scale,
+	     	    		           padding: [5, 4],
+	     	    		           align: 'center'
+	     	    		       },
+	     	    		       total: {
+	     	    		           color: "#ffc72b",
+	     	    		           fontSize: 40 * scale,
+	     	    		           align: 'center'
+	     	    		       },
+	     	    		       white: {
+	     	    		           color: "#fff",
+	     	    		           align: 'center',
+	     	    		           fontSize: 14 * scale,
+	     	    		           padding: [21, 0]
+	     	    		       },
+	     	    		       blue: {
+	     	    		           color: '#49dff0',
+	     	    		           fontSize: 16 * scale,
+	     	    		           align: 'center'
+	     	    		       },
+	     	    		       hr: {
+	     	    		           borderColor: '#0b5263',
+	     	    		           width: '100%',
+	     	    		           borderWidth: 1,
+	     	    		           height: 0,
+	     	    		       }
+	     	    		   }
+	     	    		   option = {
+	     	    		       title: {
+	     	    		           text:'topn总数',
+	     	    		           left:'center',
+	     	    		           top:'53%',
+	     	    		           padding:[24,0],
+	     	    		           textStyle:{
+	     	    		               color:'#fff',
+	     	    		               fontSize:18*scale,
+	     	    		               align:'center'
+	     	    		           }
+	     	    		       },
+	     	    		       legend: {
+	     	    		           selectedMode:false,
+	     	    		           formatter: function(name) {
+	     	    		               var total = 0; 
+	     	    		               var averagePercent; 
+	     	    		               data.forEach(function(value, index, array) {
+	     	    		                   total += value.value;
+	     	    		               });
+	     	    		               return '{total|' + total + '}';
+	     	    		           },
+	     	    		           data: [data[0].name],
+	     	    		           left: 'center',
+	     	    		           top: 'center',
+	     	    		           icon: 'none',
+	     	    		           align:'center',
+	     	    		           textStyle: {
+	     	    		               color: "#fff",
+	     	    		               fontSize: 16 * scale,
+	     	    		               rich: rich
+	     	    		           },
+	     	    		       },
+	     	    		       series: [{
+	     	    		           type: 'pie',
+	     	    		           radius: ['55%', '70%'],
+	     	    		           hoverAnimation: false,
+	     	    		           minAngle: 5,           　　 //最小的扇区角度（0 ~ 360），用于防止某个值过小导致扇区太小影响交互
+	     	    	               avoidLabelOverlap: true,   //是否启用防止标签重叠策略
+	     	    		           color: ['#c487ee', '#deb140', '#49dff0', '#034079', '#6f81da', '#00ffb4'],
+	     	    		           label: {
+	     	    		        	  normal: {
+	     	 			                formatter: function(params, ticket, callback) {
+	     	 			                    var total = 0; 
+	     	 			                    var percent = 0; 
+	     	 			                    data.forEach(function(value, index, array) {
+	     	 			                        total += value.value;
+	     	 			                    });
+	     	 			                    percent = ((params.value / total) * 100).toFixed(1);
+	     	 			                   
+	     	 			                    return '{white|' + params.name + '}{yellow|(}{blue|' + percent + '%}{yellow|)}';
+	     	 			                },
+	     	 			                rich: rich
+	     	 			            },
+	     	    		           },
+	     	    		           labelLine: {
+	     	    		               normal: {
+	     	    		                   length: 30 * scale,
+	     	    		                   length2: 0,
+	     	    		                   lineStyle: {
+	     	    		                       color: '#0b5263'
+	     	    		                   }
+	     	    		               }
+	     	    		           },
+	     	    		           data: data
+	     	    		       }]
+	     	    		   };
+	     	    		   myChart1.setOption(option);
+	    					
+ 	    		},
+	    		error:function(){
+	    			alert("请求失败,请联系管理员！");
+	    		}
+	    	})
+	   	}
+	    		
+	    	/* 域名 domain */	
+	    	function domainSearch(){
+	    		
+				document.getElementById('domainEcharttwo').style.display='none';
+				document.getElementById('domainEchartthree').style.display='none';
+	    		
+	    		var years = $("#domainSelectone").val();
+				var months = $("#domainSelecttwo").val();
+				var tablename = $("#domainSelectthree").val();
+				
+				if(years==""){
+					alert("请先选择年份");
+				}else if(years!=""&&months==""){
+	    			
+	    			$.ajax({
+	    				url:"${ctxPath}/topnStatistics/getMonthCountDomain",
+	    				data:{"year":years,"table":tablename},
+	    				dataType:"json",
+	    				type:"post",
+	    				async:false,
+	    				success:function(data){
+	    					finddataDomainMonth(data,tablename,years);
+	    				},
+	    				error : function(){
+	    					alert("请求数据失败！");
+	    				}
+	    			})
+				}else if(years!=""&&months!=""){
+					//alert("展示月份");
+	    			
+	    			$.ajax({
+	    				url:"${ctxPath}/topnStatistics/getDayCountDomain",
+	    				data:{"year":years,"monthdata":months,"table":tablename},
+	    				dataType:"json",
+	    				type:"post",
+	    				async:false,
+	    				success:function(data){
+	    					finddataDomainDay(data,tablename,years);
+	    				},
+	    				error : function(){
+	    					alert("请求数据失败！");
+	    				}
+	    			})
+				}
+	    	}	
+	    		
+	    	//月
+			function finddataDomainMonth(data,tablename,years){
+				
+				var datearr = [1,2,3,4,5,6,7,8,9,10,11,12]
+				var valuearr1= [0,0,0,0,0,0,0,0,0,0,0,0]
+				var valuearr2= [0,0,0,0,0,0,0,0,0,0,0,0]
+				var valuearr3= [0,0,0,0,0,0,0,0,0,0,0,0]
+				var valuearr4= [0,0,0,0,0,0,0,0,0,0,0,0]
+				var valuearr5= [0,0,0,0,0,0,0,0,0,0,0,0]
+				
+				$.each(data,function(index,value){
+					
+					for (var j = 0; j < datearr.length; j++) {
+						
+						if(datearr[j]==value.dates){
+							var dalength = value.count.split(",");
+							valuearr1.splice(j, 1, dalength[0]);
+							valuearr2.splice(j, 1, dalength[1]);
+							valuearr3.splice(j, 1, dalength[2]);
+							valuearr4.splice(j, 1, dalength[3]);
+							valuearr5.splice(j, 1, dalength[4]);
+							break;
+						}
+					}
+					
+				}) 
+				
+				for (var j = 0; j < valuearr1.length; j++) {
+					if(valuearr1[j]==undefined){
+						valuearr1[j]="";
+					}
+					if(valuearr2[j]==undefined){
+						valuearr2[j]="";
+					}
+					if(valuearr3[j]==undefined){
+						valuearr3[j]="";
+					}
+					if(valuearr4[j]==undefined){
+						valuearr4[j]="";
+					}
+					if(valuearr5[j]==undefined){
+						valuearr5[j]="";
+					}
+				}
+				
+				for (var i = 0; i < datearr.length; i++) {
+					datearr.splice(i, 1, i+1+"月");
+				} 
+				
+	    		var myChart = echarts.init(document.getElementById('domainEchartone'));
+	            // 指定图表的配置项和数据
+	            var option = {
+	            	    title: {
+	            	        text: years+'年TOP5分析图',
+	            	        x: 'center',
+	            	        textStyle : {
+								color : '#fff'
+							}
+	            	    },
+	            	    color: ['#FF9E10','#FF9E67', '#FFC376', '#FFD6B7', '#cccccc'],
+	            	    barWidth: 50,
+	            	    tooltip: {
+	            	        trigger: 'axis',
+	            	        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+	            	            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+	            	        },
+	            	        backgroundColor: '#fff',
+	            	        extraCssText: 'box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.2);',
+	            	        textStyle: {
+	            	            color: "#333",
+	            	        }
+	            	    },
+	            	    grid: {
+	            	        left: '0%',
+	            	        right: '0%',
+	            	        bottom: '3%',
+	            	        top: '10%',
+	            	        containLabel: true
+	            	    },
+	            	    legend: {
+	            	        align: 'left',
+	            	        position: 'left',
+	            	        left: 150,
+	            	        top: 30,
+	            	        textStyle: {
+	            	            color: '#fff',
+	            	        },
+	            	        data:[{
+	            	            type: 'bar',
+	            	            name: 'top1',
+	            	            stack: '总量',
+	            	            data: valuearr1
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top2',
+	            	            stack: '总量',
+	            	            data: valuearr2
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top3',
+	            	            stack: '总量',
+	            	            data: valuearr3
+	            	        },{
+	            	            type: 'bar',
+	            	            name: 'top4',
+	            	            stack: '总量',
+	            	            data: valuearr4
+	            	        },{
+	            	            type: 'bar',
+	            	            name: 'top5',
+	            	            stack: '总量',
+	            	            data: valuearr5
+	            	        }]
+	            	    },
+	            	    xAxis: {
+	            	        type: 'category',
+	            	        data: datearr,
+	            	        axisLabel : {
+								textStyle : {
+									color : '#fff'
+								},
+								interval : 0
+							}
+	            	    },
+	            	    yAxis: {
+	            	        type: 'value',
+	            	        splitLine: {
+	            	            show: true,
+	            	            lineStyle: {
+	            	                color: ['#f2f2f2']
+	            	            }
+	            	        },
+	            	        axisLabel : {
+								textStyle : {
+									color : '#fff'
+								}
+							}
+	            	    },
+	            	    series: [{
+	            	            type: 'bar',
+	            	            name: 'top1',
+	            	            stack: '总量',
+	            	            data: valuearr1
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top2',
+	            	            stack: '总量',
+	            	            data: valuearr2
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top3',
+	            	            stack: '总量',
+	            	            data: valuearr3
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top4',
+	            	            stack: '总量',
+	            	            data: valuearr4
+	            	        },{
+	            	            type: 'bar',
+	            	            name: 'top5',
+	            	            stack: '总量',
+	            	            data: valuearr5
+	            	        }
+	            	    ]
+	            	};
+	            myChart.clear();
+	            myChart.setOption(option);
+	            myChart.off('click');
+	            myChart.on('click',function(param){
+					getYearDataDomain(param,tablename);
+				});
+			}
+	    	
+	    	
+	    	function getYearDataDomain(paramone,tablename){
+	    		
+				document.getElementById('domainEcharttwo').style.display='';
+				document.getElementById('domainEchartthree').style.display='';
+	    		
+	    		var years = $("#domainSelectone").val();
+				var month = paramone.name;
+				
+				$.ajax({
+					url:"${ctxPath}/topnStatistics/checkMonthDomain",
+					data:{"year":years,"monthdata":month,"table":tablename},
+					type:"post",
+					dataType:"json",
+					async:false,
+					success:function(data){
+						
+						var domainEchart = '<table class="table table-striped table-bordered table-hover nomargin-bottom" id="table"><thead><tr><th class="center">域名</th><th class="center">数量</th></tr></thead><tbody class="tbod">';
+	    				   for (var i = 0; i < data.length; i++) {
+	    					   //console.log(data[i].name+"......"+data[i].value);
+	    					   domainEchart+='<tr><td class="center">'+data[i].name+'</td>'+'<td class="center">'+data[i].value+'</td></tr>';
+	    				   }
+	    				   domainEchart += '</tbody></table>';
+	    				   $("#domainEchartthree").html(domainEchart);
+	    				   //console.log(ipEchart);
+	    				   var myChart1 = echarts.init(document.getElementById("domainEcharttwo"));
+	    	    		   
+	    	    		   var scale = 1;
+	    	    		   var rich = {
+	    	    		       yellow: {
+	    	    		           color: "#ffc72b",
+	    	    		           fontSize: 30 * scale,
+	    	    		           padding: [5, 4],
+	    	    		           align: 'center'
+	    	    		       },
+	    	    		       total: {
+	    	    		           color: "#ffc72b",
+	    	    		           fontSize: 40 * scale,
+	    	    		           align: 'center'
+	    	    		       },
+	    	    		       white: {
+	    	    		           color: "#fff",
+	    	    		           align: 'center',
+	    	    		           fontSize: 14 * scale,
+	    	    		           padding: [21, 0]
+	    	    		       },
+	    	    		       blue: {
+	    	    		           color: '#49dff0',
+	    	    		           fontSize: 16 * scale,
+	    	    		           align: 'center'
+	    	    		       },
+	    	    		       hr: {
+	    	    		           borderColor: '#0b5263',
+	    	    		           width: '100%',
+	    	    		           borderWidth: 1,
+	    	    		           height: 0,
+	    	    		       }
+	    	    		   }
+	    	    		   option = {
+	    	    		       title: {
+	    	    		           text:'topn总数',
+	    	    		           left:'center',
+	    	    		           top:'53%',
+	    	    		           padding:[24,0],
+	    	    		           textStyle:{
+	    	    		               color:'#fff',
+	    	    		               fontSize:18*scale,
+	    	    		               align:'center'
+	    	    		           }
+	    	    		       },
+	    	    		       legend: {
+	    	    		           selectedMode:false,
+	    	    		           formatter: function(name) {
+	    	    		               var total = 0; 
+	    	    		               var averagePercent; 
+	    	    		               data.forEach(function(value, index, array) {
+	    	    		                   total += value.value;
+	    	    		               });
+	    	    		               return '{total|' + total + '}';
+	    	    		           },
+	    	    		           data: [data[0].name],
+	    	    		           left: 'center',
+	    	    		           top: 'center',
+	    	    		           icon: 'none',
+	    	    		           align:'center',
+	    	    		           textStyle: {
+	    	    		               color: "#fff",
+	    	    		               fontSize: 16 * scale,
+	    	    		               rich: rich
+	    	    		           },
+	    	    		       },
+	    	    		       series: [{
+	    	    		           type: 'pie',
+	    	    		           radius: ['55%', '70%'],
+	    	    		           hoverAnimation: false,
+	    	    		           color: ['#c487ee', '#deb140', '#49dff0', '#034079', '#6f81da', '#00ffb4'],
+	    	    		           label: {
+	    	    		        	   normal: {
+		     	 			                formatter: function(params, ticket, callback) {
+		     	 			                    var total = 0; 
+		     	 			                    var percent = 0; 
+		     	 			                    data.forEach(function(value, index, array) {
+		     	 			                        total += value.value;
+		     	 			                    });
+		     	 			                    percent = ((params.value / total) * 100).toFixed(1);
+		     	 			                   
+		     	 			                    return '{white|' + params.name + '}{yellow|(}{blue|' + percent + '%}{yellow|)}';
+		     	 			                },
+		     	 			                rich: rich
+		     	 			            },
+	    	    		           },
+	    	    		           labelLine: {
+	    	    		               normal: {
+	    	    		                   length: 30 * scale,
+	    	    		                   length2: 0,
+	    	    		                   lineStyle: {
+	    	    		                       color: '#0b5263'
+	    	    		                   }
+	    	    		               }
+	    	    		           },
+	    	    		           data: data
+	    	    		       }]
+	    	    		   };
+	    	    		   myChart1.clear();
+	    	    		   myChart1.setOption(option);
+			    		
+					},
+					error : function(){
+						alert("请求数据失败！");
+					}
+				}) 
+	    	}
+	    	
+	    	//天
+			function finddataDomainDay(data,tablename,years){
+	    		
+				document.getElementById('domainEcharttwo').style.display='none';
+	    		document.getElementById('domainEchartthree').style.display='none';
+	    		
+				var months = $("#domainSelecttwo").val();
+				var month = months.replace("月","");
+				var curDate = new Date();
+				var year = curDate.getFullYear();
+				var newday = new Date(year, month, 0).getDate();
+				var day = new Array();
+				var dayCount = new Array();
+				for(var i=1; i<=newday; i++){
+					day.push(i);
+					dayCount.push(0);
+				}
+				
+				dayCount1thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+				dayCount2thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+				dayCount3thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+				dayCount4thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+				dayCount5thirty = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+				$.each(data,function(index,value){
+					for (var i = 0; i < day.length; i++) {
+						if(day[i]==value.dates){
+	    					var dalength = value.count.split(",");
+	    					if(dalength.length==1){
+	    						dayCount1thirty.splice(i, 1, dalength[0]);
+	    						break;
+	    					}else if(dalength.length==2){
+	    						dayCount1thirty.splice(i, 1, dalength[0]);
+	        					dayCount2thirty.splice(i, 1, dalength[1]);
+	        					break;
+	    					}else if(dalength.length==3){
+	    						dayCount1thirty.splice(i, 1, dalength[0]);
+	        					dayCount2thirty.splice(i, 1, dalength[1]);
+	        					dayCount3thirty.splice(i, 1, dalength[2]);
+	        					break;
+	    					}else if(dalength.length==4){
+	    						dayCount1thirty.splice(i, 1, dalength[0]);
+	        					dayCount2thirty.splice(i, 1, dalength[1]);
+	        					dayCount3thirty.splice(i, 1, dalength[2]);
+	        					dayCount4thirty.splice(i, 1, dalength[3]);
+	        					break;
+	    					}else {
+	    						dayCount1thirty.splice(i, 1, dalength[0]);
+	        					dayCount2thirty.splice(i, 1, dalength[1]);
+	        					dayCount3thirty.splice(i, 1, dalength[2]);
+	        					dayCount4thirty.splice(i, 1, dalength[3]);
+	        					dayCount5thirty.splice(i, 1, dalength[4]);
+	        					break;
+	    					}
+	        			}
+					}
+					
+				})
+	    		var myChart = echarts.init(document.getElementById('domainEchartone'));
+	            var option = {
+	            	    title: {
+	            	        text: years+'年TOP5分析图',
+	            	        x: 'center',
+	            	        textStyle : {
+								color : '#fff'
+							}
+	            	    },
+	            	    color: ['#FF9E10','#FF9E67', '#FFC376', '#FFD6B7', '#cccccc'],
+	            	    barWidth: 20,
+	            	    tooltip: {
+	            	        trigger: 'axis',
+	            	        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+	            	            type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
+	            	        },
+	            	        backgroundColor: '#fff',
+	            	        extraCssText: 'box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.2);',
+	            	        textStyle: {
+	            	            color: "#333",
+	            	        }
+	            	    },
+	            	    grid: {
+	            	        left: '0%',
+	            	        right: '0%',
+	            	        bottom: '3%',
+	            	        top: '10%',
+	            	        containLabel: true
+	            	    },
+	            	    legend: {
+	            	        align: 'left',
+	            	        position: 'left',
+	            	        left: 150,
+	            	        top: 30,
+	            	        textStyle: {
+	            	            color: '#fff',
+	            	        },
+	            	        data:[{
+	            	            type: 'bar',
+	            	            name: 'top1',
+	            	            stack: '总量',
+	            	            data: dayCount1thirty
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top2',
+	            	            stack: '总量',
+	            	            data: dayCount2thirty
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top3',
+	            	            stack: '总量',
+	            	            data: dayCount3thirty
+	            	        },{
+	            	            type: 'bar',
+	            	            name: 'top4',
+	            	            stack: '总量',
+	            	            data: dayCount4thirty
+	            	        },{
+	            	            type: 'bar',
+	            	            name: 'top5',
+	            	            stack: '总量',
+	            	            data: dayCount5thirty
+	            	        }]
+	            	    },
+	            	    xAxis: {
+	            	        type: 'category',
+	            	        data: day,
+	            	        axisLabel : {
+								textStyle : {
+									color : '#fff'
+								},
+								interval : 0
+							}
+	            	    },
+	            	    yAxis: {
+	            	        type: 'value',
+	            	        splitLine: {
+	            	            show: true,
+	            	            lineStyle: {
+	            	                color: ['#f2f2f2']
+	            	            }
+	            	        },
+	            	        axisLabel : {
+								textStyle : {
+									color : '#fff'
+								}
+							}
+	            	    },
+	            	    series: [{
+	            	            type: 'bar',
+	            	            name: 'top1',
+	            	            stack: '总量',
+	            	            data: dayCount1thirty
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top2',
+	            	            stack: '总量',
+	            	            data: dayCount2thirty
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top3',
+	            	            stack: '总量',
+	            	            data: dayCount3thirty
+	            	        },
+	            	        {
+	            	            type: 'bar',
+	            	            name: 'top4',
+	            	            stack: '总量',
+	            	            data: dayCount4thirty
+	            	        },{
+	            	            type: 'bar',
+	            	            name: 'top5',
+	            	            stack: '总量',
+	            	            data: dayCount5thirty
+	            	        }
+	            	    ]
+	            	};
+	            myChart.clear();
+	            myChart.setOption(option);
+	            myChart.on('click',function(param){
+					getMonthDataDomain(param,tablename,months);
+				});
+			}
+	    	
+			function getMonthDataDomain(param,tablename,months){
+				
+				document.getElementById('domainEcharttwo').style.display='';
+	    		document.getElementById('domainEchartthree').style.display='';
+				
+				var years = $("#domainSelectone").val();
+				var dayname = param.name;
+				$.ajax({
+					url:"${ctxPath}/topnStatistics/checkDayDomain",
+					data:{"year":years,"month":months,"table":tablename,"dayname":dayname},
+					dataType:"json",
+					type:"post",
+					async:false,
+					success:function(data){
+						
+						var domainEchart = '<table class="table table-striped table-bordered table-hover nomargin-bottom" id="table"><thead><tr><th class="center">域名</th><th class="center">数量</th></tr></thead><tbody class="tbod">';
+	    				   for (var i = 0; i < data.length; i++) {
+	    					   domainEchart+='<tr><td class="center">'+data[i].name+'</td>'+'<td class="center">'+data[i].value+'</td></tr>';
+	    				   }
+	    				   domainEchart += '</tbody></table>';
+	    				   $("#domainEchartthree").html(domainEchart);
+	    				   var myChart1 = echarts.init(document.getElementById("domainEcharttwo"));
+	    	    		   
+	    	    		   var scale = 1;
+	    	    		   var rich = {
+	    	    		       yellow: {
+	    	    		           color: "#ffc72b",
+	    	    		           fontSize: 30 * scale,
+	    	    		           padding: [5, 4],
+	    	    		           align: 'center'
+	    	    		       },
+	    	    		       total: {
+	    	    		           color: "#ffc72b",
+	    	    		           fontSize: 40 * scale,
+	    	    		           align: 'center'
+	    	    		       },
+	    	    		       white: {
+	    	    		           color: "#fff",
+	    	    		           align: 'center',
+	    	    		           fontSize: 14 * scale,
+	    	    		           padding: [21, 0]
+	    	    		       },
+	    	    		       blue: {
+	    	    		           color: '#49dff0',
+	    	    		           fontSize: 16 * scale,
+	    	    		           align: 'center'
+	    	    		       },
+	    	    		       hr: {
+	    	    		           borderColor: '#0b5263',
+	    	    		           width: '100%',
+	    	    		           borderWidth: 1,
+	    	    		           height: 0,
+	    	    		       }
+	    	    		   }
+	    	    		   option = {
+	    	    		       title: {
+	    	    		           text:'topn总数',
+	    	    		           left:'center',
+	    	    		           top:'53%',
+	    	    		           padding:[24,0],
+	    	    		           textStyle:{
+	    	    		               color:'#fff',
+	    	    		               fontSize:18*scale,
+	    	    		               align:'center'
+	    	    		           }
+	    	    		       },
+	    	    		       legend: {
+	    	    		           selectedMode:false,
+	    	    		           formatter: function(name) {
+	    	    		               var total = 0; 
+	    	    		               var averagePercent; 
+	    	    		               data.forEach(function(value, index, array) {
+	    	    		                   total += value.value;
+	    	    		               });
+	    	    		               return '{total|' + total + '}';
+	    	    		           },
+	    	    		           data: [data[0].name],
+	    	    		           left: 'center',
+	    	    		           top: 'center',
+	    	    		           icon: 'none',
+	    	    		           align:'center',
+	    	    		           textStyle: {
+	    	    		               color: "#fff",
+	    	    		               fontSize: 16 * scale,
+	    	    		               rich: rich
+	    	    		           },
+	    	    		       },
+	    	    		       series: [{
+	    	    		           type: 'pie',
+	    	    		           radius: ['55%', '70%'],
+	    	    		           hoverAnimation: false,
+	    	    		           color: ['#c487ee', '#deb140', '#49dff0', '#034079', '#6f81da', '#00ffb4'],
+	    	    		           label: {
+	    	    		        	   normal: {
+		     	 			                formatter: function(params, ticket, callback) {
+		     	 			                    var total = 0; 
+		     	 			                    var percent = 0; 
+		     	 			                    data.forEach(function(value, index, array) {
+		     	 			                        total += value.value;
+		     	 			                    });
+		     	 			                    percent = ((params.value / total) * 100).toFixed(1);
+		     	 			                   
+		     	 			                    return '{white|' + params.name + '}{yellow|(}{blue|' + percent + '%}{yellow|)}';
+		     	 			                },
+		     	 			                rich: rich
+		     	 			            },
+	    	    		           },
+	    	    		           labelLine: {
+	    	    		               normal: {
+	    	    		                   length: 30 * scale,
+	    	    		                   length2: 0,
+	    	    		                   lineStyle: {
+	    	    		                       color: '#0b5263'
+	    	    		                   }
+	    	    		               }
+	    	    		           },
+	    	    		           data: data
+	    	    		       }]
+	    	    		   };
+	    	    		   myChart1.clear();
+	    	    		   myChart1.setOption(option);
+					
+					},error:function(){
+						alert("请求失败,请联系管理员！");
+					}
+				})
+			} 	
+	    	
+			$("#adomain").click(function(){
+				domainSearch();
+			})
+			
+	    </script>
+

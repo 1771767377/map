@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.datacenter.mapper.ImageCheckMapper">
+
+<!-- ***********************   初审      *************************-->
+
+	<!-- 统计全部未审的数量 -->
+	<select id="getCount" resultType="java.lang.Integer">		
+		SELECT count(*) FROM imagecheck WHERE trial_status = 0 AND province in 
+		<foreach collection="proArr" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+	</select>
+	
+	<!-- 显示初审的前20条数据，并将正常图片移至历史库 -->
+	<select id="findPageAll" parameterType="com.zicms.web.datacenter.model.ImageCheck" resultType="com.zicms.web.datacenter.model.ImageCheck">
+		<![CDATA[
+       	   {call checkTOHistory (#{province,mode=IN,jdbcType=LONGVARCHAR},#{trialAccount,mode=IN,jdbcType=VARCHAR})}
+    	]]>
+	</select>
+	
+	<!-- 显示初审的前20条数据（条件查询 ），并将正常图片移至历史库-->
+	<select id="findList" parameterType="com.zicms.web.datacenter.model.ImageCheck" resultType="com.zicms.web.datacenter.model.ImageCheck">		
+		<![CDATA[
+			{call trialcheckToHistory (#{imageturl,mode=IN,jdbcType=VARCHAR},#{iplist,mode=IN,jdbcType=VARCHAR},#{date,mode=IN,jdbcType=VARCHAR},
+			#{province,mode=IN,jdbcType=LONGVARCHAR},#{trialAccount,mode=IN,jdbcType=VARCHAR})}
+		]]>
+	</select>
+
+	<!-- 更新初审的前20条数据图片信息 -->
+	<update id="updateTop" parameterType="com.zicms.web.datacenter.model.ImageCheck"  >
+	    update imagecheck set trial_status = #{imag.trialStatus},trial_time=#{imag.trialTime},trial_account=#{imag.trialAccount} 
+	    where uuid in 
+    		<foreach collection="list" item="item" open="(" close=")" separator=",">
+    			#{item.uuid}
+    		</foreach>
+	</update>
+	
+	<!-- 更新图片信息(初审页面双击图片） -->
+	<update id="updateToBad" parameterType="com.zicms.web.datacenter.model.ImageResult"  >
+	   update imagecheck set trial_status=#{trialStatus},retrial_status = #{retrialStatus},checkdate=#{checkdate}
+	   where uuid=#{uuid}
+	</update>
+	
+		
+	<!-- 更新图片信息（初审页面点击不确定） -->
+	<update id="updateToUnconfirm" statementType="CALLABLE" parameterType="com.zicms.web.datacenter.model.ImageCheck">
+		update imagecheck set trial_status=#{trialStatus},trial_account=#{trialAccount},retrial_status=3,checkdate=null
+		where uuid=#{uuid}
+	</update>
+	
+	<!-- 更新图片信息(初审页面点击撤销) -->
+	<update id="updateToNormal" parameterType="com.zicms.web.datacenter.model.ImageCheck">
+		update imagecheck set trial_status = #{trialStatus}, retrial_status = null, checkdate = null where uuid = #{uuid}
+	</update>
+	
+	<!-- 初审完成，提交最后一页数据 -->
+	<insert id="submitPage" parameterType="com.zicms.web.datacenter.model.ImageCheck">
+		replace into image_normal select * from imagecheck where trial_status = 2 and trial_account = #{trialAccount}
+		;
+		replace into img_history select * from imagecheck where trial_status = 2 and trial_account = #{trialAccount}
+		;
+		delete from imagecheck where trial_status = 2 and trial_account = #{trialAccount}
+	</insert>
+	
+	<!-- 回滚数据，将已审核的20条数据移至审核表再次审核 -->
+	<update id="rollback">
+		update imagecheck set trial_status = 0,retrial_status = null,trial_time = null,trial_account = null where trial_account = #{trialAccount} and trial_status = 2
+		;
+		replace into imagecheck select * from img_history where trial_account = #{trialAccount} order by trial_time desc limit 20
+		;
+		update imagecheck set trial_status = 0,checkdate = null,retrial_status = null,trial_account = null,trial_time = null where trial_account = #{trialAccount} order by trial_time desc limit 20
+		;
+		delete from img_history where trial_account = #{trialAccount} order by trial_time desc limit 20;
+	</update>
+
+<!-- ***************************   复审      ****************************-->
+
+	<!-- 将复审过的图片移至学习库和历史库 -->
+	<sql id="insertAndDelete">
+		update imagecheck set retrial_status=1 where retrial_status = 101 and retrial_account=#{param.retrialAccount}
+	    ;
+	    REPLACE INTO image_normal SELECT * FROM imagecheck WHERE retrial_account = #{param.retrialAccount} and retrial_status = 2
+		;
+		REPLACE INTO image_illegal SELECT * FROM imagecheck WHERE retrial_account = #{param.retrialAccount} and retrial_status = 1
+		;
+		REPLACE INTO img_history SELECT * FROM imagecheck WHERE retrial_account = #{param.retrialAccount} and retrial_status between 1 and 2
+		;
+		DELETE FROM imagecheck WHERE retrial_status = '2' and  retrial_account = #{param.retrialAccount}
+		;
+	</sql>
+	<!-- 统计未复审的数量 -->
+	<select id="getRecheckCount" resultType="java.lang.Integer">
+		SELECT count(*) FROM imagecheck WHERE retrial_status = 0 AND province in
+		<foreach collection="proArr" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+	</select>
+
+	<!-- 显示复审页面前20条数据（条件查询 ），并将复审正常的图片移至学习库和历史库-->
+	<select id="findRecheckList" resultType="com.zicms.web.datacenter.model.ImageCheck">		
+		SELECT * FROM imagecheck WHERE retrial_status = 0 AND province in
+		<foreach collection="param.province" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+		<if test="@Ognl@isNotBlank(param.imageturl)">
+				and imageturl like concat('%', #{param.imageturl},'%')
+		</if>
+		<if test="@Ognl@isNotBlank(param.iplist)">
+				and iplist like concat('%', #{param.iplist},'%')
+		</if>
+		<if test="@Ognl@isNotBlank(param.date)">
+				and checkdate like concat('%',#{param.checkdate},'%')
+		</if>
+		order by checkdate DESC LIMIT 20
+		;
+		<include refid="insertAndDelete"/>
+	</select>
+
+	<!-- 更新复审的前20条数据 -->
+	<update id="updateRecheckTop" parameterType="com.zicms.web.datacenter.model.ImageCheck"  >
+	    update imagecheck set retrial_status=#{imag.retrialStatus},retrial_time=#{imag.retrialTime},retrial_account=#{imag.retrialAccount} 
+	    where uuid in
+   		<foreach collection="list" item="item" open="(" close=")" separator=",">
+   			#{item.uuid}
+   		</foreach>
+	</update>
+		
+	<!-- 复审更新图片信息（复审页面点击撤销） -->
+	<update id="reUpdateToNormal" parameterType="com.zicms.web.datacenter.model.ImageCheck">
+		update imagecheck set retrial_status = '2',checkdate = null where uuid = #{uuid};
+	</update>
+	
+	<!-- 取消对图片的操作 --> 
+	<update id="undoReupdate" parameterType="com.zicms.web.datacenter.model.ImageCheck">
+		update imagecheck set retrial_status = '101' where uuid = #{uuid};
+	</update>
+	
+	<!-- 复审提交数据 -->
+	<update id="updateRecheck">
+	    <include refid="insertAndDelete"/>
+	</update>
+	
+<!-- **********************   不确定库       *****************************-->
+
+	<select id="getUnconfirmCount" resultType="java.lang.Integer">
+		SELECT count(*) FROM imagecheck WHERE retrial_status = 3 AND province in 
+		<foreach collection="proArr" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+	</select>
+	
+	<!-- 显示不确定图片信息（无查询条件） -->
+	<select id="findUnConfirm" resultType="com.zicms.web.datacenter.model.TextCheck">
+		select img.username,img.province pro_zone,img.iplist,img.imageturl,img.contenttype,img.score,
+		img.date,img.checkdate,img.insertdate,img.uuid,img.img_host,img.trial_account,img.trial_time,
+		img.retrial_account,img.retrial_time,pd.name province from imagecheck img
+		left join pro_dict pd on img.province = pd.zone
+		where img.retrial_status = 3 AND img.province in
+		<foreach collection="param.province" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+		order by insertdate desc limit 20
+	</select>
+	<!-- 显示不确定图片信息（有查询条件） -->
+	<select id="findUnList" resultType="com.zicms.web.datacenter.model.ImageCheck">
+		select img.username,img.province pro_zone,img.iplist,img.imageturl,img.contenttype,img.score,
+		img.date,img.checkdate,img.insertdate,img.uuid,img.img_host,img.trial_account,img.trial_time,
+		img.retrial_account,img.retrial_time,pd.name province from imagecheck img
+		left join pro_dict pd on img.province = pd.zone
+		WHERE img.retrial_status = 3 AND img.province in
+		<foreach collection="param.province" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>		
+			<if test="@Ognl@isNotBlank(param.trialAccount)">
+				and trial_account = #{param.trialAccount}
+			</if>
+			<if test="@Ognl@isNotBlank(param.imageturl)">
+				and imageturl like concat('%', #{param.imageturl},'%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.iplist)">
+				and iplist like concat('%', #{param.iplist},'%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.trialTime)">
+				and trial_time like concat('%',#{param.trialTime},'%')
+			</if>
+		order by insertdate desc limit 20
+	</select>
+
+	<!-- 更新图片信息（不确定页面点击确认） -->
+	<update id="updateImage" parameterType="com.zicms.web.datacenter.model.ImageCheck">
+	    update imagecheck set retrial_status = #{retrialStatus},retrial_account = #{retrialAccount},retrial_time = #{retrialTime},
+		checkdate = #{checkdate} where uuid = #{uuid}
+	</update>
+	
+	<!-- 更新图片信息（不确定页面点击撤销） -->
+	<update id="updateImageToNormal" parameterType="com.zicms.web.datacenter.model.ImageCheck">
+		UPDATE imagecheck SET retrial_status = #{retrialStatus},retrial_account = #{retrialAccount},retrial_time = #{retrialTime}
+		WHERE uuid = #{uuid};
+	</update>
+	
+	<!-- 取消对图片的操作 -->
+	<update id="undoUpdate" parameterType="com.zicms.web.datacenter.model.ImageCheck">
+		update imagecheck set retrial_status = 3,retrial_account = null,retrial_time = null,
+		checkdate = null where uuid = #{uuid}
+	</update>
+	
+	<!-- 不确定图片提交结果 -->
+	<update id="updateUnconfirm" parameterType="com.zicms.web.datacenter.model.ImageCheck">
+		REPLACE INTO image_normal SELECT * FROM imagecheck WHERE retrial_account = #{retrialAccount} and retrial_status = 2
+		;
+		REPLACE INTO image_illegal SELECT * FROM imagecheck WHERE retrial_account = #{retrialAccount} and retrial_status = 1
+		;
+		REPLACE INTO img_history SELECT * FROM imagecheck WHERE retrial_account = #{retrialAccount} and retrial_status between 1 and 2
+		;
+		REPLACE INTO img_learn(uuid,status) SELECT uuid,retrial_status FROM imagecheck WHERE retrial_account = #{retrialAccount} and retrial_status between 1 and 2 
+		;
+		DELETE FROM imagecheck WHERE retrial_account = #{retrialAccount} and retrial_status = '2'
+		;
+	</update>
+	
+<!-- *********************   审核结果      ***************************-->	
+
+	<!-- 显示全部已审核图片信息 -->
+	<select id="findPageOk"  resultType="com.zicms.web.datacenter.model.ImageCheck">	
+		select img.username,img.province pro_zone,img.iplist,img.imageturl,img.contenttype,img.score,
+		img.date,img.checkdate,img.insertdate,img.img_host,img.trial_account,img.trial_time,
+		img.retrial_account,img.retrial_time,pd.name province from imagecheck img
+		left join pro_dict pd on img.province = pd.zone
+		where img.retrial_status = 1 and img.province in
+		<foreach collection="param.province" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+		order by retrial_time desc		
+	</select>
+	
+	<!-- 条件查询 结果页面 -->
+	<select id="findPageList" resultType="com.zicms.web.datacenter.model.ImageCheck">
+		select img.username,img.province pro_zone,img.iplist,img.imageturl,img.contenttype,img.score,
+		img.date,img.checkdate,img.insertdate,img.img_host,img.trial_account,img.trial_time,
+		img.retrial_account,img.retrial_time,pd.name province from imagecheck img
+		left join pro_dict pd on img.province = pd.zone
+		WHERE img.retrial_status = 1 AND img.province in
+		<foreach collection="param.province" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>		
+		<if test="@Ognl@isNotBlank(param.account)">
+			and (trial_account = #{param.account}
+				or
+				retrial_account = #{param.account})
+		</if>
+		<if test="@Ognl@isNotBlank(param.imageturl)">
+				and imageturl like concat('%', #{param.imageturl},'%')
+		</if>
+		<if test="@Ognl@isNotBlank(param.iplist)">
+				and iplist like concat('%', #{param.iplist},'%')
+		</if>
+		<if test="@Ognl@isNotBlank(param.date)">
+				and checkdate like concat('%',#{param.checkdate},'%')
+		</if>
+		order by retrial_time desc
+	</select>
+	
+<!-- *************************   数据导出      ***********************-->	
+
+	<!-- 更新图片信息（更改导出状态为10001,添加导出人和导出时间） -->
+	<update id="saveCsvImage">
+	   update imagecheck set export_status = 10001,exportdate = CURRENT_TIMESTAMP,username = #{param.username} where retrial_status = 1 and province in
+	    <foreach collection="param.province" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+	</update>
+	
+	<!-- 查询全部已审核未导出图片 -->
+	<select id="findPag" parameterType="com.zicms.web.datacenter.model.ImageCheck" resultType="com.zicms.web.datacenter.model.ImageCheck">
+		select img.username,img.province pro_zone,img.iplist,img.imageturl,img.contenttype,img.score,
+		img.date,img.checkdate,img.insertdate,img.img_host,img.trial_account,img.trial_time,
+		img.retrial_account,img.retrial_time,pd.name province from imagecheck img
+		left join pro_dict pd on img.province = pd.zone
+		WHERE export_status = 10001 and username = #{username}
+	</select>
+
+	<insert id="replace" parameterType="com.zicms.web.datacenter.model.ImageCheck" >
+		replace into img_history select * from imagecheck where export_status = 10001 and username = #{username}
+		;
+		delete from imagecheck where export_status = 10001 and username = #{username}
+	</insert>
+	
+<!-- *********************   学习库(暂未开发)      *************************-->
+
+	<!-- 显示学习库中的图片信息 -->
+	<select id="findLearnList" resultType="com.zicms.web.datacenter.model.ImageCheck">
+		select * from img_learn
+		<where>
+			<if test="@Ognl@isNotBlank(params.status)">
+				and status = #{params.status}
+			</if>
+		</where>
+	</select>
+	
+	
+<!-- ******************   历史库      ************************-->
+
+	<!-- 查找所有初审账号 -->
+	<select id="findTrialAccount" resultType="java.lang.String">
+		select distinct trial_account from img_history where trial_account is not null;
+	</select>
+	
+	<!-- 查找所有复审账号 -->
+	<select id="findRetrialAccount" resultType="java.lang.String">
+		select distinct retrial_account from img_history where retrial_account is not null;
+	</select>
+	
+	<!-- 查找所有导出账号 -->
+	<select id="findUsername" resultType="java.lang.String">
+		select distinct username from img_history where username is not null;
+	</select>
+	
+	<!-- 根据条件查询图片信息 -->
+	<select id="findHistoryList" resultType="com.zicms.web.datacenter.model.ImageCheck">
+		select img.username,img.province num,img.iplist,img.imageturl,img.contenttype,img.score,
+		img.date,img.checkdate,img.insertdate,img.img_host,img.trial_account,img.trial_time,
+		img.retrial_account,img.retrial_time,pd.name province from img_history img
+		left join pro_dict pd on img.province = pd.zone
+		<where>
+			1 = 1
+			<if test="@Ognl@isNotBlank(param.province)">
+				AND img.province = #{param.province}
+			</if>
+			<if test="@Ognl@isNotBlank(param.imageturl)">
+				and imageturl like concat('%', #{param.imageturl},'%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.iplist)">
+				and iplist like concat('%', #{param.iplist},'%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.trialAccount)">
+				and trial_account like concat('%', #{param.trialAccount}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.retrialAccount)">
+				and retrial_account like concat('%', #{param.retrialAccount}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.username)">
+				and username = #{param.username}
+			</if>
+			<if test="param.trialTime1 !=null and param.trialTime1 !='' ">
+			<![CDATA[ and trial_time >=  #{param.trialTime1}  ]]>
+		    </if>
+		    <if test="param.trialTime2 !=null and param.trialTime2 !='' ">
+		    <![CDATA[ and trial_time <=  #{param.trialTime2}  ]]>
+		    </if>
+		    <if test="param.retrialTime1 !=null and param.retrialTime1 !='' ">
+		    <![CDATA[ and retrial_time >=  #{param.retrialTime1}  ]]>
+		    </if>
+		    <if test="param.retrialTime2 !=null and param.retrialTime2 !='' ">
+		    <![CDATA[ and retrial_time <=  #{param.retrialTime2}  ]]>
+		    </if>
+		    <if test="param.date1 !=null and param.date1 !='' ">
+		    <![CDATA[ and date >=  #{param.date1}  ]]>
+		    </if>
+		    <if test="param.date2 !=null and param.date2 !='' ">
+		    <![CDATA[ and date <=  #{param.date2}  ]]>
+		    </if>
+		    <if test="param.checkdate1 !=null and param.checkdate1 !='' ">
+		    <![CDATA[ and checkdate >=  #{param.checkdate1}  ]]>
+		    </if>
+		    <if test="param.retrialTime2 !=null and param.retrialTime2 !='' ">
+		    <![CDATA[ and checkdate <=  #{param.checkdate2}  ]]>
+		    </if>
+		    <if test="param.exportStatus !=null and param.exportStatus != 0">
+		    	and export_status = #{param.exportStatus}
+		    </if>
+	    </where>
+    </select>
+    
+	<!-- 根据查找出图片的uuid导出数据 -->   
+    <select id="findExportData" resultType="com.zicms.web.datacenter.model.ImageCheck" >
+    	select * from img_history where uuid in
+    	<foreach collection="uuids" item="uuid" open="(" close=")" separator=",">
+    		#{uuid}
+    	</foreach>
+    </select>
+
+<!-- *******************   其他        *************************** -->	
+	<!-- 根据图片url查找图片信息 -->
+	<select id="findUrl" parameterType="com.zicms.web.datacenter.model.ImageCheck" resultType="com.zicms.web.datacenter.model.ImageCheck">
+		select * from imagecheck
+		<where>
+		    imageturl = #{imageturl} 
+		</where>
+	</select>
+	
+<!-- *******************   北京数据导出（单独使用）        *************************** -->
+	<select id="findPekingData" resultType="com.zicms.web.datacenter.model.ImageCheck">
+		select img.username,img.province pro_zone,img.imageturl,img.insertdate,
+		img.start_domain,pd.name province from imagecheck img
+		left join pro_dict pd on img.province = pd.zone
+		WHERE retrial_status = 1 and username = #{username} limit 10;
+	</select>
+</mapper>
+	
+
+

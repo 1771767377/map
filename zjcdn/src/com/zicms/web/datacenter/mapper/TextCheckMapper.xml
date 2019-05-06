@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.datacenter.mapper.TextCheckMapper">
+
+<!-- ****************  初审      ***************** -->
+	<!-- 统计未审的数量 -->
+	<select id="getCount" resultType="java.lang.Integer">
+		SELECT count(*) FROM textcheck WHERE trial_status = '0' AND province in
+		<foreach collection="proArr" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+	</select>
+
+	<sql id="trialInsertAndDelete">
+		replace into text_normal select * from textcheck where trial_status = 2 and trial_account = #{param.trialAccount}
+		;
+		replace into text_history select * from textcheck where trial_status = 2 and trial_account = #{param.trialAccount}
+		;
+		delete from textcheck where trial_status = 2 and trial_account = #{param.trialAccount}
+	</sql>
+	
+	<!-- 条件查询 显示页面 -->
+	<select id="findList" resultType="com.zicms.web.datacenter.model.TextCheck">
+		select text.username,text.province pro_zone,text.iplist,text.texturl,text.contenttype,text.score,
+		text.date,text.checkdate,text.insertdate,text.uuid,text.text_host,text.trial_account,text.trial_time,
+		text.retrial_account,text.retrial_time,pd.name province from textcheck text
+		left join pro_dict pd on text.province = pd.zone
+		<where>
+			trial_status = 0 and text.province in
+			<foreach collection="param.proArr" item="province" open="(" close=")" separator=",">
+				#{province}
+			</foreach>
+			<if test="@Ognl@isNotBlank(param.texturl)">
+				and texturl like concat('%', #{param.texturl}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.iplist)">
+				and iplist like concat('%', #{param.iplist}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.date)">
+				and date like concat('%', #{param.date}, '%')
+			</if>
+			order by insertdate desc limit 5
+		</where>
+		;
+		<include refid="trialInsertAndDelete"></include>
+	</select>
+
+	<!-- 进入初审页面，更新状态为2并添加初审账号和初审时间 -->
+	<update id="updateTop" parameterType="com.zicms.web.datacenter.model.TextCheck">
+		update textcheck set trial_status=2,trial_account='${tet.trialAccount}',trial_time='${tet.trialTime}'
+		<where>
+			uuid in
+			<foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+				#{item.uuid}
+			</foreach>
+		</where>
+	</update>
+	
+	<!-- 初审各种操作 -->
+	<update id="updateTextCheck" parameterType="com.zicms.web.datacenter.model.TextCheck">
+		update textcheck set trial_status= #{trialStatus},retrial_status=#{retrialStatus},
+		checkdate = #{checkdate} where uuid='${uuid}'
+	</update>
+		
+	<!-- 初审完成，提交最后一页数据 -->
+	<insert id="submitPage">
+		<include refid="trialInsertAndDelete"></include>
+	</insert>
+<!-- ******************  复审    ************************** -->
+
+	<!-- 复审将正常的移至历史库和学习库 -->
+	<sql id="insertAndDelete">
+		REPLACE INTO text_normal SELECT * FROM textcheck WHERE retrial_account = #{retrialAccount} and retrial_status = 2
+		;
+		REPLACE INTO text_illegal SELECT * FROM textcheck WHERE retrial_account = #{retrialAccount} and retrial_status = 1
+		;
+		REPLACE INTO text_history SELECT * FROM textcheck WHERE retrial_account = #{retrialAccount} and retrial_status between 1 and 2
+		;
+		REPLACE INTO text_learn(uuid,status) SELECT uuid,retrial_status FROM textcheck WHERE retrial_account = #{retrialAccount} and retrial_status between 1 and 2 
+		;
+		DELETE FROM textcheck WHERE retrial_status = '2' and retrial_account = #{retrialAccount};
+	</sql>
+	
+	<!-- 待复审的数量 -->
+	<select id="getReCount" resultType="java.lang.Integer">
+		SELECT count(*) FROM textcheck WHERE retrial_status = '0' AND province in
+		<foreach collection="proArr" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+	</select>
+	
+	<!-- 复审显示全部已审核文字信息（条件查询） -->
+	<select id="findPageList" parameterType="com.zicms.web.datacenter.model.TextCheck"
+		resultType="com.zicms.web.datacenter.model.TextCheck">
+		select text.username,text.province pro_zone,text.iplist,text.texturl,text.contenttype,text.score,
+		text.date,text.checkdate,text.insertdate,text.uuid,text.text_host,text.trial_account,text.trial_time,
+		text.retrial_account,text.retrial_time,pd.name province from textcheck text
+		left join pro_dict pd on text.province = pd.zone
+		<where>
+			retrial_status = 0 and text.province in
+			<foreach collection="param.proArr" item="province" open="(" close=")" separator=",">
+				#{province}
+			</foreach>
+			<if test="@Ognl@isNotBlank(param.texturl)">
+				and texturl like concat('%', #{param.texturl}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.iplist)">
+				and iplist like concat('%', #{param.iplist}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.checkdate)">
+				and checkdate like concat('%', #{param.checkdate}, '%')
+			</if>
+		</where>
+		order by checkdate desc limit 5
+		;
+		<include refid="insertAndDelete"/>
+	</select>
+	
+	<!-- 进入复审页面更新图片信息 -->
+	<update id="updateTopList" >
+		update textcheck set retrial_status = 101,retrial_account=#{tet.retrialAccount},retrial_time=#{tet.retrialTime}
+		<where>
+			uuid in
+			<foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+				#{item.uuid}
+			</foreach>
+		</where>
+	</update>
+	
+	<!-- 复审确定为不良 -->
+	<update id="updatereTextCheck" parameterType="com.zicms.web.datacenter.model.TextCheck">
+		update textcheck set retrial_status = #{retrialStatus},checkdate = #{checkdate} where uuid='${uuid}'
+	</update>
+	
+	<!-- 把复审撤销的数据插入到历史表和学习表中 -->
+	<insert id="insertRecord" parameterType="com.zicms.web.datacenter.model.TextCheck">
+		<![CDATA[
+       	   {call retextTOhistory (#{uuid,mode=IN,jdbcType=VARCHAR})}
+    	]]>
+	</insert>
+	
+	<!-- 复审提交最后一页数据 -->
+	<update id="updateRestatus" >
+		update textcheck set retrial_status = 1 where retrial_status = 101 and retrial_account=#{retrialAccount}
+		;
+		<include refid="insertAndDelete"/>
+	</update>
+	
+<!-- ******************  不确定库    ************************** -->
+	
+	<select id="getUnconfirmCount" resultType="java.lang.Integer">
+		SELECT count(*) FROM textcheck WHERE retrial_status = 3 AND province in 
+		<foreach collection="proArr" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+	</select>
+
+	<!-- 查找不确定文字 -->
+	<select id="findUnList" resultType="com.zicms.web.datacenter.model.TextCheck">
+		select text.username,text.province pro_zone,text.iplist,text.texturl,text.contenttype,text.score,
+		text.date,text.checkdate,text.insertdate,text.uuid,text.text_host,text.trial_account,text.trial_time,
+		text.retrial_account,text.retrial_time,pd.name province from textcheck text
+		left join pro_dict pd on text.province = pd.zone
+		WHERE text.retrial_status = 3 AND text.province in
+		<foreach collection="param.proArr" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>		
+			<if test="@Ognl@isNotBlank(param.trialAccount)">
+				and trial_account = #{param.trialAccount}
+			</if>
+			<if test="@Ognl@isNotBlank(param.texturl)">
+				and imageturl like concat('%', #{param.texturl},'%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.iplist)">
+				and iplist like concat('%', #{param.iplist},'%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.trialTime)">
+				and trial_time like concat('%',#{param.trialTime},'%')
+			</if>
+		order by insertdate desc limit 5
+	</select>
+
+	
+	<!-- 更新文字信息 -->
+	<update id="updateUnconfirmStatus" parameterType="com.zicms.web.datacenter.model.TextCheck">
+		update textcheck set retrial_status=#{retrialStatus},retrial_time=#{retrialTime},retrial_account=#{retrialAccount},checkdate=#{checkdate} where uuid=#{uuid}
+	</update>
+
+	<!-- 不确定图片提交结果 -->
+	<update id="updateUnconfirm" parameterType="com.zicms.web.datacenter.model.TextCheck">
+		REPLACE INTO text_normal SELECT * FROM textcheck WHERE retrial_account = #{retrialAccount} and retrial_status between = 2
+		;
+		REPLACE INTO text_illegal SELECT * FROM textcheck WHERE retrial_account = #{retrialAccount} and retrial_status = 1
+		;
+		REPLACE INTO text_history SELECT * FROM textcheck WHERE retrial_account = #{retrialAccount} and retrial_status between 1 and 2
+		;
+		REPLACE INTO text_learn(uuid,status) SELECT uuid,retrial_status FROM textcheck WHERE retrial_account = #{retrialAccount} and retrial_status between 1 and 2 
+		;
+		DELETE FROM textcheck WHERE retrial_account = #{retrialAccount} and retrial_status = '2'
+		;
+	</update>
+<!-- ******************  审核结果   ************************ -->
+
+	<!-- 审核结果页面(条件查询) -->
+	<select id="findRecheckList" resultType="com.zicms.web.datacenter.model.TextCheck">
+		select text.username,text.province pro_zone,text.iplist,text.texturl,text.contenttype,text.score,
+		text.date,text.checkdate,text.insertdate,text.text_host,text.trial_account,text.trial_time,
+		text.retrial_account,text.retrial_time,pd.name province from textcheck text
+		left join pro_dict pd on text.province = pd.zone
+		<where>
+			text.retrial_status = 1 and text.province in
+			<foreach collection="param.proArr" item="province" open="(" close=")" separator=",">
+				#{province}
+			</foreach>
+			<if test="@Ognl@isNotBlank(param.texturl)">
+				and texturl like concat('%', #{param.texturl}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.iplist)">
+				and iplist like concat('%', #{param.iplist}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.checkdate)">
+				and checkdate like concat('%', #{param.checkdate}, '%')
+			</if>
+		</where>
+		order by checkdate desc
+	</select>
+	
+<!-- ******************  数据导出   ************************ -->	
+	
+	<!-- 更新文本导出状态 -->
+	<update id="updateExport">
+		update textcheck set export_status = 10001,exportdate = CURRENT_TIMESTAMP,username = #{param.username} where retrial_status = 1 and province in
+		<foreach collection="param.proArr" item="province" open="(" close=")" separator=",">
+			#{province}
+		</foreach>
+	</update>
+
+	<!-- 查找需要导出的数据 -->
+	<select id="findPag" parameterType="com.zicms.web.datacenter.model.TextCheck" resultType="com.zicms.web.datacenter.model.TextCheck">
+		select * from textcheck where export_status = 10001 and username = #{username}
+	</select>
+	
+	<!-- 已导出的数据插入历史库并从原表删除 -->
+	<insert id="deleteData" parameterType="com.zicms.web.datacenter.model.TextCheck">
+		replace into text_history select * from textcheck where export_status = 10001 and username = #{username}
+		;
+		delete from textcheck where export_status = 10001 and username = #{username}
+	</insert>
+	
+<!-- ********************  历史管理    *************************** -->	
+
+	<!-- 查找所有初审账号 -->
+	<select id="findTrialAccount" resultType="java.lang.String">
+		select distinct trial_account from text_history where trial_account is not null;
+	</select>
+	
+	<!-- 查找所有复审账号 -->
+	<select id="findRetrialAccount" resultType="java.lang.String">
+		select distinct retrial_account from text_history where retrial_account is not null;
+	</select>
+	
+	<!-- 查找所有导出账号 -->
+	<select id="findUsername" resultType="java.lang.String">
+		select distinct username from text_history where username is not null;
+	</select>
+	
+	<!-- 历史查询 -->
+	<select id="findExportList" resultType="com.zicms.web.datacenter.model.TextCheck">
+		select text.username,text.province num,text.iplist,text.texturl,text.contenttype,text.score,
+		text.date,text.checkdate,text.insertdate,text.text_host,text.trial_account,text.trial_time,
+		text.retrial_account,text.retrial_time,pd.name province from text_history text
+		left join pro_dict pd on text.province = pd.zone
+		<where>
+			1 = 1
+			<if test="@Ognl@isNotBlank(param.province)">
+				and text.province=#{param.province}
+			</if>
+			<if test="@Ognl@isNotBlank(param.texturl)">
+				and texturl like concat('%', #{param.texturl},'%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.iplist)">
+				and iplist like concat('%', #{param.iplist},'%')
+			</if>
+			<if test="@Ognl@isNotBlank(param.trialAccount)">
+				and trial_account=#{param.trialAccount}
+			</if>
+			<if test="@Ognl@isNotBlank(param.retrialAccount)">
+				and retrial_account=#{param.retrialAccount}
+			</if>
+			<if test="@Ognl@isNotBlank(param.username)">
+				and username = #{param.username}
+			</if>
+			<if test="param.trialTime1 !=null and param.trialTime1 !='' ">
+				<![CDATA[ and trial_time >=  #{param.trialTime1}  ]]>
+			</if>
+			<if test="param.trialTime2 !=null and param.trialTime2 !='' ">
+		    	<![CDATA[ and trial_time <=  #{param.trialTime2}  ]]>
+			</if>
+			<if test="param.retrialTime1 !=null and param.retrialTime1 !='' ">
+				<![CDATA[ and retrial_time >=  #{param.retrialTime1}  ]]>
+			</if>
+			<if test="param.retrialTime2 !=null and param.retrialTime2 !='' ">
+		    	<![CDATA[ and retrial_time <=  #{param.retrialTime2}  ]]>
+			</if>
+			<if test="param.checkdate1 !=null and param.checkdate1 !='' ">
+				<![CDATA[ and checkdate >=  #{param.checkdate1}  ]]>
+			</if>
+			<if test="param.checkdate2 !=null and param.checkdate2 !='' ">
+		    	<![CDATA[ and checkdate <=  #{param.checkdate2}  ]]>
+			</if>
+			<if test="param.date1 !=null and param.date1 !='' ">
+		    	<![CDATA[ and date >=  #{param.date1}  ]]>
+			</if>
+			<if test="param.date2 !=null and param.date2 !='' ">
+		    	<![CDATA[ and date <=  #{param.date2}  ]]>
+			</if>
+			<if test="param.exportStatus !=null and param.exportStatus != 0">
+				and export_status = #{param.exportStatus}
+			</if>
+		</where>
+	</select>
+	
+</mapper>

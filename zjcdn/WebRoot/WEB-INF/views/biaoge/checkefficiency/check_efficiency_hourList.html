@@ -1,0 +1,141 @@
+<style type="text/css">
+#myTable {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+#myTable th,td {
+	text-align: center;
+	padding: .5em;
+	border: 1px solid #fff;
+}
+
+th {
+	background-color: #328aa4;
+	color: #fff;
+}
+
+td {
+	background: #e5f1f4;
+}
+
+tr.even td {
+	background: #e5f1f4;
+}
+
+tr.odd td {
+	background: #f8fbfc;
+}
+
+tr.over td {
+	background: #bce774;
+}
+
+tr.out td {
+	
+}
+</style>
+<table width="500" id="myTable" cellspacing="0" cellpadding="0">
+	<thead>
+		<tr>
+			<th id="name">账号</th>
+			<th id="0">0点</th>
+			<th id="1">1点</th>
+			<th id="2">2点</th>
+			<th id="3">3点</th>
+			<th id="4">4点</th>
+			<th id="5">5点</th>
+			<th id="6">6点</th>
+			<th id="7">7点</th>
+			<th id="8">8点</th>
+			<th id="9">9点</th>
+			<th id="10">10点</th>
+			<th id="11">11点</th>
+			<th id="12">12点</th>
+			<th id="13">13点</th>
+			<th id="14">14点</th>
+			<th id="15">15点</th>
+			<th id="16">16点</th>
+			<th id="17">17点</th>
+			<th id="18">18点</th>
+			<th id="19">19点</th>
+			<th id="20">20点</th>
+			<th id="21">21点</th>
+			<th id="22">22点</th>
+			<th id="23">23点</th>
+			<th>合计</th>
+		</tr>
+	</thead>
+	<tbody id="tbody">
+	</tbody>
+</table>
+<script type="text/javascript">
+	$(function() {
+		var jsonObject = ${json};
+		var tbody = $("#tbody");
+		tbody.empty();
+		for(var i in jsonObject){
+			var sum = 0;
+			var jsonArray = eval ("(" + jsonObject[i]+ ")");
+			for (var j = 0; j < jsonArray.length; j++){
+				sum += parseInt(jsonArray[j]);
+			}
+			var tr = $("<tr></tr>");
+			tr.data("account",i);
+			tr.append("<td class='center'><a href='javascript:void(0);' onclick='showChart(this)'>"+i+"</a></td>");
+			tr.append("<td class='center'>"+jsonArray[0]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[1]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[2]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[3]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[4]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[5]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[6]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[7]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[8]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[9]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[10]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[11]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[12]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[13]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[14]+"</td>"); 
+			tr.append("<td class='center'>"+jsonArray[15]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[16]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[17]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[18]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[19]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[20]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[21]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[22]+"</td>");
+			tr.append("<td class='center'>"+jsonArray[23]+"</td>");
+			tr.append("<td class='center'>"+sum+"</td>");
+			tbody.append(tr);
+		}
+	})
+	
+	//点击账号显示当前账号审核量的折线统计图
+	function showChart(thiz){
+		var account = $(thiz).parent().parent().data("account");
+		var dateStart=$("input[name='dateStart']").val();
+		var dateEnd=$("input[name='dateEnd']").val();
+		var url = "${ctxPath}/check_efficiency/showDetail?account="+account+"&dateStart="+dateStart+"&dateEnd="+dateEnd;
+		window.open (url,'newwindow','height=600,width=1000,top=100px,left=600px,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no') 	
+	}
+
+	//隔行变色
+	$(function() {
+		var changeTr = document.getElementById("myTable").getElementsByTagName(
+				"tr");
+		for (i = 0; i < changeTr.length; i++) {
+			changeTr[i].className = (i % 2 > 0) ? "even" : "odd";
+			changeTr[i].temp = changeTr[i].className;
+			changeTr[i].onmouseover = function() {
+				this.className = 'over';
+			}
+			changeTr[i].onmouseout = function() {
+				this.className = this.temp;
+			}
+		}
+	})
+	
+</script>

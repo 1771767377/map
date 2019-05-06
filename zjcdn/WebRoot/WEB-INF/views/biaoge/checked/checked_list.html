@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>不良信息审核系统统计报表</title>
+<meta content="text/html;charset=utf-8">
+<style type="text/css">
+#myTable {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+#myTable th,td {
+	text-align: center;
+	padding: .5em;
+	border: 1px solid #fff;
+}
+
+th {
+	background-color: #328aa4;
+	color: #fff;
+}
+
+td {
+	background: #e5f1f4;
+}
+
+tr.even td {
+	background: #e5f1f4;
+}
+
+tr.odd td {
+	background: #f8fbfc;
+}
+
+tr.over td {
+	background: #bce774;
+}
+
+tr.out td {
+	
+}
+</style>
+</head>
+<body>
+<table  width="500" id="myTable" cellspacing="0" cellpadding="0">
+	<thead>
+		<tr>
+			<th class="center">省份</th>
+			<th class="center">总审核量</th>
+			<th class="center">待审核量</th>
+			<th class="center">已审核量</th>
+			<th class="center">审核完成率</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@for(item in page){
+			<tr class="main">
+				<td class="center"><a class="green" href="javascript:checkSelect('${item.province}');">${item.province}</a></td>
+				<td class="checkcount center">
+				
+				</td>
+				<td class="unchecked center">@if(item.uncheckCount==null){
+					0
+				@}else{
+					${item.uncheckCount}
+				@}
+				</td>
+				<td class="checked center">@if(item.checkCount==null){
+					0
+				@}else{
+					${item.checkCount}
+				@}
+				</td>
+				<td class="checkrate center">@if(item.checkCount==null){
+					0
+				@}else if(item.uncheckCount==null){
+					100%
+				@}else{
+					${parseInt(item.checkCount)/parseInt(item.checkCount+item.uncheckCount),numberFormat='##.##%'}
+				@}
+				</td>
+			</tr>
+		@}
+		<tr class="total">
+		<td class="center">合计</td>
+		<td class="center"></td>
+		<td class="center"></td>
+		<td class="center"></td>
+		<td class="center"></td>
+		</tr>
+	</tbody>
+</table>
+<div class="space-8"></div>
+<script type="text/javascript">
+$(function(){
+	var uncheckedSum = 0;
+	var checkedSum = 0;
+	var checkcountSum = 0;
+	for(var i=0;i<$("tr").length-2;i++){
+		var unchecked = parseInt($(".main .unchecked").eq(i).text().trim());
+		uncheckedSum += unchecked;
+		var checked = parseInt($(".main .checked").eq(i).text().trim());
+		checkedSum += checked;
+		var checkcount = unchecked + checked;
+		$(".main .checkcount").eq(i).text(checkcount);
+	}
+	checkcountSum=uncheckedSum+checkedSum;
+	$(".total td").eq(1).text(checkcountSum);
+	$(".total td").eq(2).text(uncheckedSum);
+	$(".total td").eq(3).text(checkedSum);
+	$(".total td").eq(4).text((checkedSum*100/(checkcountSum)).toFixed(2)+"%");
+})
+	
+function checkSelect(province) {
+		//判断是否为一天的24点和明天的0点
+		var regex=new RegExp("\\d{4}(\\-)(\\d{2})(\\-)(\\d{2})(\\s)([0]{2})(:)(\\d{2})(:)(\\d{2})");
+		var dateStart=$("input[name='dateStart']").val();
+		var dateEnd=$("input[name='dateEnd']").val();
+		var url = "${ctxPath}/check/selectAll?province=" + province+"&dateStart="+dateStart+"&dateEnd="+dateEnd;
+		//判断日期间隔天数，超过7天不让展示
+		if(regex.test(dateEnd)){//按照起始日期七天计算，如果最终时间是0点，则大于7否则大于6
+			if(DateDiff(dateEnd,dateStart)>7){
+				alert("日期查询范围最大为7天");
+				return false;
+			}
+		}else{
+			if(DateDiff(dateEnd,dateStart)>6){
+				alert("日期查询范围最大为7天");
+				return false;
+			}
+		}
+		
+		//获得天，通过判断按照小时还是天展示来确定弹框的大小	
+		var day1=(new Date(dateStart)).getDate();
+		var day2=(new Date(dateEnd)).getDate();
+		if(regex.test(dateEnd)){
+			//天数间隔一天0点到24点（对应月跳转）
+			if(day2-day1==1||(day1==28&&day2==1)||(day1==29&&day2==1)||(day1==30&&day2==1)||(day1==31&&day2==1)){
+				day2=day1;
+			}
+		}	
+		if(day1==day2){
+			window.open (url,'newwindow','height=500,width=1200,top=100px,left=100px,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no') ;	
+		}else{
+			window.open (url,'newwindow','height=500,width=900,top=100px,left=100px,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no') ;	
+		}	
+}
+ //计算天数差的函数，通用  
+   function  DateDiff(sDate1,  sDate2){    
+       var  aDate,  oDate1,  oDate2,  iDays  ;
+       oDate1  =  new  Date(sDate1) ;   
+       oDate2  =  new  Date(sDate2)  ;
+       iDays  =  parseInt(Math.abs(oDate1  -  oDate2)  /  1000  /  60  /  60  /24)  ;  //把相差的毫秒数转换为天数  
+       return  iDays  ;
+	}
+//隔行变色
+$(function() {
+			var changeTr = document.getElementById("myTable").getElementsByTagName("tr");
+			for (i = 0; i < changeTr.length; i++) {
+				changeTr[i].className = (i % 2 > 0) ? "even" : "odd";
+				changeTr[i].temp = changeTr[i].className;
+				changeTr[i].onmouseover = function() {
+					this.className = 'over';
+				}
+				changeTr[i].onmouseout = function() {
+					this.className = this.temp;
+				}
+			}
+		})
+</script>
+</body>
+</html>

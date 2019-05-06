@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.biaoge.mapper.CheckEfficiencyMapper">
+	<!-- 审核人员工作效率分析(按小时统计全量) -->
+	<select id="findHourCountAll" parameterType="java.util.Map" resultType="com.zicms.web.biaoge.model.CheckEfficiency">
+		<![CDATA[
+       	   {call efficiencyByHourAll (#{account,mode=IN,jdbcType=VARCHAR},#{checkType,mode=IN,jdbcType=VARCHAR},#{dateStart,mode=IN,jdbcType=VARCHAR},#{dateEnd,mode=IN,jdbcType=VARCHAR})}
+    	]]>
+	</select>
+	
+	<!-- 审核人员工作效率分析(按天统计全量) -->
+	<select id="findDayCountAll" parameterType="java.util.Map"	resultType="com.zicms.web.biaoge.model.CheckEfficiency">
+		<![CDATA[
+       	   {call efficiencyByDayAll (#{account,mode=IN,jdbcType=VARCHAR},#{checkType,mode=IN,jdbcType=VARCHAR},#{dateStart,mode=IN,jdbcType=VARCHAR},#{dateEnd,mode=IN,jdbcType=VARCHAR})}
+    	]]>
+	</select>
+	
+	<!-- 审核人员工作效率分析(按小时分别统计图片、文本) -->
+	<select id="findHourCount" parameterType="java.util.Map" resultType="com.zicms.web.biaoge.model.CheckEfficiency">
+		<![CDATA[
+       	   {call efficiencyByHour (#{account,mode=IN,jdbcType=VARCHAR},#{checkType,mode=IN,jdbcType=VARCHAR},#{dataResource,mode=IN,jdbcType=VARCHAR},#{dateStart,mode=IN,jdbcType=VARCHAR},#{dateEnd,mode=IN,jdbcType=VARCHAR})}
+    	]]>
+	</select>
+	
+	<!-- 审核人员工作效率分析(按天分别统计图片、文本) -->
+	<select id="findDayCount" parameterType="java.util.Map"	resultType="com.zicms.web.biaoge.model.CheckEfficiency">
+		<![CDATA[
+       	   {call efficiencyByDay (#{account,mode=IN,jdbcType=VARCHAR},#{checkType,mode=IN,jdbcType=VARCHAR},#{dataResource,mode=IN,jdbcType=VARCHAR},#{dateStart,mode=IN,jdbcType=VARCHAR},#{dateEnd,mode=IN,jdbcType=VARCHAR})}
+    	]]>
+	</select>
+	
+	<!-- 审核人员工作效率分析(按小时统计域名) -->
+	<select id="findHourCountFromAudit" parameterType="java.util.Map" resultType="com.zicms.web.biaoge.model.CheckEfficiency">
+		SELECT f.account,f.hour,f.count FROM (
+			SELECT audit_account AS account, HOUR (DATE_FORMAT(audit_time,'%Y%m%d%H%i%s')) AS hour, count(1) AS count FROM audit_info
+			WHERE (audit_time BETWEEN #{dateStart} AND #{dateEnd}) AND audit_account is not null GROUP BY HOUR, account 
+			)  as  f left join  sys_user  on  sys_user.username=f.account
+		WHERE sys_user.del_flag='0'
+		<if test="@Ognl@isNotBlank(account)">
+			AND f.account = #{account}
+		</if>
+		<if test="@Ognl@isNotBlank(checkType)">
+			AND check_type = #{checkType}
+		</if> 
+		GROUP BY f.account,f.hour order by f.account,f.hour
+	</select>
+	<select id="findDayCountFromAudit" parameterType="java.util.Map" resultType="com.zicms.web.biaoge.model.CheckEfficiency">
+		SELECT f.account,f.day,f.count FROM (
+			SELECT audit_account AS account, DATE_FORMAT(audit_time,'%Y-%m-%d') AS day, count(1) AS count FROM audit_info
+			WHERE (audit_time BETWEEN #{dateStart} AND #{dateEnd}) AND audit_account is not null GROUP BY day, account 
+			)  as  f left join  sys_user  on  sys_user.username=f.account
+		where sys_user.del_flag='0'
+		<if test="@Ognl@isNotBlank(account)">
+			AND f.account = #{account}
+		</if>
+		<if test="@Ognl@isNotBlank(checkType)">
+			AND check_type = #{checkType}
+		</if> 
+		GROUP BY f.account,f.day order by f.account,f.day
+	</select>
+</mapper>

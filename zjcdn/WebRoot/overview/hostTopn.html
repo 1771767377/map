@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<body>
+	<div id="echart" style="width: 600px; height: 400px; margin-top: 14px;"></div>
+</body>
+<script src="/pekingpf/static/jquery/jquery-2.1.1.min.js"></script>
+<script src="/pekingpf/static/app/echarts.js"></script>
+<script type="text/javascript">
+	$.ajax({
+		type : "post",
+		async : false,
+		contentType : "application/json",
+		url : "/pekingpf/overview/getTopn",
+		dataType : "json",
+		error : function() {
+			alert("涓嶅ソ鎰忔��,鍥捐〃璇锋眰鏁版嵁澶辫触鍟�!");
+		},
+		success : function(json) {
+			var host = new Array();
+			var count = new Array();
+			$.each(json, function(n, value){
+				host.push(value.host);
+				count.push(value.count);
+			});
+			require.config({
+				paths : {
+					echarts : '/pekingpf/static/app'
+				}
+			});
+			require([ 'echarts', 'echarts/chart/bar' ], function(ec) {
+				var myChart = ec.init(document.getElementById('echart'));
+				var option = {
+					title : {
+						text : '杩濊鍩熷悕topn',
+						 x:'center'
+					},
+					tooltip : {
+						trigger : 'item',
+						formatter: "{b}:<br/>{c}(娆�)"
+					},
+					grid : {
+						left : '50%',
+						bottom : '30%'
+					},
+					xAxis : {
+						data : host,
+				        axisLabel : {
+				        	interval : 0,
+				        	rotate : -30,
+				            textStyle : {
+				                color : '#000'
+				            }
+				        },
+				        axisLine : {
+				        	show : false
+				        }
+					},
+					yAxis : {
+				        axisLabel : {
+				            textStyle : {
+				                color : '#999'
+				            }
+				        },
+				        axisLine : {
+				        	show : false
+				        }
+					},
+					series : [{  
+			            type : 'bar',
+			            data : count
+					}]
+				};
+				myChart.setOption(option);
+			});
+		},
+	});
+</script>
+</html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper  namespace="com.zicms.web.biaoge.mapper.CheckCountMapper">
+	<!--通过账号条件统计审核量  -->
+	<select id="findAllByAccount" parameterType="com.zicms.web.biaoge.model.CheckCount"
+	resultType="com.zicms.web.biaoge.model.CheckCount">
+		select  account,check_count,check_standard from checkcountall
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(account)">
+				and account=#{account}
+			</if>
+		</where>
+	</select>
+	<!--查询默认段时间内审核量,时间已经融入到checkcountall中  -->
+	<select id="findCount" parameterType="com.zicms.web.biaoge.model.CheckCount"
+	resultType="java.lang.Integer">
+		select  sum(check_count) from  checkcountall 
+	</select>
+	<!--查询时间内审核量,有条件查询  -->
+	<select id="findAllByDate" statementType="CALLABLE" parameterType="com.zicms.web.biaoge.model.CheckCount" resultType="com.zicms.web.biaoge.model.CheckCount">
+		<![CDATA[
+		{
+		call checkcount(#{account,mode=IN,jdbcType=VARCHAR},
+		#{dateStart,mode=IN,jdbcType=VARCHAR},
+		#{dateEnd,mode=IN,jdbcType=VARCHAR})
+		}
+		]]>
+	</select>
+	<!-- 查询审核人员工作量 -->
+	<select id="findCheckWork" statementType="CALLABLE" 
+	parameterType="com.zicms.web.biaoge.model.CheckCount" resultType="com.zicms.web.biaoge.model.CheckCount">
+		<![CDATA[
+		{
+		call checkWork(#{account,mode=IN,jdbcType=VARCHAR},
+		#{dateStart,mode=IN,jdbcType=VARCHAR},
+		#{dateEnd,mode=IN,jdbcType=VARCHAR})
+		}
+		]]>
+	</select>
+	<!-- 查询各省工作量  service层调用-->
+	<select id="findWorkByProvince" statementType="CALLABLE" 
+	parameterType="com.zicms.web.biaoge.model.CheckCount" resultType="com.zicms.web.biaoge.model.CheckCount">
+		<![CDATA[
+		{Call checkWorkByProvince(
+		#{dateStart,mode=IN,jdbcType=VARCHAR},
+		#{dateEnd,mode=IN,jdbcType=VARCHAR})}
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,110 @@
+<html>
+<head>
+<title>审核人员工作量详情</title>
+<meta http-equiv="content-Type" content="text/html;charset=utf-8">
+<style type="text/css">
+#myTable {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+#myTable th,td {
+	text-align: center;
+	padding: .5em;
+	border: 1px solid #fff;
+}
+
+th {
+	background-color: #328aa4;
+	color: #fff;
+}
+
+td {
+	background: #e5f1f4;
+}
+
+tr.even td {
+	background: #e5f1f4;
+}
+
+tr.odd td {
+	background: #f8fbfc;
+}
+
+tr.over td {
+	background: #bce774;
+}
+
+tr.out td {
+	
+}
+</style>
+</head>
+<body>
+		<!-- 在此处展示审核人员工作量分析表 -->
+		<table width="500" id="myTable" cellspacing="0" cellpadding="0">
+			<thead>
+				<tr>
+					<th>省份</th>
+					<th>已审核量</th>
+					<th>审核总量</th>
+					<th>贡献率</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(item in page){
+				<tr class="main">
+					<td>${item.province}</td>
+					<td class="checkCount">${item.checkCount}</td>
+					<td class="countbyprovince">${item.countbyprovince}</td>
+					<td class="checkrate">@if(item.countbyprovince==null){ 
+							0
+						@}else{
+						${parseInt(item.checkCount)/parseInt(item.countbyprovince),numberFormat='##.##%'}
+						@}
+						</td>
+				</tr>
+				@}
+				<tr class="total">
+					<td class="center">合计</td>
+					<td class="center"></td>
+					<td class="center"></td>
+					<td class="center">贡献率</td>
+				</tr>
+			</tbody>
+		</table>
+		<script type="text/javascript">
+//合计计算	
+		$(function() {
+			var checkCount = 0;
+			var countbyprovince = 0;
+			for ( var i = 0; i < $("tr").length - 2; i++) {
+				checkCount = parseInt(checkCount)
+						+ parseInt($(".main .checkCount").eq(i).text().trim());//已审核
+				countbyprovince = parseInt(countbyprovince)
+						+ parseInt($(".main .countbyprovince").eq(i).text()
+								.trim());//审核标准
+			}
+			$(".total td").eq(1).text(checkCount);
+			$(".total td").eq(2).text(countbyprovince);
+			$(".total td").eq(3).text(
+					(checkCount * 100 / countbyprovince).toFixed(2) + "%");//达标率
+		})
+//隔行变色
+$(function() {
+			var changeTr = document.getElementById("myTable").getElementsByTagName("tr");
+			for (i = 0; i < changeTr.length; i++) {
+				changeTr[i].className = (i % 2 > 0) ? "even" : "odd";
+				changeTr[i].temp = changeTr[i].className;
+				changeTr[i].onmouseover = function() {
+					this.className = 'over';
+				}
+				changeTr[i].onmouseout = function() {
+					this.className = this.temp;
+				}
+			}
+		})
+</script>
+ </body>
+</html>

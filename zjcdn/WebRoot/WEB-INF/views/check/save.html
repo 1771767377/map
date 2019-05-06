@@ -1,0 +1,123 @@
+@var imageType = dict.getDictListByType("sys_check_pic"); //图片类型
+<div class="layer">
+	<form name="FormPost" id="pic_save" class="FormGrid"  method="post"
+		action="${ctxPath}/Check/result/result_image" >
+		<input type="hidden" value="${page.province!}" id="province" />		
+		<input type="hidden" value="${page.city!}" id="city"/>
+		<input type="hidden" value="${page.information!}" id="information"/>
+		<input type="hidden" value="${page.iplist!}" id="iplist"/>
+		<input type="hidden" value="${page.linetype!}" id="linetype"/>
+		<input type="hidden" value="${page.imageturl!}" id="imageturl"/>
+		<input type="hidden" value="${page.score!}" id="score"/>
+		<input type="hidden" value="${page.date!}" id="date"/>
+		<input type="hidden" value="1" id="statusa"/>
+		<input type="hidden" value="${page.serverip!}" id="serverip"/>
+		<input type="hidden" value="${page.type!}" id="type"/>
+		<table class="EditTable" width="100%" hidden>
+			<tbody>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">省份</td>
+					<td class="DataTD width-100"><input type="text"
+						name="name" datatype="*"  nullmsg="请输入角色名！"
+						value="${page.province!}"></td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">城市</td>
+					<td class="DataTD">
+					<input type="text" value="${page.city!}" name="username"
+					datatype="*" readonly="readonly"  nullmsg="请输入登录名！"/>
+					</td>
+				</tr>
+				
+				
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">信息</td>
+					<td class="DataTD">
+					<input type="text" value="${page.information!}" name="moblie"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">IP</td>
+					<td class="DataTD">
+					<input type="text" value="${page.iplist!}" name="phone"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">类型</td>
+					<td class="DataTD">
+					<input type="text" value="${page.linetype!}" name="email"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">图片地址</td>
+					<td class="DataTD">
+					<input type="text" value="${page.imageturl!}" id="turl"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">图片分数</td>
+					<td class="DataTD">
+					<input type="text" value="${page.score!}" name="score"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">图片日期</td>
+					<td class="DataTD">
+					<input type="text" value="${page.date!}" name="date"/>
+					</td>
+				</tr>
+				<!-- <tr class="FormData">
+					<td class="CaptionTD">图片类型</td>
+					<td class="DataTD">
+					<input type="text" value="${page.status!}" name="status"/>
+					</td>
+				</tr> -->
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">服务器地址</td>
+					<td class="DataTD">
+					<input type="text" value="${page.serverip!}" name="serverip"/>
+					</td>
+				</tr>
+				<tr class="FormData" hidden>
+					<td class="CaptionTD">图片备用</td>
+					<td class="DataTD">
+					<input type="text" value="${page.type!}" name="type"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		
+		
+		请选择图片类型：
+		<select id="chosenSelectEdit" class="width-80" id="pic-select"  multiple class="chosen-select tag-input-style" data-placeholder="选择类型">
+		@for(type in imageType){
+			<option value="${type.value!}">
+				${type.label}
+			</option>
+		@}
+		</select>
+		<script type="text/javascript">
+			$("#chosenSelectEdit").change(function(){
+				alert($(this).val());
+			});
+		</script>
+	</form>
+</div>
+
+<#save formId="pic_save" config="true" validId="roleEditForm"> 
+	var data ='data='+ $("#province").val()+','+ $("#city").val()+','+ $("#information").val()+','+ $("#iplist").val()+','+ $("#linetype").val()+','+ $("#imageturl").val()+','+ $("#score").val()+','+ $("#date").val()+','+ $("#chosenSelectEdit").val()+','+ $("#serverip").val()+','+$("#type").val(); 
+	roleEditForm.config({
+		 ajaxpost:{data:data}
+	});
+</#save>
+
+<script type="text/javascript">
+
+//描述框自动扩张高度
+//$('textarea[class*=autosize]').autosize({append: "\n"});
+//$("#user-role-update").chosen({width: "100%",search_contains: true});
+$("#pic-select").chosen({width: "60%",search_contains: true}); 
+	
+
+</script>

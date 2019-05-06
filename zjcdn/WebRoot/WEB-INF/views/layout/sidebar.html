@@ -1,0 +1,81 @@
+<div id="sidebar" class="sidebar responsive  sidebar-fixed-top" style="background-color:#304050">
+	<script type="text/javascript">
+		try {
+			ace.settings.check('sidebar', 'fixed')
+		} catch (e) {
+		}
+	</script>
+<!-- 
+	<div class="sidebar-shortcuts" id="sidebar-shortcuts">
+		<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+			<button class="btn" data-skin="no-skin" style="background: #438EB9 !important;border-color:#438EB9;">
+				<i class="ace-icon fa"></i>
+			</button>
+
+			<button class="btn" data-skin="skin-1" style="background: #222A2D !important;border-color:#222A2D;">
+				<i class="ace-icon fa"></i>
+			</button>
+			
+			<button class="btn" data-skin="skin-2" style="background: #C6487E !important;border-color:#C6487E;">
+				<i class="ace-icon fa"></i>
+			</button>
+
+			<button class="btn" data-skin="skin-3" style="background: #D0D0D0 !important;border-color:#D0D0D0;">
+				<i class="ace-icon fa"></i>
+			</button>
+		</div>
+
+		<div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+			<button class="btn" data-skin="no-skin" style="background: #438EB9 !important;border-color:#438EB9;">
+			</button>
+
+			<button class="btn" data-skin="skin-1" style="background: #222A2D !important;border-color:#222A2D;">
+			</button>
+			
+			<button class="btn" data-skin="skin-2" style="background: #C6487E !important;border-color:#C6487E;">
+			</button>
+
+			<button class="btn" data-skin="skin-3" style="background: #D0D0D0 !important;border-color:#D0D0D0;">
+			</button>
+		</div>
+	</div> --><!-- sidebar-shortcuts -->
+
+	<div class="sidebar-shortcuts" id="sidebar-shortcuts">
+		<div
+			style="position: relative; height: 80px; background-color: #283848"
+			id="sidebar-shortcuts-large" class="sidebar-shortcuts-large">
+			<a href="${ctxPath}/#/ajax/userCenter"><img
+				src="${ctxPath}/static/app/img/index_user.png"
+				style="font-size: 14px; color: #fff; position: absolute; left: 2%; top: 25%; height: 40px" />
+			</a>
+			<div
+				style="font-size: 14px; color: #fff; position: absolute; left: 28%; top: 28%">${auth.getLoginUser().name}</div>
+		</div>
+
+		<div
+			style="position: relative; height: 80px; background-color: #283848"
+			id="sidebar-shortcuts-mini" class="sidebar-shortcuts-mini">
+			<img src="${ctxPath}/static/app/img/index_user.png"
+				style="font-size: 14px; color: #fff; position: absolute; left: 2%; top: 25%; height: 40px" />
+		</div>
+	</div>
+
+
+	<ul class="nav nav-list" id="sidebar-menu">
+		@menuTree(menuList!);
+	</ul>
+	/.nav-list
+	<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+		<i class="ace-icon fa fa-angle-double-left"
+			data-icon1="ace-icon fa fa-angle-double-left"
+			data-icon2="ace-icon fa fa-angle-double-right"></i>
+	</div>
+
+	<script type="text/javascript">
+		try {
+			ace.settings.check('sidebar', 'collapsed')
+		} catch (e) {
+		}
+	</script>
+</div>
+

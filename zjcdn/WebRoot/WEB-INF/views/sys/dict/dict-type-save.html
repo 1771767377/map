@@ -1,0 +1,58 @@
+<div class="layer">
+	<form name="FormPost" id="area-save" class="FormGrid"  method="post"
+		action="${ctxPath}/dict/type/save" >
+		
+		<input type="hidden" value="${type.id!}" name="id"/>
+		<input type="hidden" value="${pType.parentIds!}" name="parentIds" />
+		<input type="hidden" value="${type.parentIds!}" name="oldParentIds" />
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr style="display: none;">
+					<td class="ui-state-error" id="FormError"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">分类名称</td>
+					<td class="DataTD width-100"><input type="text"
+						name="name" datatype="*"  nullmsg="请输入分类名称！"
+						value="${type.name!}"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">标识</td>
+					<td class="DataTD width-100"><input type="text"
+						name="code" datatype="*" 
+						
+						@if(isEmpty(type)){
+							ajaxurl="${ctxPath!}/dict/type/checkcode" 
+						@}else{
+							readonly="readonly"
+						@}
+						nullmsg="请输入区域标识！"
+						value="${type.code!}"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">上级分类</td>
+					<td class="DataTD">
+					<#treeselect url="dict/type/tree" modelNameValue="${pType.name!}" 
+							modelIdValue="${pType.id!0}" selectIds="${pType.id!}"
+							curId="${type.id!}" />
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">分类描述</td>
+					<td class="DataTD">
+						<textarea name="remarks" class="autosize-transition form-control "
+						style="resize: none;">${type.remarks!}</textarea>	
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<#save formId="area-save" />
+
+<script type="text/javascript">
+
+//描述框自动扩张高度
+$('textarea[class*=autosize]').autosize({append: "\n"});
+
+</script>

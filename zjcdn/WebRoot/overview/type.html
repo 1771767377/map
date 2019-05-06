@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	
+	<div id="echart" style="width: 100%; height:500px"></div>
+</body>
+<script src="/pekingpf/static/jquery/jquery-2.1.1.min.js"></script>
+<script src="/pekingpf/static/app/echarts.js"></script>
+<script type="text/javascript">
+	function flushdata(){
+		$.ajax({
+			type : "post",
+			async : false,
+			contentType : "application/json",
+			url : "/pekingpf/overview/getTypeCount",
+			dataType : "json",
+			error : function() {
+				alert("不好意思,图文违规占比请求数据失败啦!");
+			},
+			success : function(json) {
+				require.config({
+					paths : {
+						echarts : '/pekingpf/static/app'
+					}
+				});
+				require([ 'echarts', 'echarts/chart/pie' ], function(ec) {
+					myChart = ec.init(document.getElementById('echart'));
+					option = {
+						animation : false,
+						tooltip : {
+							trigger : 'item',
+							formatter: "{a} <br/>{b} : {c} ({d}%)"
+						},
+						legend : {
+							orient : 'vertical',  
+							x : 'left',  
+							data: [
+							   '图片',
+							   '文本'
+							]
+						},
+						toolbox: {  
+							show : false,  
+							feature : {  
+								mark : {show: true},  
+								dataView : {show: true, readOnly: false},  
+								restore : {show: true},  
+								saveAsImage : {show: true}
+								
+							},
+							x:"right",
+							y:"bottom"
+						},  
+						series : [  
+							{  
+							    name: '内容',  
+							    type: 'pie',  
+							    radius : '50%',  
+							    center: ['50%', '40%'],
+							    corsor: 'pointer',
+							    data: [
+							      {name:'图片', value:json.illegalImage},
+							      {name:'文本', value:json.illegalText}
+							    ]
+							}  
+						]
+					};
+					myChart.setOption(option);
+				});
+			},
+		});
+	}
+	$(document).ready(function(){
+		flushdata();
+		//window.setInterval(flushdata, 2000);
+	})
+</script>
+</html>
