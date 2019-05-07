@@ -13,6 +13,7 @@ public class Audit extends BaseEntity{
 	private String url;
 	private String ip;
 	private String ysrecord;
+	private String insertdate;
 	
 	
 	public String getStatuscode() {
@@ -51,12 +52,12 @@ public class Audit extends BaseEntity{
 	public void setYsrecord(String ysrecord) {
 		this.set("ysrecord", ysrecord);
 	}
-	@Override
-	public String toString() {
-		return "Audit [statuscode=" + getStatuscode() + ", exportdate=" + getExportdate() + ", domain=" + getDomain() + ", url=" + getUrl()
-				+ ", ip=" + getIp() + ", ysrecord=" + getYsrecord() + "]";
+	public String getInsertdate() {
+		return this.getString("insertdate");
 	}
-	
-	
+	public void setInsertdate(String insertdate) {
+		this.set("insertdate", insertdate);
+	}
+
 	
 }

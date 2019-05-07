@@ -1,23 +1,12 @@
 package com.zicms.web.zjcdn.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.github.pagehelper.PageHelper;
+import com.zicms.common.utils.FileUtil;
+import com.zicms.web.sys.utils.SysUserUtils;
+import com.zicms.web.zjcdn.model.Audit;
+import com.zicms.web.zjcdn.service.TasksService;
+import com.zicms.web.zjcdn.utils.JDBCUtil;
+import com.zicms.web.zjcdn.utils.JdbcTools;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -32,13 +21,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.github.pagehelper.PageHelper;
-import com.zicms.common.utils.FileUtil;
-import com.zicms.web.sys.utils.SysUserUtils;
-import com.zicms.web.zjcdn.model.Audit;
-import com.zicms.web.zjcdn.service.TasksService;
-import com.zicms.web.zjcdn.utils.JDBCUtil;
-import com.zicms.web.zjcdn.utils.JdbcTools;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("recordMessage")
@@ -215,7 +209,7 @@ public class RecordMessageController {
         		for(Audit audit: list) {
         			System.out.println(audit.toString());
         		}
-        		//tasksService.insertDatas(list);        			
+        		tasksService.insertDatas(list);
         	}catch(Exception e){
         		System.out.println(e.getMessage());
         		return "insertError";
@@ -257,7 +251,8 @@ public class RecordMessageController {
         			Cell cell = row.getCell(cIndex);
         			if(cIndex==0){
         				String statuscode = cell.toString();
-        				task.setStatuscode(statuscode);
+						//System.out.println("statuscode"+statuscode.replace(".0",""));
+        				task.setStatuscode(statuscode.replace(".0",""));
         			}else if(cIndex==1) {
         				Date exportdate = cell.getDateCellValue();
         				task.setExportdate(sdf.format(exportdate));
