@@ -1,162 +1,148 @@
 package com.zicms.web.zjcdn.controller;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.zicms.web.sys.utils.SysUserUtils;
+import com.zicms.web.zjcdn.model.Main;
+import com.zicms.web.zjcdn.service.MainService;
+import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zicms.web.zjcdn.utils.JDBCUtil;
-import com.zicms.web.zjcdn.utils.JDBCUtils;
-import com.zicms.web.zjcdn.utils.JdbcTools;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("main")
 public class MainController {
-	/**
-	 * 获取监测URL数量
-	 * @throws SQLException 
-	 * 
-	 */
-	@RequestMapping("getURLcount")
-	@ResponseBody
-	public List<Map<String,Object>> getURLcount() throws SQLException, ClassNotFoundException{
+
+	@Resource
+	private MainService mainService;
+
+	private static final String BAIDU_APP_KEY = "1FhyZv3dzYHoOP8Ph4CXxOnoAB477qfT";
+
+	public static void main(String[] args){
+		String ip = "111.202.206.210";
+		System.out.println("getLatitude"+getLatitude(ip));
+		/*InetAddress ia=null;
+		try {
+			ia=ia.getLocalHost();
+
+			String localname=ia.getHostName();
+			String localip=ia.getHostAddress();
+			System.out.println("本机名称是："+ localname);
+			System.out.println("本机的ip是 ："+localip);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		
-		List<Map<String,Object>> list = null;
-		Connection con = JDBCUtil.getConnection();
-		//获得statement对象
-		Statement statement = con.createStatement();
-		//执行sql语句
-		String sql = "SELECT COUNT(*) as count from audit_filing where ysrecord = '1' ";
-		ResultSet resultSet = statement.executeQuery(sql);
-		list = JdbcTools.handleResultSetToMapListNew(resultSet);
-		JDBCUtil.closeConnection(con);
-		return list;
 	}
-	
+
 	/**
-	   * 不合规信息厂家统计图
+	 * 获取登录用户IP地址
+	 *
+	 * @param request
 	 * @return
-	 * @throws SQLException 
 	 */
-	@RequestMapping("getVender")
+      public static String getIpAddr(HttpServletRequest request) {
+		         String ip = request.getHeader("x-forwarded-for");
+		         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			             ip = request.getHeader("Proxy-Client-IP");
+			         }
+		         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			             ip = request.getHeader("WL-Proxy-Client-IP");
+			         }
+		         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			             ip = request.getRemoteAddr();
+			         }
+		         if (ip.equals("0:0:0:0:0:0:0:1")) {
+			             ip = "本地";
+			         }
+		         return ip;
+		     }
+
+
+	@RequestMapping("getMessage")
 	@ResponseBody
-	public List<Map<String,Object>> getVender() throws SQLException{
-		
-		List<Map<String,Object>> list = null;
-		long start = System.currentTimeMillis();
-		Connection con = JDBCUtils.getConnection();
-		System.out.println("连接花费====="+(System.currentTimeMillis()-start)+"ms");
-		Statement statement = con.createStatement();
-		System.out.println("准备花费====="+(System.currentTimeMillis()-start)+"ms");
-		//执行sql语句
-		String sql = "SELECT SUM(count) as sum, name from (SELECT COUNT(*) as count,information as name from img_history  WHERE retrial_status = '1' and province = '3310000' GROUP BY information UNION ALL SELECT COUNT(*) as count,information as name from video_history WHERE retrial_status = '1' and province = '3310000' GROUP BY information UNION ALL SELECT COUNT(*) as count,information as name from text_history  WHERE retrial_status = '1' and province = '3310000' GROUP BY information) a GROUP BY name";
-		ResultSet resultSet = statement.executeQuery(sql);
-		list = JdbcTools.handleResultSetToMapListNew(resultSet);
-		long end = System.currentTimeMillis();
-		System.out.println("getVender查询需要时间"+(end-start)+"ms");
-		JDBCUtils.closeConnection(con);
+	public Map<String, Object> geMessage(HttpServletRequest request){
+
+      	Map<String,Object> map = new HashMap<String, Object>();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//获取当前登陆用户
+		String username = SysUserUtils.getCacheLoginUser().getUsername();
+		//获取当前日期
+		String date = sdf.format(new Date());
+		//获取本机ip地址
+		InetAddress ia=null;
+		String ip = "";
+		try {
+			ia=ia.getLocalHost();
+			ip=ia.getHostAddress();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//String ip = getIpAddr(request);
+		mainService.updateIp(ip,date,username);
+		if(username.equals("admin")){
+			 List<Main> list = mainService.findIpa(username);
+			 String ip1 = list.get(0).toJSONString();
+			 List<Object> list1 = getLatitude(ip1);
+			 map.put("test",list1);
+		}
+		if (username.equals("test")){
+			List<Main> list = mainService.findIpa(username);
+			String ip1 = list.get(0).toJSONString();
+			List<Object> list1 = getLatitude(ip1);
+			map.put("admin",list1);
+		}
+
+		List<Object> list = getLatitude(ip);
+		map.put("main",list);
+
+      	return  map;
+	}
+
+	/**
+	 * 返回经纬度坐标的map longitude(经度),latitude(纬度)
+	 */
+	public static List<Object> getLatitude(String ip) {
+		List<Object> list = new ArrayList<Object>();
+		try {
+			ip = URLEncoder.encode(ip, "UTF-8");
+			URL resjson = new URL("http://api.map.baidu.com/location/ip?ip="+ip+"&ak="+BAIDU_APP_KEY+"&coor=bd09ll");
+			BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream()));
+			//System.out.println(resjson);
+			String res;
+			StringBuilder sb = new StringBuilder("");
+			while ((res = in.readLine()) != null) {
+				sb.append(res.trim());
+			}
+			in.close();
+			String str = sb.toString();
+			JSONObject jsonObject = JSONObject.fromObject(str);
+			Object o = jsonObject.get("content");
+			//取出经纬度
+			JSONObject object = JSONObject.fromObject(o);
+			Object o1 = object.get("point");
+			//取出所在省份
+			//JSONObject object1 = jsonObject.fromObject(o);
+			Object o2 = object.get("address");
+
+			list.add(o1);
+			list.add(o2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return list;
 	}
-	
-	
-	/**
-	 * 不合规信息类别分布图
-	 * @return
-	 * @throws SQLException 
-	 */
-	@RequestMapping("getType")
-	@ResponseBody
-	public List<Map<String,Object>> getType() throws SQLException{
-		
-		List<Map<String,Object>> list = null;
-		long start = System.currentTimeMillis();
-		Connection con = JDBCUtils.getConnection();
-		System.out.println("连接花费====="+(System.currentTimeMillis()-start)+"ms");
-		//获得statement对象
-		Statement statement = con.createStatement();
-		//执行sql语句
-		String sql = "SELECT COUNT(*) as count from img_history where retrial_status = '1' and province = '3310000' UNION ALL SELECT COUNT(*) from video_history where retrial_status = '1' and province = '3310000' UNION ALL SELECT COUNT(*) FROM text_history where retrial_status='1' and province = '3310000' ";
-		ResultSet resultSet = statement.executeQuery(sql);
-		list = JdbcTools.handleResultSetToMapListNew(resultSet);
-		long end = System.currentTimeMillis();
-		System.out.println("getType查询需要时间"+(end-start)+"ms");
-		JDBCUtils.closeConnection(con);
-		return list;
-	}
-	
-	/**
-	   * 不合规信息占比
-	 * @throws SQLException 
-	 */
-	@RequestMapping("getGrade")
-	@ResponseBody
-	public List<Map<String,Object>> getGrade() throws SQLException{
-		
-		List<Map<String,Object>> list = null;
-		long start = System.currentTimeMillis();
-		Connection con = JDBCUtils.getConnection();
-		System.out.println("连接花费====="+(System.currentTimeMillis()-start)+"ms");
-		//获得statement对象
-		Statement statement = con.createStatement();
-		//执行sql语句
-		String sql = "SELECT SUM(count) as sum from (SELECT COUNT(*) as count from img_history where retrial_status = '1' and province = '3310000' UNION ALL SELECT COUNT(*) from video_history where retrial_status = '1' and province = '3310000' UNION ALL SELECT COUNT(*) FROM text_history where retrial_status='1' and province = '3310000') a UNION ALL SELECT SUM(count) as sum from (SELECT COUNT(*) as count from img_history where province = '3310000' UNION ALL SELECT COUNT(*) from video_history where province = '3310000' UNION ALL SELECT COUNT(*) FROM text_history where province = '3310000') b";
-		ResultSet resultSet = statement.executeQuery(sql);
-		list = JdbcTools.handleResultSetToMapListNew(resultSet);
-		long end = System.currentTimeMillis();
-		System.out.println("getGrade查询需要时间"+(end-start)+"ms");
-		JDBCUtils.closeConnection(con);
-		return list;
-	}
-	
-	/**
-	   * 最近一周不合规信息数量
-	 * @throws SQLException 
-	 */
-	 @RequestMapping("getWeek")
-	 @ResponseBody
-	 public Map<String,Object> getWeek() throws SQLException{
-		 
-		 List<Map<String,Object>> list1 = null;
-		 List<Map<String,Object>> list2 = null;
-		 Connection con = JDBCUtils.getConnection();
-		 Statement statement1 = con.createStatement();
-		 Statement statement2 = con.createStatement();
-		 String sql1 = "select count(*) as count,day(insertdate) as date from img_history  where province = '3310000' and retrial_status = '1' and DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(insertdate) GROUP BY DATE(insertdate);";
-		 String sql2 = "select count(*) as count,day(insertdate) as date from video_history  where province = '3310000' and retrial_status = '1' and DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(insertdate) GROUP BY DATE(insertdate);";
-		 ResultSet resultSet1 = statement1.executeQuery(sql1);
-		 ResultSet resultSet2 = statement2.executeQuery(sql2);
-		 list1 = JdbcTools.handleResultSetToMapListNew(resultSet1);
-		 list2 = JdbcTools.handleResultSetToMapListNew(resultSet2);
-		 JDBCUtils.closeConnection(con);
-		 
-		 Map<String,Object> map = new HashMap<String,Object>();
-		 
-		 map.put("img", list1);
-		 map.put("video", list2);
-		 
-		 return map;
-	 }
-	 
-	public static void main(String[] args) throws SQLException {
-		Long start = System.currentTimeMillis();
-		Connection con = JDBCUtils.getConnection();
-		System.out.println("连接花费====="+(System.currentTimeMillis()-start)+"ms");
-		//获得statement对象
-		Statement statement = con.createStatement();
-		//执行sql语句
-		String sql = "select * from sys_user";
-		ResultSet resultSet = statement.executeQuery(sql);
-		List<Map<String,Object>> list = JdbcTools.handleResultSetToMapListNew(resultSet);
-		System.out.println(list);
-		
-	}
-	
+
 	
 }

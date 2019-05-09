@@ -3,6 +3,7 @@
   <servlet-mapping>
     <servlet-name>default</servlet-name>
     <url-pattern>/static/fonts/*</url-pattern>
+    <url-pattern>/static/app/*</url-pattern>
     <url-pattern>*.jpg</url-pattern>
     <url-pattern>*.png</url-pattern>
     <url-pattern>*.gif</url-pattern>

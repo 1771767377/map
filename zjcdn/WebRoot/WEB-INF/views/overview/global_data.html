@@ -2,569 +2,253 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script type="text/javascript" src="${ctxPath}/static/app/china.js"></script>
 </head>
-<script type="text/javascript" src="${ctxPath}/static/app/echarts.min.js"></script>
-<!-- <script type="text/javascript" src="${ctxPath}/static/app/zhejiang.json"></script> -->
 <body>
-<div class="container index_all">
-	<div class="row">
-	
-		<div class="col-sm-3 col-md-3 col-lg-3">
-			<div class="kuang_list" style="height: 10vh;">
-				<h3>URL监测</h3>
-				<h2 style="margin-left: 28%; margin-top: 1%; color: #fff;">累计值：<span id="span1">NaN</span></h2>
-			</div>
-			<div class="kuang_list" style="height: 10vh;">
-				<h3>未备案网站</h3>
-				<h2 style="margin-left: 28%; margin-top: 1%; color: #fff;">累计值：<span id="span2">NaN</span></h2>
-			</div>
-			<div class="kuang_list" style="height: 31vh">
-				<h3>不合规信息厂家统计图</h3>
-				<div id="imageWeek" style="width: 100%; height: 100%;"></div>
-			</div>
-			<div class="kuang_list" style="height: 31vh">
-				<h3>不合规信息类别分布图</h3>
-				<div id="textWeek" style="width: 100%; height: 120%; margin-top:-20%"></div>
-			</div>
-		</div>
-	
+
+<input type="button" id="btn" value="获取定位">
+
 		<div class="col-sm-6 col-md-6 col-lg-6">
-			<div style="position:absolute;left:0;top:0;z-index;5;">
+			<div style="position:absolute;margin-left:50%;top:0;z-index:5;">
 			</div>
-			    <center><h3><font color='#fff'>浙江不合规信息分布图</font></h3></center>
-			    <div id="peking" style="height: 70vh;width: 100%;margin-top: 8vh;margin-bottom:1vh;"> 
+			    <h3><font color='#fff'>浙江不合规信息分布图</font></h3>
+			    <div id="peking" style="height: 50vh;width: 100%;margin-top: 4vh;margin-bottom:1vh;margin-bottom:30vh;margin-left: 50vh;">
 			</div>
 			<div>
 			</div>
 		</div>
-		
-		<div class="col-sm-3 col-md-3 col-lg-3">
-		<div class="kuang_list" style="height: 10vh;">
-				<h3>URL监测</h3>
-				<h2 style="margin-left: 28%; margin-top: 1%; color: #fff;">不合规：<span id="span3">NaN</span></h2>
-		</div>
-			<div class="kuang_list" style="height: 35vh;">
-				<h3>不合规信息占比评级</h3>
-				<div id="proportion" style="width: 100%; height:140%;margin-top:-15%"></div>
-			</div>
-			<div class="kuang_list" style="height: 38vh;">
-				<h3>一周不合规信息类型折线图</h3>
-				<div id="image_text" style="width: 100%; height: 90%;"></div>
-			</div>
-		</div> 
-	</div>
-</div>
+
 </body>
 <script type="text/javascript">
-$("sx").hide();
-$("tj").hide();
 
-			$(function(){
-				
-				//未备案网站累计值
-				$.ajax({
-					url:"${ctxPath}/main/getURLcount",
-					data:"",
-					dataType:"json",
-					type:"post",
-					success:function(data){
-						
-							$("#span2").html(data[0].count);
-						
-					},
-					error:function(){
-						alert("数据异常，请联系管理员！");
-					}
-					
-				}) 
-				
-			/* 不合规信息厂家统计图 */
-			$.ajax({
-				url:"${ctxPath}/main/getVender",
-				data:"",
-				dataType:"json",
-				type:"post",
-				success:function(data){
-					
-					var xArr = ['hwcache','hwb2b','zxcache','zxb2b','hy','None']; 
-					var yArr = [0,0,0,0,0,0];
-					
-					$.each(data,function(index,value){
-						
-						for (var i = 0; i < data.length; i++) {
-							if(data[i].name==xArr[0]){
-								//yArr[0].push(data[i].sum);
-								yArr.splice(0, 1, data[i].sum);
-							}
-							if(data[i].name==xArr[1]){
-								yArr.splice(1, 1, data[i].sum);
-							}
-							if(data[i].name==xArr[2]){
-								yArr.splice(2, 1, data[i].sum);
-							}
-							if(data[i].name==xArr[3]){
-								yArr.splice(3, 1, data[i].sum);
-							}
-							if(data[i].name==xArr[4]){
-								yArr.splice(4, 1, data[i].sum);
-							}
-							if(data[i].name==xArr[5]){
-								yArr.splice(5, 1, data[i].sum);
-							}
-							if(data[i].name==xArr[6]){
-								yArr.splice(6, 1, data[i].sum);
-							}
-						}
-						
-					})
-					
-					var myChart1 = echarts.init(document.getElementById('imageWeek'));
-					option = {
-						grid: {
-					        left: '3%',
-					        right: '4%',
-					        bottom: '16%',
-					        x : '12%',
-							y : '10%',
-							x2 : '8%',
-							y2 : '30%',
-					        containLabel: true
-					    },
-					    tooltip : {
-							trigger : 'axis',
-							axisPointer : {
-								type : 'line'
-							}
-						},
-					    xAxis: {
-					        type: 'category',
-					        data: xArr,
-					        axisLabel : {
-								textStyle : {
-									color : '#fff'
-								},
-								interval : 0,
-								rotate:40
-							}
-					    },
-					    yAxis: {
-					        type: 'value',
-					        axisLabel : {
-					        	textStyle : {
-					        		color : '#fff'
-					        	},
-					        	interval : 0
-					        }
-					    },
-					    series: [{
-					        data: yArr,
-					        type: 'bar'
-					    }]
-					};
-					myChart1.setOption(option);  
-				},
-				error : function(){
-					alert("数据异常，请联系管理员！");
-				}
-			})
+    var myChart = echarts.init(document.getElementById('peking'));
+    var chinaGeoCoordMap = {
+        '黑龙江': [127.9688, 45.3681],
+        '内蒙古': [110.3467, 41.4899],
+        "吉林": [125.8154, 44.2584],
+        '北京市': [116.4551, 40.2539],
+        "辽宁": [123.1238, 42.1216],
+        "河北": [114.4995, 38.1006],
+        "天津": [117.4219, 39.4189],
+        "山西": [112.3352, 37.9413],
+        "陕西": [109.1162, 34.2004],
+        "甘肃": [103.5901, 36.3043],
+        "宁夏": [106.3586, 38.1775],
+        "青海": [101.4038, 36.8207],
+        "新疆": [87.9236, 43.5883],
+        "西藏": [91.11, 29.97],
+        "四川": [103.9526, 30.7617],
+        "重庆": [108.384366, 30.439702],
+        "山东": [117.1582, 36.8701],
+        "河南": [113.4668, 34.6234],
+        "江苏": [118.8062, 31.9208],
+        "安徽": [117.29, 32.0581],
+        "湖北": [114.3896, 30.6628],
+        "浙江": [119.5313, 29.8773],
+        "福建": [119.4543, 25.9222],
+        "江西": [116.0046, 28.6633],
+        "湖南": [113.0823, 28.2568],
+        "贵州": [106.6992, 26.7682],
+        "云南": [102.9199, 25.4663],
+        "广东": [113.12244, 23.009505],
+        "广西": [108.479, 23.1152],
+        "海南": [110.3893, 19.8516],
+        '上海': [121.4648, 31.2891]
+    };
+    var chinaDatas = [
+        [{
+            name: '黑龙江',
+            value: 0
+        }]
+    ];
 
-			/* 不合规信息类别分布图  */
-			$.ajax({
-				url:"${ctxPath}/main/getType",
-				data:"",
-				dataType:"json",
-				type:"post",
-				success:function(data){
-					
-					var myChart1 = echarts.init(document.getElementById('textWeek'));
-					option = {
-						    tooltip : {
-						        trigger: 'item',
-						        formatter: "{a} <br/>{b} : {c} ({d}%)"
-						    },
-						    series : [
-						        {
-						            type: 'pie',
-						            radius : '55%',
-						            center: ['50%', '60%'],
-						            data:[
-						                {value:data[0].count, name:'图片'},
-						                {value:data[1].count, name:'视频'},
-						                {value:data[2].count, name:'文本'}
-						            ],
-						            itemStyle: {
-						                emphasis: {
-						                    shadowBlur: 10,
-						                    shadowOffsetX: 0,
-						                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-						                }
-						            }
-						        }
-						    ]
-						};
-						myChart1.setOption(option);	
-				},
-				error : function(){
-					alert("数据异常，请联系管理员！");
-				}
-			})
-
-			/* 不合规信息占比 */
-			$.ajax({
-				url:"${ctxPath}/main/getGrade",
-				data:"",
-				dataType:"json",
-				type:"post",
-				success:function(data){
-					
-					$("#span1").html(data[1].sum);
-					$("#span3").html(data[0].sum);
-					
-					var level;
-					var value = Number(data[0].sum/data[1].sum)*100;
-					
-					if(value<30){
-						level = "低";
-					}else if(value>30&&value<70){
-						level = "中";
-					}else if(value>70){
-						level = "高";
-					}
-					
-					var myChart1 = echarts.init(document.getElementById("proportion"));
-					option = {
-						    series: [
-						        {
-						            type: 'gauge',
-						            radius: '65%',
-						            axisLine: {            // 坐标轴线
-						                lineStyle: {       // 属性lineStyle控制线条样式
-						                    width: 12,
-						                    color: [[0.3, '#62c87f'], [0.7, '#5d9cec'], [1, '#f15755']]
-						                }
-						            },
-						            detail: {formatter:level}, 
-						            data: value 
-						        }
-						    ]
-						};	
-					    myChart1.setOption(option);
-				},
-				error:function(){
-					alert("数据异常，请联系管理员！");					
-				}
-			})
-			
-				//一周不合规信息类型折线图
-				$.ajax({
-					url:"${ctxPath}/main/getWeek",
-					data:"",
-					dataType:"json",
-					type:"post",
-					async:false,
-					success:function(data){
-						
-						var Date1 = new Date()
-					    var dates = [];
-					    for(var i = 7; i < 8&&i > 0; i--) {
-					        dates.push(new Date(Date1.getTime() - i*24*60*60*1000).toLocaleDateString().replace(/[年月]/g, '-').replace(/[日上下午]/g, ''));
-					    } 
-					    var day = new Array();
-					    var imgArr = [0,0,0,0,0,0,0];
-					    var videoArr = [0,0,0,0,0,0,0];
-					    
-					    for (var j = 0; j < dates.length; j++) {
-					    	day.push(dates[j].split("/")[2]);
-						}
-					    
-					    //console.log(day);
-					           
-					    var img = data.img;
-					    var video = data.video;
-					    
-						$.each(img,function(index,value){
-							for (var h = 0; h < day.length; h++) {
-								if(day[h]==value.date){
-									imgArr.splice(h, 1, value.count);
-								}
-							}
-						})
-						
-						$.each(video,function(index,value){
-							for (var h = 0; h < day.length; h++) {
-								if(day[h]==value.date){
-									videoArr.splice(h, 1, value.count);
-								}
-						    }
-						})
-						//console.log(imgArr);
-						//console.log(videoArr);
-						
-						var myChart1 = echarts.init(document.getElementById("image_text"));
-						option = {
-						    tooltip: {
-						        trigger: 'axis'
-						    }, 
-						    grid: {
-						    	top : '5%',
-						        left: '3%',
-						        right: '4%',
-						        bottom: '5%',
-						        containLabel: true
-						    },
-						    xAxis: {
-						    	axisLabel : {
-						    		textStyle : {
-										color : '#fff'
-									}
-						    	},
-						        type: 'category',
-						        boundaryGap: false,
-						        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-						    },
-						    yAxis: {
-						    	axisLabel : {
-						    		textStyle : {
-						    			color : '#fff'	
-						    		}
-						    	},
-						        type: 'value'
-						    },
-						    series: [
-						        {
-						            name:'图片',
-						            type:'line',
-						            stack: '总量',
-						            data: imgArr
-						        },
-						        {
-						            name:'视频',
-						            type:'line',
-						            stack: '总量',
-						            data: videoArr
-						        },
-						        {
-						            name:'文本',
-						            type:'line',
-						            stack: '总量',
-						            data:[0,0,0,0,0,0,0]
-						        }
-						    ]
-						};
-						myChart1.setOption(option);
-						
-						
-					},
-					error:function(){
-						alert("数据异常，请联系管理员！");
-					}
-				})
-				
-			 }) 			
-				
-</script>
-<!-- css样式 -->
-<style type="text/css">
-	.index_all{
-			width: 100%;
-			height: 94vh;
-		}
-	.kuang_list{
-		width: 100%;
-		background: url(${ctxPath}/static/app/img/01.png) no-repeat;
-		background-size: 100% 100%;
-		margin-top:1vh;
-		margin-bottom:1vh;
-	}
-	.kuang_list h3{
-		color: #00f3fc;
-		font-size: 14px;
-	    line-height: 30px;
-	    margin-left: 15px;
-	    margin-top: 0;
-	    margin-bottom: 0;
-	}
-	.iconlist{
-		width:130px;
-		height:30px;
-		line-height:30px;
-		font-size:14px;
-		color:#fff;
-		background:url(${ctxPath}/static/app/img/icon01.png) no-repeat;
-		background-size: 100% 100%;
-		text-align:center;
-	}
-	table{
-		margin-left:5%;
-		width:90%;
-		color:#1e917e;
-		text-align:center;
-		height:77%;
-		table-layout:fixed;
-		cellspacing: 0;
-		cellpadding: 0;
-		font-size:12px;
-	}
-	table th{
-		text-align: center;
-		color: #58abda;
-		border: 1px solid #003c57;
-	}
-	tr td{
-		border: 1px solid #003c57;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-	}
-	th:nth-child(2){
-	    width: 25%;
-	}
-	tr td:nth-child(2){
-		width: 25%;
-	}
-</style>
-<script type="text/javascript">
-        
-		var myChart = echarts.init(document.getElementById('peking'));
-        var uploadedDataURL = "${ctxPath}/static/app/zhejiang.json";
-        myChart.showLoading();
-        $.getJSON(uploadedDataURL, function(geoJson) {
-            echarts.registerMap('zhejiang', geoJson);
-            myChart.hideLoading();
-            var geoCoordMap = {
-                
+    var convertData = function(data) {
+        var res = [];
+        for(var i = 0; i < data.length; i++) {
+            var dataItem = data[i];
+            var fromCoord = chinaGeoCoordMap[dataItem[0].name];
+            //被攻击点坐标
+            var toCoord = [116.4551,40.2539];
+            if(fromCoord && toCoord) {
+                res.push([{
+                    coord: fromCoord,
+                    value: dataItem[0].value
+                }, {
+                    coord: toCoord,
+                }]);
             }
-            var data = [{
-               
-            } ];
-            var max = 1000,
-                min = 0; // todo 
-            var maxSize4Pin = 100,
-                minSize4Pin = 0;
+        }
+        return res;
+    };
 
-            var convertData = function(data) {
-                var res = [];
-                for (var i = 0; i < data.length; i++) {
-                    var geoCoord = geoCoordMap[data[i].name];
-                    if (geoCoord) {
-                        res.push({
-                            name: data[i].name,
-                            value: geoCoord.concat(data[i].value)
-                        });
-                    }
-                }
-                return res;
-            };
-
-            option = {
-                title: {
-                    //text: '浙江',
-                    //subtext: 'data from Map',
-                    x: 'left',
-                    textStyle: {
-                        color: '#ccc'
+    var series = [];
+    [['北京市', chinaDatas]].forEach(function(item, i) {
+        //console.log(item)
+        //console.log(convertData(item[1]));
+        series.push({
+                type: 'lines',
+                zlevel: 2,
+                effect: {
+                    show: true,
+                    period: 4, //箭头指向速度，值越小速度越快
+                    trailLength: 0.02, //特效尾迹长度[0,1]值越大，尾迹越长重
+                    symbol: 'arrow', //箭头图标
+                    symbolSize: 5, //图标大小
+                },
+                lineStyle: {
+                    normal: {
+                        width: 1, //尾迹线条宽度
+                        opacity: 1, //尾迹线条透明度
+                        curveness: .3 //尾迹线条曲直度
                     }
                 },
-                tooltip: {
-                    trigger: 'item',
-                    backgroundColor: 'rgba(12, 204, 104, 0.92)',
-                    borderColor: '#FFFFCC',
-                    showDelay: 0,
-                    hideDelay: 0,
-                    enterable: true,
-                    transitionDuration: 0,
-                    extraCssText: 'z-index:100',
-                    formatter: function(params, ticket, callback) {
-                        //根据业务自己拓展要显示的内容
-                        var res = "";
-                        var name = params.name;
-                        var value = params.value;
-                        res = "<span style='color:#fff;'>" + name + "</span><br/>数据：" + value;
-                        return res;
+                data: convertData(item[1])
+            }, {
+                type: 'effectScatter',
+                coordinateSystem: 'geo',
+                zlevel: 2,
+                rippleEffect: { //涟漪特效
+                    period: 4, //动画时间，值越小速度越快
+                    brushType: 'stroke', //波纹绘制方式 stroke, fill
+                    scale: 4 //波纹圆环最大限制，值越大波纹越大
+                },
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'right', //显示位置
+                        offset: [5, 0], //偏移设置
+                        formatter: function(params){//圆环显示文字
+                            return params.data.name;
+                        },
+                        fontSize: 13
+                    },
+                    emphasis: {
+                        show: true
                     }
                 },
-                geo: {
-                    map: 'zhejiang',
-                    label: {
-                    	normal: {
-                    		show: true
-                    	},
-                        emphasis: {
-                            show: true
+                symbol: 'circle',
+                symbolSize: function(val) {
+                    return 5+ val[2] * 5; //圆环大小
+                },
+                itemStyle: {
+                    normal: {
+                        show: false,
+                        color: '#f00'
+                    }
+                },
+                data: item[1].map(function(dataItem) {
+                    return {
+                        name: dataItem[0].name,
+                        value: chinaGeoCoordMap[dataItem[0].name].concat([dataItem[0].value])
+                    };
+                }),
+            },
+            //被攻击点
+            {
+                type: 'scatter',
+                coordinateSystem: 'geo',
+                zlevel: 2,
+                rippleEffect: {
+                    period: 4,
+                    brushType: 'stroke',
+                    scale: 4
+                },
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'right',
+                        //offset:[5, 0],
+                        color: '#0f0',
+                        formatter: '{b}',
+                        textStyle: {
+                            color: "#0f0"
                         }
                     },
-                    roam: false, //是否允许缩放
-                    layoutCenter: ['50%', '50%'], //地图位置
-                    layoutSize: "95%",
-                    itemStyle: {
-                        normal: {
-                            color: 'rgba(51, 69, 89, .5)', //地图背景色
-                            borderColor: 'rgba(100,149,237,1)' //省市边界线
-                        },
-                        emphasis: {
-                            color: 'rgba(37, 43, 61, .5)' //悬浮背景
-                        }
+                    emphasis: {
+                        show: true,
+                        color: "#f60"
                     }
                 },
-                series: [{
-                        name: 'credit_pm2.5',
-                        type: 'scatter',
-                        coordinateSystem: 'geo',
-                        data: convertData(data),
-                        symbolSize: function(val) {
-                            return val[2] / 30;
-                        },
-                        label: {
-                            normal: {
-                                formatter: '{b}',
-                                position: 'right',
-                                show: true
-                            },
-                            emphasis: {
-                                show: true
-                            }
-                        },
-                        itemStyle: {
-                            normal: {
-                                color: '#05C3F9'
-                            }
-                        }
-                    }, {
-                        type: 'map',
-                        map: 'shanghai',
-                        geoIndex: 0,
-                        aspectScale: 0.75, //长宽比
-                        showLegendSymbol: false, // 存在legend时显示
-                        label: {
-                            normal: {
-                                show: false
-                            },
-                            emphasis: {
-                                show: false,
-                                textStyle: {
-                                    color: '#fff'
-                                }
-                            }
-                        },
-                        roam: false,
-                        itemStyle: {
-                            normal: {
-                                areaColor: '#031525',
-                                borderColor: '#3B5077',
-                            },
-                            emphasis: {
-                                areaColor: '#2B91B7'
-                            }
-                        },
-                        animation: false,
-                        data: data
-                    }
-                ]
-            };
-            myChart.setOption(option);
+                symbol: 'pin',
+                symbolSize: 50,
+                data: [{
+                    name: item[0],
+                    value: chinaGeoCoordMap[item[0]].concat([10]),
+                }],
+            }
+        );
+    });
 
-        });
-        
-      
+    option = {
+        tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(166, 200, 76, 0.82)',
+            borderColor: '#FFFFCC',
+            showDelay: 0,
+            hideDelay: 0,
+            enterable: true,
+            transitionDuration: 0,
+            extraCssText: 'z-index:100',
+            /*formatter: function(params, ticket, callback) {
+                //根据业务自己拓展要显示的内容
+                var res = "";
+                var name = params.name;
+                var value = params.value[params.seriesIndex + 1];
+                res = "<span style='color:#fff;'>" + name + "</span><br/>数据：" + value;
+                return res;
+            }*/
+        },
+        //backgroundColor:"#013954",
+        visualMap: { //图例值控制
+            min: 0,
+            max: 1,
+            calculable: false,
+            show: false,
+            color: ['#f44336', '#fc9700', '#ffde00', '#ffde00', '#00eaff'],
+            textStyle: {
+                color: '#fff'
+            }
+        },
+        geo: {
+            map: 'china',
+            zoom: 1.2,
+            label: {
+                emphasis: {
+                    show: false
+                }
+            },
+            roam: true, //是否允许缩放
+            itemStyle: {
+                normal: {
+                    color: 'rgba(51, 69, 89, .5)', //地图背景色
+                    borderColor: '#516a89', //省市边界线00fcff 516a89
+                    borderWidth: 1
+                },
+                emphasis: {
+                    color: 'rgba(37, 43, 61, .5)' //悬浮背景
+                }
+            }
+        },
+        series: series
+    };
+    myChart.setOption(option);
+
+    $("#btn").click(function(){
+        $.ajax({
+			url:"${ctxPath}/main/getMessage",
+			data:"",
+			dataType:"json",
+			type:"post",
+			async:false,
+			success:function (data) {
+				alert("success");
+            },
+			error:function () {
+				alert("数据异常，请联系管理员！");
+            }
+		})
+	})
+
+
 </script>
 </html>

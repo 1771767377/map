@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicms.web.zjcdn.mapper.MainMapper">
+
+		<insert id="updateIp">
+				REPLACE INTO iplist(ip,date,username) values (#{ip},#{date},#{username}) where 1 - 1
+				<if test="@Ognl@isNotBlank(username)">
+						and username = #{username};
+				</if>
+		</insert>
+
+		<select id="findIpa" resultType="com.zicms.web.zjcdn.model.Main">
+				select ip from iplist where username = #{username}
+		</select>
+
+</mapper>

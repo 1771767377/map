@@ -1,19 +1,12 @@
 package com.zicms.web.biaoge.controller;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zicms.web.biaoge.model.Checked;
+import com.zicms.web.biaoge.service.CheckedService;
+import com.zicms.web.datacenter.model.ProvinceDict;
+import com.zicms.web.datacenter.service.ProvinceDictService;
+import com.zicms.web.util.DateUtils;
+import com.zicms.web.util.FileUtil;
 import net.sf.json.JSONArray;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -22,12 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zicms.web.biaoge.model.Checked;
-import com.zicms.web.biaoge.service.CheckedService;
-import com.zicms.web.datacenter.model.ProvinceDict;
-import com.zicms.web.datacenter.service.ProvinceDictService;
-import com.zicms.web.util.DateUtils;
-import com.zicms.web.util.FileUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /*审核完成率统计*/
 @Controller
@@ -98,7 +95,7 @@ public class CheckedController {
 	 * 重新加载侧边栏
 	 * 
 	 * @param params
-	 * @param Checked
+	 * @param
 	 * @param model
 	 * @return
 	 * @throws UnsupportedEncodingException
